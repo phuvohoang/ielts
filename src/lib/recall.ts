@@ -55,7 +55,7 @@ export function gradeRecall(
       );
       let result: RecallField["result"];
       if (!answers[part].trim()) result = "incorrect";
-      else if (!expected.length && noForm(answers[part])) result = "correct";
+      else if (!expected.length) result = noForm(answers[part]) ? "correct" : given.length ? "review" : "incorrect";
       else if (noForm(answers[part]) || misplaced) result = "incorrect";
       else if (unknown.length) result = "review";
       else if (allForms ? missing.length > 0 : !given.length)

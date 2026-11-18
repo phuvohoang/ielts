@@ -42,6 +42,7 @@ describe("word-family production grading", () => {
     expect(
       gradeRecall(development, { ...answers, adverb: "" }).adverb.result,
     ).toBe("incorrect");
+    expect(gradeRecall(development, { ...answers, adverb: "!!!" }).adverb.result).toBe("incorrect");
     expect(
       gradeRecall(success, { ...blankAnswers(), adverb: "none" }).adverb.result,
     ).toBe("incorrect");
