@@ -12,8 +12,10 @@
     "test:e2e": "playwright test",
     "test:pages": "playwright test --config=playwright.pages.config.ts",
     "worker:dev": "wrangler dev --config worker/wrangler.jsonc",
-    "worker:check": "wrangler deploy --config worker/wrangler.jsonc --dry-run",
-    "worker:deploy": "wrangler deploy --config worker/wrangler.jsonc"
+    "worker:check": "node scripts/sync-worker-config.mjs --check && wrangler deploy --dry-run",
+    "worker:deploy": "wrangler deploy --config worker/wrangler.jsonc",
+    "worker:sync-config": "node scripts/sync-worker-config.mjs",
+    "worker:preview": "wrangler preview --config worker/wrangler.jsonc"
   },
   "dependencies": {
     "@fontsource/nunito": "^5.3.0",
