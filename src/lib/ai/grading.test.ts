@@ -534,3 +534,92 @@ it("uses reviewed grammar explanations even when model prose invents an unsuppor
     explanationVi: q.explanation,
   });
 });
+
+it.each([
+  [
+    16,
+    "She explained it clearly.",
+    { degreePreserved: "no", contextPreserved: "yes" },
+  ],
+  [
+    24,
+    "The manager appeared very confident.",
+    { degreePreserved: "yes", contextPreserved: "no" },
+  ],
+])(
+  "independently checks source degree/context without relying on a positive grader verdict",
+  async (index, answer, coverage) => {
+    const e = env(),
+      q = b2Exercises[index];
+    e.AI.run
+      .mockResolvedValueOnce({
+        response: { ...report(q.id, answer), criteria: allCriteria },
+      })
+      .mockResolvedValueOnce({ response: { ...coverage, confidence: 0.99 } });
+    expect(
+      await infer(
+        { ...e, AI_CRITERIA_GRADING: "true", AI_SOURCE_COVERAGE: "true" },
+        q,
+        answer,
+      ),
+    ).toMatchObject({
+      status: "partially_correct",
+      score: 0.5,
+      correctedAnswer: q.referenceAnswers[0],
+    });
+    const second = e.AI.run.mock.calls[1] as unknown as [
+      string,
+      { messages: { content: string }[] },
+    ];
+    const payload = JSON.parse(second[1].messages[1].content);
+    expect(payload).toEqual({
+      sourceSentence: q.question,
+      studentAnswer: answer,
+    });
+  },
+);
+it("overturns an unfair degree penalty after a reference-free semantic comparison", async () => {
+  const e = env(),
+    q = b2Exercises[15],
+    answer = "The company grew a great deal.";
+  const initial = {
+    response: {
+      ...report(q.id, answer, "partially_correct"),
+      criteria: { ...allCriteria, degreePreserved: "no" },
+    },
+  };
+  e.AI.run
+    .mockResolvedValueOnce(initial)
+    .mockResolvedValueOnce(initial)
+    .mockResolvedValueOnce({
+      response: {
+        degreePreserved: "yes",
+        contextPreserved: "yes",
+        confidence: 0.99,
+      },
+    });
+  expect(
+    await infer(
+      { ...e, AI_CRITERIA_GRADING: "true", AI_SOURCE_COVERAGE: "true" },
+      q,
+      answer,
+    ),
+  ).toMatchObject({ status: "correct", score: 1, correctedAnswer: answer });
+});
+it("leaves an unavailable source-comparison check unscored", async () => {
+  const e = env(),
+    q = b2Exercises[15],
+    answer = "The company grew by a significant amount.";
+  e.AI.run
+    .mockResolvedValueOnce({
+      response: { ...report(q.id, answer), criteria: allCriteria },
+    })
+    .mockRejectedValueOnce(Error("coverage unavailable"));
+  expect(
+    await infer(
+      { ...e, AI_CRITERIA_GRADING: "true", AI_SOURCE_COVERAGE: "true" },
+      q,
+      answer,
+    ),
+  ).toMatchObject({ status: "needs_review", score: null });
+});
