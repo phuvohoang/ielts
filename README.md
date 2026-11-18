@@ -79,3 +79,11 @@ PAGES_BASE_PATH=/ielts/ npm run preview -- --host 0.0.0.0
 ```
 
 Learning progress is stored separately for each origin. To move existing study history from the Sites-hosted app, export a JSON backup in its Settings, then restore it in Settings on GitHub Pages.
+
+## Word-family recall
+
+Open **Word Families → Practise word-family recall** (also available in Practice Lab). Each card shows a Vietnamese meaning and four empty text boxes: noun, adjective, adverb and verb. A root hint is optional. Answers and study forms stay hidden until all four fields are submitted.
+
+The default harder goal requires all forms taught in the library, separated by commas, semicolons or newlines. A lighter goal accepts one known form per class. Enter `none`, `—` or `N/A` when no common form is taught; empty input does not count as recalling an absent form. British/American organize spelling variants are accepted. Unlisted words require verification rather than being automatically rejected; known forms placed in the wrong word class need correction.
+
+Feedback identifies recalled classes and missing forms. Retry missed families from the session summary. Each submitted family is one production attempt with four typed answers; it is saved to existing attempt history, backups, analytics and spaced review without altering existing data. Error Bank links back to the four-field recall mode for retrying these attempts.

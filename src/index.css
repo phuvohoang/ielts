@@ -882,3 +882,90 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+.recall-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: #edf3e6;
+}
+.recall-intro h2 {
+  margin-bottom: 6px;
+}
+.recall-intro p {
+  font-size: 13px;
+  margin: 0;
+}
+.recall-intro a {
+  flex-shrink: 0;
+}
+.recall-card {
+  max-width: 850px;
+  margin: 0 auto 22px;
+}
+.recall-card progress {
+  width: 100%;
+  height: 5px;
+  accent-color: #416c46;
+  margin: 18px 0;
+}
+.recall-cue-label {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+.recall-card > h2 {
+  font-size: 28px;
+}
+.recall-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 10px 0 24px;
+}
+.recall-field {
+  padding: 18px;
+  border: 1px solid #dfe5d9;
+  border-radius: 9px;
+}
+.recall-field .field {
+  margin: 0;
+}
+.recall-class {
+  font-size: 14px;
+}
+.recall-field input {
+  font-size: 17px;
+  width: 100%;
+}
+.recall-field.correct {
+  background: #f0f6eb;
+  border-color: #90aa7a;
+}
+.recall-field.incorrect {
+  background: #fff5ed;
+  border-color: #d7ac8e;
+}
+.recall-field.review {
+  background: #faf6e8;
+  border-color: #c5b776;
+}
+.recall-answer {
+  font-size: 12px;
+  margin-top: 14px;
+}
+.recall-answer p {
+  margin: 8px 0 0;
+}
+.family > .button-outline {
+  margin-top: 10px;
+}
+@media (max-width: 760px) {
+  .recall-grid {
+    grid-template-columns: 1fr;
+  }
+  .recall-intro {
+    align-items: start;
+    flex-direction: column;
+  }
+}
