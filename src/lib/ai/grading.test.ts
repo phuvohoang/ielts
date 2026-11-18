@@ -309,3 +309,18 @@ it("deduplicates unknown answers in a batch and accepts an AI-verified unseen al
     "correct",
   ]);
 });
+
+it("retains numeric provider diagnostics without exposing provider messages or answers", async () => {
+  const e = env(),
+    q = b2Exercises[0];
+  e.AI.run.mockRejectedValue(
+    Object.assign(Error("private provider details and student answer"), {
+      code: 3040,
+    }),
+  );
+  await expect(infer(e, q, "unlisted input")).rejects.toMatchObject({
+    message: "AI unavailable",
+    code: "AI_PROVIDER_ERROR",
+    reason: "provider:3040",
+  });
+});

@@ -106,6 +106,10 @@ export async function infer(
       stage = "validation";
       return parseReport(raw, q, answer);
     } catch (error) {
+      const providerCode = String((error as { code?: unknown })?.code ?? "");
+      const safeProviderCode = /^\d{3,6}$/.test(providerCode)
+        ? providerCode
+        : "";
       const reason =
         error instanceof z.ZodError
           ? "schema:" +
@@ -117,7 +121,9 @@ export async function infer(
             ? "timeout"
             : stage === "validation"
               ? "invalid-report"
-              : "provider";
+              : safeProviderCode
+                ? `provider:${safeProviderCode}`
+                : "provider";
       failure = {
         code:
           reason === "timeout"
