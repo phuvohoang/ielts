@@ -6,7 +6,7 @@ The IELTS app uses React/TypeScript/Vite, React Router (hash navigation on GitHu
 
 Inspected `phuvohoang/english-steps/worker/index.mjs` and `worker/wrangler.jsonc` through GitHub. Its source declares `POST /grade`, Workers AI `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, Vietnamese feedback, JSON-schema inference, `ALLOWED_ORIGIN`, an AI binding and a 6/minute global rate limiter. It has no separate application authentication. Its config names the Worker `english-steps-writing`, which differs from the supplied reference hostname. Neither its deployed model availability nor hostname was assumed from these files. No reference Worker was modified, redeployed or sent student answers.
 
-The separate IELTS Worker uses these compatible conventions with server-owned exercises, stricter runtime validation, per-client and global limits, bounded retries/concurrency, timeouts and per-question batch failures. AI_MODEL deliberately has no default: choose an available, JSON-schema-capable Workers AI model in the target account and run the live evaluation checklist before release.
+The separate IELTS Worker uses these compatible conventions with server-owned exercises, stricter runtime validation, per-client and global limits, bounded retries/concurrency, timeouts and per-question batch failures. Production AI_MODEL is configured as @cf/meta/llama-3.3-70b-instruct-fp8-fast, verified against Cloudflare’s JSON Mode support list and active-variant deprecation notice on 2026-11-18. Keep it configurable and run the live evaluation checklist in the target account. Sources: https://developers.cloudflare.com/workers-ai/features/json-mode/ and https://developers.cloudflare.com/changelog/post/2026-05-08-planned-model-deprecations/.
 
 ## Files
 
@@ -44,7 +44,7 @@ Returns `{"results":[{"exerciseId":"wf-b2-016","result":{...}}]}`. Each item ind
 Worker:
 
 - `AI`: Workers AI binding.
-- `AI_MODEL`: an explicitly verified model ID with JSON-schema output support (required, no assumed availability).
+- `AI_MODEL`: the configured model ID with JSON-schema output support; verify availability and response quality when changing it.
 - `ALLOWED_ORIGINS`: comma-separated exact origins, production `https://phuvohoang.github.io`; remove localhost for production.
 - `GRADE_LIMIT`: Cloudflare rate-limit binding, 12 requests per client IP per minute.
 - `GLOBAL_LIMIT`: separate global binding, 60 requests per minute.
@@ -89,7 +89,7 @@ In this managed workspace use `npm_config_cache=/tmp/npm-cache`, `PLAYWRIGHT_BRO
 4. Set repository Actions variable VITE_GRAMMAR_API_URL to that actual URL plus `/api/grammar/grade`.
 5. Review and merge the theory-first prerequisite and this feature only with approval. Main pushes automatically deploy GitHub Pages. Verify the actual Pages lesson and AI network flow after deployment.
 
-No production deployment or configuration change has been executed. A successful dry-run proves bundling, not model availability, account permission or remote correctness.
+The website was deployed after approval. The owner reports a successful separate Worker build; live AI inference still requires endpoint verification. A successful dry-run proves bundling, not account permission or remote correctness.
 
 ## Content audit and grading limitations
 
