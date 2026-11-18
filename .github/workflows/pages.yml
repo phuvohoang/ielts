@@ -25,6 +25,7 @@ jobs:
         env:
           PAGES_BASE_PATH: /${{ github.event.repository.name }}/
           VITE_ROUTER_MODE: hash
+          VITE_GRAMMAR_API_URL: ${{ vars.VITE_GRAMMAR_API_URL }}
       - run: npx playwright install --with-deps chromium
       - run: npm run test:pages
       - uses: actions/configure-pages@v5

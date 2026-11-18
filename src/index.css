@@ -1075,3 +1075,5 @@ textarea {
   margin-right: 10px;
   margin-top: 8px;
 }
+
+.ai-card form {display:grid;gap:1rem}.ai-card input,.ai-card textarea{width:100%;padding:.8rem;border:1px solid #64748b;border-radius:.5rem;font:inherit}.ai-question{font-size:1.3rem}.ai-feedback{margin-top:1.5rem;border-top:1px solid #cbd5e1;padding-top:1.5rem}.answer-diff{line-height:2}.answer-diff del{background:#fee2e2;color:#7f1d1d;text-decoration:line-through}.answer-diff ins{background:#dcfce7;color:#14532d;text-decoration:underline}.ai-card progress{width:100%;accent-color:#286457}

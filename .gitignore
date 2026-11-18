@@ -26,3 +26,8 @@ dist-ssr
 # Browser test artifacts
 /test-results/
 /playwright-report/
+
+# Worker local state and secrets
+.wrangler/
+.dev.vars
+.dev.vars.*

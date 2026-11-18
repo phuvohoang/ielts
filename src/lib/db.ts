@@ -1,4 +1,8 @@
 import {
+  attemptSchema as aiAttemptSchema,
+  type AIExerciseAttempt,
+} from "./ai/schema";
+import {
   learningProgressSchema,
   checkSchema,
   type LearningProgress,
@@ -48,6 +52,7 @@ class LearningDB extends Dexie {
   writing!: Table<Writing, number>;
   lessons!: Table<LearningProgress, string>;
   checks!: Table<MasteryCheck, string>;
+  aiAttempts!: Table<AIExerciseAttempt, string>;
   constructor() {
     super("ielts-grammar-mastery");
     this.version(1).stores({
@@ -59,6 +64,7 @@ class LearningDB extends Dexie {
       lessons: "id,reviewDueAt",
       checks: "id,lessonId,startedAt",
     });
+    this.version(3).stores({ aiAttempts: "id,sessionId,exerciseId,date" });
   }
 }
 export const db = new LearningDB();
@@ -85,13 +91,18 @@ export const backupSchema = z.union([
   }),
   z
     .object({
-      version: z.literal(2),
+      version: z.union([z.literal(2), z.literal(3)]),
+      aiAttempts: z.array(aiAttemptSchema).optional(),
       attempts: z.array(attemptSchema),
       progress: z.array(progressSchema),
       writing: z.array(writingSchema),
       lessons: z.array(learningProgressSchema),
       checks: z.array(checkSchema),
     })
+    .refine(
+      (b) => b.version !== 3 || b.aiAttempts !== undefined,
+      "Version 3 requires AI attempts",
+    )
     .refine(
       (b) =>
         b.lessons.every(
@@ -111,13 +122,17 @@ export const backupSchema = z.union([
 export async function exportBackup() {
   return db.transaction(
     "r",
-    db.attempts,
-    db.progress,
-    db.writing,
-    db.lessons,
-    db.checks,
+    [
+      db.attempts,
+      db.progress,
+      db.writing,
+      db.lessons,
+      db.checks,
+      db.aiAttempts,
+    ],
     async () => ({
-      version: 2 as const,
+      version: 3 as const,
+      aiAttempts: await db.aiAttempts.toArray(),
       attempts: await db.attempts.toArray(),
       progress: await db.progress.toArray(),
       writing: await db.writing.toArray(),
@@ -130,11 +145,14 @@ export async function importBackup(input: unknown) {
   const b = backupSchema.parse(input);
   await db.transaction(
     "rw",
-    db.attempts,
-    db.progress,
-    db.writing,
-    db.lessons,
-    db.checks,
+    [
+      db.attempts,
+      db.progress,
+      db.writing,
+      db.lessons,
+      db.checks,
+      db.aiAttempts,
+    ],
     async () => {
       await Promise.all([
         db.attempts.clear(),
@@ -145,11 +163,15 @@ export async function importBackup(input: unknown) {
       await db.progress.bulkAdd(b.progress);
       await db.writing.bulkAdd(b.writing);
       // A v1 backup predates learning progress: preserve the new tables when restoring it.
-      if (b.version === 2) {
+      if (b.version === 2 || b.version === 3) {
         await db.lessons.clear();
         await db.checks.clear();
         await db.lessons.bulkAdd(b.lessons);
         await db.checks.bulkAdd(b.checks);
+        if (b.version === 3) {
+          await db.aiAttempts.clear();
+          await db.aiAttempts.bulkAdd(b.aiAttempts ?? []);
+        }
       }
     },
   );

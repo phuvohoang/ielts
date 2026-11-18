@@ -42,3 +42,21 @@ test("Pages opens four-field family recall through the library link", async ({
     page.getByRole("button", { name: "Check all four forms" }),
   ).toBeDisabled();
 });
+
+test("Pages opens and refreshes Lesson 01.2 with answers hidden", async ({
+  page,
+}) => {
+  await page.goto("/ielts/#/lessons/01.2");
+  await expect(
+    page.getByRole("heading", { name: "Word Formation B2", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("checkbox").check();
+  await expect(page.getByLabel("Your answer", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Reference answer", exact: true }),
+  ).toHaveCount(0);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Word Formation B2", exact: true }),
+  ).toBeVisible();
+});

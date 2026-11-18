@@ -21,6 +21,16 @@ export function LearningPath() {
           Review → Mastery Check
         </p>
       </div>
+      <section className="panel">
+        <h2>Advanced · Lesson 01.2</h2>
+        <p>
+          Word Formation B2: 25 typed questions with AI feedback. Optional
+          advanced study; does not unlock foundation rules.
+        </p>
+        <Link className="button button-outline" to="/lessons/01.2">
+          Open Word Formation B2
+        </Link>
+      </section>
       <div className="learning-statuses">
         {labels.map((label) => (
           <div className="stat" key={label}>
