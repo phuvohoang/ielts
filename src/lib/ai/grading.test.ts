@@ -407,3 +407,36 @@ it("keeps a disputed or unavailable penalty review unscored", async () => {
     score: null,
   });
 });
+
+it("supports configured OpenAI-style structured models without changing the public grading contract", async () => {
+  const e = env(),
+    q = b2Exercises[0],
+    answer = "a candidate answer";
+  e.AI.run.mockResolvedValue({
+    choices: [{ message: { content: JSON.stringify(report(q.id, answer)) } }],
+  });
+  expect(
+    await infer(
+      { ...e, AI_SCHEMA_STYLE: "openai", AI_DISABLE_THINKING: "true" },
+      q,
+      answer,
+    ),
+  ).toMatchObject({ status: "correct", score: 1, userAnswer: answer });
+  const input = e.AI.run.mock.calls[0] as unknown as [
+    string,
+    {
+      response_format: {
+        json_schema: {
+          name: string;
+          schema: { properties: Record<string, unknown> };
+        };
+      };
+      chat_template_kwargs: { enable_thinking: boolean };
+    },
+  ];
+  expect(input[1].response_format.json_schema.name).toBe("grammar_grade");
+  expect(
+    input[1].response_format.json_schema.schema.properties.status,
+  ).toBeDefined();
+  expect(input[1].chat_template_kwargs.enable_thinking).toBe(false);
+});
