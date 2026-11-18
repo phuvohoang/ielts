@@ -353,6 +353,12 @@ export function GrammarExercise() {
                       <h3>Grammar explanation</h3>
                       <p>{result.grammarRule}</p>
                       <p>{result.explanationVi}</p>
+                      {result.explanationVi !== q.explanation && (
+                        <>
+                          <h3>Reviewed lesson explanation</h3>
+                          <p>{q.explanation}</p>
+                        </>
+                      )}
                       <h3>Reference answer</h3>
                       <p>{q.referenceAnswers[0]}</p>
                       {result.alternativeAnswers.length > 0 && (
