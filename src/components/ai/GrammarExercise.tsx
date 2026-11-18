@@ -151,10 +151,9 @@ export function GrammarExercise() {
         </p>
         <p>
           <strong>Sentence Transformation:</strong> Giữ Subject, ý nghĩa, thời
-          và mức độ. “gave a very careful reply” → “explained extremely
-          clearly”; bỏ very làm giảm mức độ. “find + Object + Adjective” →
-          “found the room warm”. Có thể dùng mệnh đề “found that the room was
-          warm”.
+          và mức độ. “gave a very careful reply” → “replied very carefully”; bỏ
+          very làm giảm mức độ. “find + Object + Adjective” → “found the room
+          warm”. Có thể dùng mệnh đề “found that the room was warm”.
         </p>
         <p>
           <strong>Word Formation:</strong> Adjective bổ nghĩa Noun hoặc làm

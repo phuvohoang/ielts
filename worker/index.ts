@@ -26,7 +26,7 @@ const system = `You are an IELTS Band 6.5 grammar tutor. Return only JSON matchi
 const resultJson = z.toJSONSchema(resultSchema, { unrepresentable: "any" });
 const cache = new Map<string, { expires: number; result: GradeResult }>();
 const pending = new Map<string, Promise<GradeResult>>();
-export const AI_TIMEOUT_MS = 12000;
+export const AI_TIMEOUT_MS = 25000;
 export async function withTimeout<T>(
   operation: (signal: AbortSignal) => Promise<T>,
   ms = AI_TIMEOUT_MS,
@@ -77,7 +77,9 @@ export async function infer(
   q: Exercise,
   answer: string,
 ): Promise<GradeResult> {
+  let failure = { code: "AI_PROVIDER_ERROR", reason: "provider" };
   for (let attempt = 0; attempt < 2; attempt++) {
+    let stage = "provider";
     try {
       const raw = await withTimeout((signal) =>
         env.AI.run(
@@ -101,12 +103,33 @@ export async function infer(
           { signal },
         ),
       );
+      stage = "validation";
       return parseReport(raw, q, answer);
-    } catch {
-      /* Bounded retry covers invalid JSON, transient inference and timeout. No answer logging. */
+    } catch (error) {
+      const reason =
+        error instanceof z.ZodError
+          ? "schema:" +
+            error.issues
+              .map((issue) => issue.path.join("."))
+              .join(",")
+              .slice(0, 100)
+          : error instanceof Error && error.message === "timeout"
+            ? "timeout"
+            : stage === "validation"
+              ? "invalid-report"
+              : "provider";
+      failure = {
+        code:
+          reason === "timeout"
+            ? "AI_TIMEOUT"
+            : stage === "validation"
+              ? "AI_RESPONSE_INVALID"
+              : "AI_PROVIDER_ERROR",
+        reason,
+      };
     }
   }
-  throw Error("AI unavailable");
+  throw Object.assign(Error("AI unavailable"), failure);
 }
 async function cachedGrade(env: Env, q: Exercise, answer: string) {
   const known = knownResult(q, answer);
@@ -247,11 +270,25 @@ export default {
               s.userAnswer,
             ),
           };
-        } catch {
+        } catch (error) {
+          const failure = error as { code?: string; reason?: string };
+          const code = [
+            "AI_TIMEOUT",
+            "AI_RESPONSE_INVALID",
+            "AI_PROVIDER_ERROR",
+          ].includes(failure.code ?? "")
+            ? failure.code!
+            : "AI_PROVIDER_ERROR";
           return {
             exerciseId: s.exerciseId,
+            errorCode: code,
+            reason: failure.reason ?? "provider",
             error:
-              "AI chưa trả về đánh giá đáng tin cậy. Hãy thử lại; bài này chưa được chấm điểm.",
+              code === "AI_TIMEOUT"
+                ? "AI chấm quá lâu. Hãy thử lại; bài này chưa được chấm điểm."
+                : code === "AI_RESPONSE_INVALID"
+                  ? "AI trả về đánh giá chưa hợp lệ. Hãy thử lại; bài này chưa được chấm điểm."
+                  : "AI tạm thời không khả dụng. Hãy thử lại; bài này chưa được chấm điểm.",
           };
         }
       });

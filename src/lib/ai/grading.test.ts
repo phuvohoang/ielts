@@ -182,6 +182,10 @@ it("keeps batch partial failures per question and restricts CORS, body size, unk
   expect(body.results[0].result?.score).toBe(1);
   expect(body.results[1].result).toBeUndefined();
   expect(body.results[1].error).toBeTruthy();
+  expect(body.results[1]).toMatchObject({
+    errorCode: "AI_PROVIDER_ERROR",
+    reason: "provider",
+  });
   expect(
     (
       await worker.fetch(

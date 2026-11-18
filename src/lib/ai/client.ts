@@ -11,6 +11,10 @@ const responseSchema = z.object({
       exerciseId: z.string(),
       result: resultSchema.optional(),
       error: z.string().optional(),
+      errorCode: z
+        .enum(["AI_TIMEOUT", "AI_RESPONSE_INVALID", "AI_PROVIDER_ERROR"])
+        .optional(),
+      reason: z.string().max(120).optional(),
     }),
   ),
 });
@@ -46,9 +50,18 @@ export function gradeExercise(
       const item = responseSchema
         .parse(await response.json())
         .results.find((r) => r.exerciseId === q.id);
-      if (!item?.result)
+      if (!item?.result) {
+        console.warn(
+          "Grammar grading unavailable",
+          item?.errorCode ?? "UNKNOWN",
+          item?.reason ?? "unknown",
+        );
         throw Error(item?.error ?? "AI chưa trả về kết quả. Hãy thử lại.");
-      if (item.result.userAnswer !== userAnswer)
+      }
+      if (
+        item.result.exerciseId !== q.id ||
+        item.result.userAnswer !== userAnswer
+      )
         throw Error("Kết quả không khớp với bài gửi. Hãy thử lại.");
       return item.result;
     } catch (error) {
