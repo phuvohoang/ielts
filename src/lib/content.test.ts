@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   families,
-  questions,
+  legacyQuestions as questions,
   types,
   grade,
   normalize,

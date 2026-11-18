@@ -1,6 +1,6 @@
 import "fake-indexeddb/auto";
 import { describe, it, expect, beforeEach } from "vitest";
-import { families, questions, grade, shuffle } from "./content";
+import { families, legacyQuestions as questions, grade, shuffle } from "./content";
 import { schedule, intervals } from "./schedule";
 import { db, record, exportBackup, importBackup } from "./db";
 describe("curriculum content", () => {

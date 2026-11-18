@@ -969,3 +969,27 @@ textarea {
     flex-direction: column;
   }
 }
+
+.practice-card mark {
+  background: #e4efd9;
+  color: #25462e;
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+.token-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 15px 0 22px;
+}
+.token-list span {
+  padding: 8px 13px;
+  border: 1px solid #cfdcc4;
+  border-radius: 6px;
+  background: #f4f7ef;
+  font-weight: 700;
+}
+.audit-note {
+  border-left: 3px solid #b2a56c;
+  padding-left: 12px;
+}

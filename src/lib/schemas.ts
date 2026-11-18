@@ -1,0 +1,42 @@
+import { z } from "zod";
+export const types = [
+  "Identify Word Class",
+  "Word Formation",
+  "Fill in the Blank",
+  "Error Detection",
+  "Sentence Correction",
+  "Sentence Building",
+  "Vietnamese to English",
+  "Writing Error Recall",
+] as const;
+export const familySchema = z.object({
+  id: z.string(),
+  root: z.string(),
+  cefr: z.string(),
+  topic: z.string(),
+  forms: z.record(z.string(), z.array(z.string())),
+  ipa: z.string(),
+  meaning: z.string(),
+  examples: z.array(z.string()),
+  collocations: z.array(z.string()),
+  verbPatterns: z.array(z.string()),
+  mistakes: z.array(z.string()),
+  rules: z.array(z.string()),
+});
+export const questionSchema = z.object({
+  id: z.string(),
+  family: z.string(),
+  type: z.enum(types),
+  prompt: z.string(),
+  answers: z.array(z.string()).min(1),
+  explanation: z.string(),
+  difficulty: z.string(),
+  topic: z.string(),
+  choices: z.array(z.string()),
+  requiresReview: z.boolean(),
+  ruleId: z.string().optional(),
+  rootHint: z.string().optional(),
+  tokens: z.array(z.string()).optional(),
+  group: z.string().optional(),
+  auditNote: z.string().optional(),
+});
