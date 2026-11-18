@@ -440,3 +440,50 @@ it("supports configured OpenAI-style structured models without changing the publ
   ).toBeDefined();
   expect(input[1].chat_template_kwargs.enable_thinking).toBe(false);
 });
+
+const allCriteria = {
+  grammarCorrect: "yes",
+  coreMeaningPreserved: "yes",
+  tensePreserved: "yes",
+  degreePreserved: "yes",
+  instructionFollowed: "yes",
+  wordFormationCorrect: "yes",
+};
+it.each([
+  [{}, "correct", 1],
+  [{ degreePreserved: "no" }, "partially_correct", 0.5],
+  [{ tensePreserved: "no" }, "partially_correct", 0.5],
+  [{ grammarCorrect: "no" }, "incorrect", 0],
+  [{ coreMeaningPreserved: "no" }, "incorrect", 0],
+  [{ degreePreserved: "uncertain" }, "needs_review", null],
+])(
+  "derives the rubric score from factual criteria: %j",
+  async (overrides, status, score) => {
+    const e = env(),
+      q = b2Exercises[15],
+      answer = "The company grew by a significant amount.";
+    e.AI.run.mockResolvedValue({
+      response: {
+        ...report(q.id, answer),
+        criteria: { ...allCriteria, ...overrides },
+      },
+    });
+    expect(
+      await infer({ ...e, AI_CRITERIA_GRADING: "true" }, q, answer),
+    ).toMatchObject({ status, score });
+  },
+);
+it("checks the explicit opening directly without penalizing invented connector requirements", async () => {
+  const e = env(),
+    q = b2Exercises[15],
+    answer = "The company grew by a significant amount.";
+  e.AI.run.mockResolvedValue({
+    response: {
+      ...report(q.id, answer),
+      criteria: { ...allCriteria, instructionFollowed: "no" },
+    },
+  });
+  expect(
+    await infer({ ...e, AI_CRITERIA_GRADING: "true" }, q, answer),
+  ).toMatchObject({ status: "correct", score: 1 });
+});
