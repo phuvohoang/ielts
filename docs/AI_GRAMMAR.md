@@ -52,7 +52,7 @@ Worker:
 Frontend:
 
 - `VITE_GRAMMAR_API_URL`: public complete endpoint URL, e.g. `https://<approved-ielts-worker-host>/api/grammar/grade`. Without it, the client tries the same-origin `/api/grammar/grade`; static Pages returns an unscored service error.
-- GitHub repository Actions variable `VITE_GRAMMAR_API_URL` is injected by the Pages build workflow.
+- The Pages build defaults to the owner-provided endpoint https://ielts-grammar-grader.phu-vohoang89.workers.dev/api/grammar/grade. GitHub repository Actions variable `VITE_GRAMMAR_API_URL` can override it.
 
 Deployment credentials: Cloudflare CLI login or server-side `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. They are CLI/CI secrets, never VITE variables, JSON content or checked-in files. The AI binding does not require a client API key. `.dev.vars` files are ignored. No credentials are included in this implementation.
 
