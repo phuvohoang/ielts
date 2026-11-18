@@ -182,6 +182,10 @@ it("keeps batch partial failures per question and restricts CORS, body size, unk
   expect(body.results[0].result?.score).toBe(1);
   expect(body.results[1].result).toBeUndefined();
   expect(body.results[1].error).toBeTruthy();
+  expect(body.results[1]).toMatchObject({
+    errorCode: "AI_PROVIDER_ERROR",
+    reason: "provider",
+  });
   expect(
     (
       await worker.fetch(
@@ -304,4 +308,19 @@ it("deduplicates unknown answers in a batch and accepts an AI-verified unseen al
     "correct",
     "correct",
   ]);
+});
+
+it("retains numeric provider diagnostics without exposing provider messages or answers", async () => {
+  const e = env(),
+    q = b2Exercises[0];
+  e.AI.run.mockRejectedValue(
+    Object.assign(Error("private provider details and student answer"), {
+      code: 3040,
+    }),
+  );
+  await expect(infer(e, q, "unlisted input")).rejects.toMatchObject({
+    message: "AI unavailable",
+    code: "AI_PROVIDER_ERROR",
+    reason: "provider:3040",
+  });
 });
