@@ -19,6 +19,7 @@ export const exerciseSchema = z.object({
   instruction: z.string().min(1),
   question: z.string().min(1),
   rootWord: z.string().optional(),
+  requiredOpening: z.string().min(1).optional(),
   referenceAnswers: z.array(z.string().min(1)).min(1),
   acceptedVariants: z.array(z.string()),
   grammarRules: z.array(z.string().min(1)).min(1),

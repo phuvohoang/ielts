@@ -403,7 +403,8 @@
     ],
     "explanation": "Noun growth → Verb grew; Adjective significant → Adverb significantly. Giữ Past Simple và mức độ đáng kể.",
     "rubric": "Past Simple; significant intensity; subject company; begin The company grew. In this ordinary business context, significant and substantial both describe a large increase; grew substantially is fully correct. Considerably is also an acceptable comparable-degree synonym here.",
-    "objective": false
+    "objective": false,
+    "requiredOpening": "The company grew"
   },
   {
     "id": "wf-b2-017",
@@ -429,7 +430,8 @@
     ],
     "explanation": "explanation → explained; clear → clearly; extremely thể hiện mức độ rất cao. Chỉ clearly làm giảm mức độ nên chỉ được một phần điểm.",
     "rubric": "Preserve past tense, object it and very high clarity; extremely clearly or an equivalently intense expression acceptable; very clearly is potentially weaker and requires contextual evaluation; clearly alone partial.",
-    "objective": false
+    "objective": false,
+    "requiredOpening": "She explained"
   },
   {
     "id": "wf-b2-018",
@@ -510,7 +512,8 @@
     ],
     "explanation": "improved → improvement; considerably → considerable. last year xác định thời gian quá khứ nên không chuyển thành Present Perfect.",
     "rubric": "Must begin There was; simple past, last year and considerable degree preserved. Present perfect answer partial if otherwise equivalent. A grammatical answer such as Her English has improved considerably conveys the same core improvement but misses the simple past, last year and required opening; award partially_correct (0.5), even with these multiple compliance omissions. Reserve incorrect for substantive grammar errors or different core meaning.",
-    "objective": false
+    "objective": false,
+    "requiredOpening": "There was"
   },
   {
     "id": "wf-b2-021",
@@ -536,7 +539,8 @@
     ],
     "explanation": "accurate explanation → explained accurately. accurately chỉ tính chính xác, không nhất thiết là clearly.",
     "rubric": "Past Simple; preserve accuracy; teacher explained it; begin specified words.",
-    "objective": false
+    "objective": false,
+    "requiredOpening": "The teacher explained"
   },
   {
     "id": "wf-b2-022",
@@ -564,7 +568,8 @@
     ],
     "explanation": "responded effectively → response was effective; giữ Past Simple và cụm to the crisis.",
     "rubric": "Past tense; effective response to same crisis; begin company response.",
-    "objective": false
+    "objective": false,
+    "requiredOpening": "The company’s response"
   },
   {
     "id": "wf-b2-023",
@@ -590,7 +595,8 @@
     ],
     "explanation": "Object the researchers trở thành Subject; Past Simple Passive = were + surprised. Giữ tác nhân the results.",
     "rubric": "Passive past; same experiencers and cause; no stronger intensity.",
-    "objective": false
+    "objective": false,
+    "requiredOpening": "The researchers"
   },
   {
     "id": "wf-b2-024",
@@ -618,7 +624,8 @@
     ],
     "explanation": "find + Object + Adjective: found + the instructions + confusing. Không thêm are trong Object Complement. Với mệnh đề that, dùng were để giữ Past Simple.",
     "rubric": "Past Simple; beginners confused by instructions; begin The beginners found; allow that clause with were; found the instructions are confusing is incorrect.",
-    "objective": false
+    "objective": false,
+    "requiredOpening": "The beginners found"
   },
   {
     "id": "wf-b2-025",
