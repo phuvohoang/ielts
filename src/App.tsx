@@ -1,3 +1,4 @@
+import { FamilyRecall } from "./components/FamilyRecall";
 import { useEffect, useState } from "react";
 import {
   BrowserRouter,
@@ -95,7 +96,8 @@ function useStats() {
   };
 }
 // GitHub Pages cannot rewrite application paths; hashes keep deep links refreshable.
-const AppRouter = import.meta.env.VITE_ROUTER_MODE === "hash" ? HashRouter : BrowserRouter;
+const AppRouter =
+  import.meta.env.VITE_ROUTER_MODE === "hash" ? HashRouter : BrowserRouter;
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -170,6 +172,7 @@ function App() {
               <Route path="/path" element={<Curriculum />} />
               <Route path="/lessons" element={<Lessons />} />
               <Route path="/families" element={<Families />} />
+              <Route path="/families/recall" element={<FamilyRecall />} />
               <Route path="/practice" element={<Practice />} />
               <Route path="/writing" element={<Writing />} />
               <Route path="/errors" element={<Errors />} />
@@ -553,6 +556,18 @@ function Families() {
       >
         25 word families · Empty forms mean no common form is taught.
       </Heading>
+      <section className="panel recall-intro">
+        <div>
+          <h2>Can you recall every form?</h2>
+          <p>
+            Type the noun, adjective, adverb and verb from memory. Hide the
+            library and test yourself.
+          </p>
+        </div>
+        <Link className="button button-primary" to="/families/recall">
+          Practise word-family recall <ArrowRight size={16} />
+        </Link>
+      </section>
       <label className="field">
         Search by word, topic or Vietnamese meaning
         <input
@@ -593,6 +608,12 @@ function Families() {
               {selected === f.id ? "Close details" : "Explore family"}{" "}
               <ArrowUpRight size={16} />
             </Button>
+            <Link
+              className="button button-outline"
+              to={`/families/recall?family=${f.id}`}
+            >
+              Recall this family
+            </Link>
             {selected === f.id && (
               <div className="family-details">
                 <p>{f.examples[0]}</p>
@@ -698,6 +719,17 @@ function Practice() {
       >
         Think first. Write it yourself. Learn from the correction.
       </Heading>
+      {!started && (
+        <section className="panel recall-intro">
+          <div>
+            <h2>Word-family recall</h2>
+            <p>Write all four word classes yourself, without choices.</p>
+          </div>
+          <Link className="button button-primary" to="/families/recall">
+            Practise all four forms →
+          </Link>
+        </section>
+      )}
       {!started ? (
         <section className="panel">
           <div className="filter-grid">
@@ -1031,9 +1063,23 @@ function Errors() {
                   {a.result === "review" ? "Requires review" : "Needs practice"}{" "}
                   · {a.type}
                 </span>
-                <h3>{q?.prompt}</h3>
-                <p>Your answer: {a.answer}</p>
-                <p>Reference: {q?.answers[0]}</p>
+                <h3>
+                  {q?.prompt ??
+                    `Recall the ${families.find((f) => f.id === a.family)?.root ?? "word"} family`}
+                </h3>
+                <p className="preserve">Your answer: {a.answer}</p>
+                <p>
+                  Reference:{" "}
+                  {q?.answers[0] ??
+                    Object.entries(
+                      families.find((f) => f.id === a.family)?.forms ?? {},
+                    )
+                      .map(
+                        ([part, forms]) =>
+                          `${part}: ${forms.join(", ") || "none"}`,
+                      )
+                      .join(" · ")}
+                </p>
                 <p lang="vi">{q?.explanation}</p>
                 {a.result === "review" && (
                   <div className="actions">
@@ -1051,7 +1097,13 @@ function Errors() {
                     </Button>
                   </div>
                 )}
-                <Link to={`/practice?family=${a.family}`}>
+                <Link
+                  to={
+                    a.type === "Word Family Recall"
+                      ? `/families/recall?family=${a.family}`
+                      : `/practice?family=${a.family}`
+                  }
+                >
                   Practise this family →
                 </Link>
               </section>
