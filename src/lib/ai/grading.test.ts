@@ -134,13 +134,17 @@ it("validates incorrect Object Complement model feedback without turning provide
   await expect(infer(e, q, answer)).rejects.toThrow("AI unavailable");
   expect(e.AI.run).toHaveBeenCalledTimes(3);
 });
-it("retries invalid AI identity, confidence and score; rejects absent error spans", async () => {
+it("keeps low confidence unscored and omits unverified error spans", async () => {
   const q = b2Exercises[0],
     e = env();
   e.AI.run.mockResolvedValue({
     response: { ...report(q.id, "wrong"), confidence: 0.1 },
   });
-  await expect(infer(e, q, "wrong")).rejects.toThrow();
+  expect(await infer(e, q, "wrong")).toMatchObject({
+    status: "needs_review",
+    score: null,
+    needsReview: true,
+  });
   expect(
     resultSchema.safeParse({
       ...report(q.id, "wrong", "needs_review"),
@@ -153,7 +157,7 @@ it("retries invalid AI identity, confidence and score; rejects absent error span
       errorSpans: [{ text: "absent", type: "grammar", suggestion: "good" }],
     },
   });
-  await expect(infer(e, q, "wrong")).rejects.toThrow();
+  expect((await infer(e, q, "wrong")).errorSpans).toEqual([]);
 });
 it("enforces timeouts without scoring a hanging provider call", async () => {
   vi.useFakeTimers();
@@ -323,4 +327,36 @@ it("retains numeric provider diagnostics without exposing provider messages or a
     code: "AI_PROVIDER_ERROR",
     reason: "provider:3040",
   });
+});
+
+it("builds scores and original-answer identity from the request and validated semantic verdict", async () => {
+  const e = env(),
+    q = b2Exercises[16],
+    answer = "She explained it clearly.";
+  e.AI.run.mockResolvedValue({
+    response: {
+      ...report("invented-id", "invented echo", "partially_correct"),
+      score: 99,
+      maxScore: 100,
+      needsReview: true,
+    },
+  });
+  const result = await infer(e, q, answer);
+  expect(result).toMatchObject({
+    exerciseId: q.id,
+    userAnswer: answer,
+    status: "partially_correct",
+    score: 0.5,
+    maxScore: 1,
+    needsReview: false,
+  });
+  const input = e.AI.run.mock.calls[0] as unknown as [
+    string,
+    {
+      response_format: { json_schema: { properties: Record<string, unknown> } };
+    },
+  ];
+  expect(
+    Object.keys(input[1].response_format.json_schema.properties),
+  ).not.toContain("userAnswer");
 });
