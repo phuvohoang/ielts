@@ -445,6 +445,7 @@ const allCriteria = {
   grammarCorrect: "yes",
   coreMeaningPreserved: "yes",
   tensePreserved: "yes",
+  contextPreserved: "yes",
   degreePreserved: "yes",
   instructionFollowed: "yes",
   wordFormationCorrect: "yes",
@@ -453,6 +454,7 @@ it.each([
   [{}, "correct", 1],
   [{ degreePreserved: "no" }, "partially_correct", 0.5],
   [{ tensePreserved: "no" }, "partially_correct", 0.5],
+  [{ contextPreserved: "no" }, "partially_correct", 0.5],
   [{ grammarCorrect: "no" }, "incorrect", 0],
   [{ coreMeaningPreserved: "no" }, "incorrect", 0],
   [{ degreePreserved: "uncertain" }, "needs_review", null],
@@ -486,4 +488,28 @@ it("checks the explicit opening directly without penalizing invented connector r
   expect(
     await infer({ ...e, AI_CRITERIA_GRADING: "true" }, q, answer),
   ).toMatchObject({ status: "correct", score: 1 });
+});
+
+it("keeps public feedback consistent with the assessed facts and falls back from truncated explanations", async () => {
+  const e = env(),
+    q = b2Exercises[15],
+    answer = "The company grew by a significant amount.";
+  e.AI.run.mockResolvedValue({
+    response: {
+      ...report(q.id, answer, "incorrect"),
+      feedbackVi: "An invented fault",
+      explanationVi: "Incomplete",
+      criteria: allCriteria,
+    },
+  });
+  expect(
+    await infer({ ...e, AI_CRITERIA_GRADING: "true" }, q, answer),
+  ).toMatchObject({
+    status: "correct",
+    score: 1,
+    correctedAnswer: answer,
+    explanationVi: q.explanation,
+    feedbackVi:
+      "Đúng. Câu trả lời giữ được ngữ pháp, ý nghĩa và các yêu cầu của bài.",
+  });
 });

@@ -6,7 +6,7 @@ The IELTS app uses React/TypeScript/Vite, React Router (hash navigation on GitHu
 
 Inspected `phuvohoang/english-steps/worker/index.mjs` and `worker/wrangler.jsonc` through GitHub. Its source declares `POST /grade`, Workers AI `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, Vietnamese feedback, JSON-schema inference, `ALLOWED_ORIGIN`, an AI binding and a 6/minute global rate limiter. It has no separate application authentication. Its config names the Worker `english-steps-writing`, which differs from the supplied reference hostname. Neither its deployed model availability nor hostname was assumed from these files. No reference Worker was modified, redeployed or sent student answers.
 
-The separate IELTS Worker uses these compatible conventions with server-owned exercises, stricter runtime validation, per-client and global limits, bounded retries/concurrency, timeouts and per-question batch failures. Production AI_MODEL is configured as @cf/meta/llama-3.3-70b-instruct-fp8-fast, verified against Cloudflare’s JSON Mode support list and active-variant deprecation notice on 2026-11-18. Keep it configurable and run the live evaluation checklist in the target account. Sources: https://developers.cloudflare.com/workers-ai/features/json-mode/ and https://developers.cloudflare.com/changelog/post/2026-05-08-planned-model-deprecations/.
+The separate IELTS Worker uses these compatible conventions with server-owned exercises, stricter runtime validation, per-client and global limits, bounded retries/concurrency, timeouts and per-question batch failures. Production AI_MODEL is configured in worker/wrangler.jsonc; the current rollout uses Cloudflare-hosted GLM-4.7-Flash with its OpenAI-style structured-output profile. Llama was the initial compatible reference, but live audits exposed overly strict free-form verdicts. Check the current model card and configured schema profile whenever changing the model. Live quality checks remain necessary.
 
 ## Files
 
@@ -63,7 +63,7 @@ npm ci
 cp .env.example .env.local
 # In worker/wrangler.jsonc choose a model verified in your own account.
 npx wrangler ai models
-npm run worker:dev
+npm run worker:dev -- --var ALLOWED_ORIGINS:http://localhost:5173
 # A second terminal:
 npm run dev
 ```
@@ -126,3 +126,5 @@ A live unseen Adverbial-phrase answer exposed a style preference being penalized
 The reference Llama model remained overly strict on unseen natural phrasing even with adjudication. The current candidate is configurable @cf/zai-org/glm-4.7-flash, verified against its Cloudflare model card and official structured-output example: https://developers.cloudflare.com/workers-ai/models/glm-4.7-flash/ and https://developers.cloudflare.com/agents/models/ai-sdk/. AI_SCHEMA_STYLE=openai selects its named/schema response_format; AI_DISABLE_THINKING=true uses its documented chat-template switch for bounded latency. Legacy Workers-style JSON schemas remain supported by configuration. A non-sensitive X-Grader-Revision response header and cache revision identify the running contract. Live accuracy verification is required before claiming this candidate solves the observed cases.
 
 Live scoring still showed verdict/feedback contradictions. Production now uses explicit yes/no/uncertain assessments for grammar, core meaning, tense/time, degree, explicit instructions and word formation. The server derives the rubric status and score from those assessments, rather than accepting an arbitrary model label. Authored requiredOpening metadata is checked directly without matching the rest of a sentence. Optional style suggestions do not justify deductions. Uncertain criteria and failed/disputed penalty reviews stay unscored. Legacy status-based model responses remain configurable for compatibility.
+
+Context preservation is a separate factual criterion, so material details such as during the interview are not silently dropped. Public feedback summaries are derived from the same criteria as scores. Truncated model explanations fall back to the authored lesson explanation; the UI also exposes reviewed theory alongside longer AI feedback after submission.
