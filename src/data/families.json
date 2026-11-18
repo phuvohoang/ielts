@@ -1,0 +1,532 @@
+[
+  {
+    "id": "f01",
+    "root": "develop",
+    "cefr": "B1",
+    "topic": "Community",
+    "forms": {
+      "noun": ["development", "developer"],
+      "verb": ["develop"],
+      "adjective": ["developed", "developing"],
+      "adverb": []
+    },
+    "ipa": "dɪˈveləp",
+    "meaning": "phát triển",
+    "examples": ["Local councils develop new services."],
+    "collocations": ["develop skills"],
+    "verbPatterns": ["develop + noun: develop skills"],
+    "mistakes": [
+      "Use development as a noun and developed as an adjective; they are not interchangeable.",
+      "developer = người/đơn vị phát triển; developed = đã phát triển; developing = đang phát triển."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f02",
+    "root": "educate",
+    "cefr": "B2",
+    "topic": "Education",
+    "forms": {
+      "noun": ["education"],
+      "verb": ["educate"],
+      "adjective": ["educational"],
+      "adverb": ["educationally"]
+    },
+    "ipa": "ˈedʒʊkeɪt",
+    "meaning": "giáo dục",
+    "examples": ["These activities are educational."],
+    "collocations": ["access to education"],
+    "verbPatterns": ["educate someone about something"],
+    "mistakes": [
+      "Use education as a noun and educational as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f03",
+    "root": "improve",
+    "cefr": "B1",
+    "topic": "Work",
+    "forms": {
+      "noun": ["improvement"],
+      "verb": ["improve"],
+      "adjective": ["improved"],
+      "adverb": []
+    },
+    "ipa": "ɪmˈpruːv",
+    "meaning": "cải thiện",
+    "examples": ["The new timetable is an improvement."],
+    "collocations": ["a significant improvement"],
+    "verbPatterns": ["improve + noun: improve services"],
+    "mistakes": [
+      "Use improvement as a noun and improved as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f04",
+    "root": "decide",
+    "cefr": "B2",
+    "topic": "Work",
+    "forms": {
+      "noun": ["decision"],
+      "verb": ["decide"],
+      "adjective": ["decisive"],
+      "adverb": ["decisively"]
+    },
+    "ipa": "dɪˈsaɪd",
+    "meaning": "quyết định",
+    "examples": ["We need to make a decision."],
+    "collocations": ["make a decision"],
+    "verbPatterns": ["decide to + verb; decide on + noun"],
+    "mistakes": [
+      "Use decision as a noun and decisive as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f05",
+    "root": "succeed",
+    "cefr": "B1",
+    "topic": "Work",
+    "forms": {
+      "noun": ["success"],
+      "verb": ["succeed"],
+      "adjective": ["successful"],
+      "adverb": ["successfully"]
+    },
+    "ipa": "səkˈsiːd",
+    "meaning": "thành công",
+    "examples": ["She completed the course successfully."],
+    "collocations": ["achieve success"],
+    "verbPatterns": ["succeed in + -ing"],
+    "mistakes": [
+      "Use success as a noun and successful as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f06",
+    "root": "employ",
+    "cefr": "B2",
+    "topic": "Work",
+    "forms": {
+      "noun": ["employment", "employer", "employee"],
+      "verb": ["employ"],
+      "adjective": ["employed", "unemployed"],
+      "adverb": []
+    },
+    "ipa": "ɪmˈplɔɪ",
+    "meaning": "tuyển dụng",
+    "examples": ["The company employs local people."],
+    "collocations": ["employment opportunities"],
+    "verbPatterns": ["employ someone to + verb"],
+    "mistakes": [
+      "Use employment as a noun and employed as an adjective; they are not interchangeable.",
+      "employer = người sử dụng lao động; employee = người lao động; unemployed = thất nghiệp."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f07",
+    "root": "communicate",
+    "cefr": "B1",
+    "topic": "Community",
+    "forms": {
+      "noun": ["communication"],
+      "verb": ["communicate"],
+      "adjective": ["communicative"],
+      "adverb": ["communicatively"]
+    },
+    "ipa": "kəˈmjuːnɪkeɪt",
+    "meaning": "giao tiếp",
+    "examples": ["Good communication helps teams work together."],
+    "collocations": ["effective communication"],
+    "verbPatterns": ["communicate with someone"],
+    "mistakes": [
+      "Use communication as a noun and communicative as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f08",
+    "root": "inform",
+    "cefr": "B2",
+    "topic": "Education",
+    "forms": {
+      "noun": ["information"],
+      "verb": ["inform"],
+      "adjective": ["informative"],
+      "adverb": ["informatively"]
+    },
+    "ipa": "ɪnˈfɔːm",
+    "meaning": "thông báo",
+    "examples": ["The guide contains useful information."],
+    "collocations": ["useful information"],
+    "verbPatterns": ["inform someone of/about something"],
+    "mistakes": [
+      "Use information as a noun and informative as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f09",
+    "root": "organize",
+    "cefr": "B1",
+    "topic": "Work",
+    "forms": {
+      "noun": ["organization"],
+      "verb": ["organize"],
+      "adjective": ["organized"],
+      "adverb": []
+    },
+    "ipa": "ˈɔːɡənaɪz",
+    "meaning": "tổ chức",
+    "examples": ["We organize a meeting every month."],
+    "collocations": ["organize an event"],
+    "verbPatterns": ["organize + noun: organize a meeting"],
+    "mistakes": [
+      "Use organization as a noun and organized as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f10",
+    "root": "create",
+    "cefr": "B2",
+    "topic": "Education",
+    "forms": {
+      "noun": ["creation"],
+      "verb": ["create"],
+      "adjective": ["creative"],
+      "adverb": ["creatively"]
+    },
+    "ipa": "kriˈeɪt",
+    "meaning": "sáng tạo",
+    "examples": ["Students solve problems creatively."],
+    "collocations": ["create jobs"],
+    "verbPatterns": ["create + noun: create jobs"],
+    "mistakes": [
+      "Use creation as a noun and creative as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f11",
+    "root": "protect",
+    "cefr": "B1",
+    "topic": "Environment",
+    "forms": {
+      "noun": ["protection"],
+      "verb": ["protect"],
+      "adjective": ["protective"],
+      "adverb": ["protectively"]
+    },
+    "ipa": "prəˈtekt",
+    "meaning": "bảo vệ",
+    "examples": ["Workers wear protective clothing."],
+    "collocations": ["environmental protection"],
+    "verbPatterns": ["protect someone from something"],
+    "mistakes": [
+      "Use protection as a noun and protective as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f12",
+    "root": "pollute",
+    "cefr": "B2",
+    "topic": "Environment",
+    "forms": {
+      "noun": ["pollution"],
+      "verb": ["pollute"],
+      "adjective": ["polluted"],
+      "adverb": []
+    },
+    "ipa": "pəˈluːt",
+    "meaning": "gây ô nhiễm",
+    "examples": ["Air pollution affects our health."],
+    "collocations": ["air pollution"],
+    "verbPatterns": ["pollute + noun: pollute a river"],
+    "mistakes": [
+      "Use pollution as a noun and polluted as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f13",
+    "root": "reduce",
+    "cefr": "B1",
+    "topic": "Environment",
+    "forms": {
+      "noun": ["reduction"],
+      "verb": ["reduce"],
+      "adjective": ["reduced"],
+      "adverb": []
+    },
+    "ipa": "rɪˈdjuːs",
+    "meaning": "giảm",
+    "examples": ["We need a reduction in traffic."],
+    "collocations": ["a reduction in costs"],
+    "verbPatterns": ["reduce costs by 10%; reduce costs to a minimum"],
+    "mistakes": [
+      "Use reduction as a noun and reduced as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f14",
+    "root": "differ",
+    "cefr": "B2",
+    "topic": "Community",
+    "forms": {
+      "noun": ["difference"],
+      "verb": ["differ"],
+      "adjective": ["different"],
+      "adverb": ["differently"]
+    },
+    "ipa": "ˈdɪfə",
+    "meaning": "khác biệt",
+    "examples": ["People learn differently."],
+    "collocations": ["a significant difference"],
+    "verbPatterns": ["differ from + noun; differ in + noun"],
+    "mistakes": [
+      "Use difference as a noun and different as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f15",
+    "root": "depend",
+    "cefr": "B1",
+    "topic": "Community",
+    "forms": {
+      "noun": ["dependence"],
+      "verb": ["depend"],
+      "adjective": ["dependent"],
+      "adverb": ["dependently"]
+    },
+    "ipa": "dɪˈpend",
+    "meaning": "phụ thuộc",
+    "examples": ["Children depend on adults."],
+    "collocations": ["depend on others"],
+    "verbPatterns": ["depend on + noun"],
+    "mistakes": [
+      "Use dependence as a noun and dependent as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f16",
+    "root": "achieve",
+    "cefr": "B2",
+    "topic": "Education",
+    "forms": {
+      "noun": ["achievement"],
+      "verb": ["achieve"],
+      "adjective": ["achievable"],
+      "adverb": []
+    },
+    "ipa": "əˈtʃiːv",
+    "meaning": "đạt được",
+    "examples": ["This is an achievable goal."],
+    "collocations": ["a major achievement"],
+    "verbPatterns": ["achieve + noun: achieve a goal"],
+    "mistakes": [
+      "Use achievement as a noun and achievable as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f17",
+    "root": "explain",
+    "cefr": "B1",
+    "topic": "Education",
+    "forms": {
+      "noun": ["explanation"],
+      "verb": ["explain"],
+      "adjective": ["explanatory"],
+      "adverb": []
+    },
+    "ipa": "ɪkˈspleɪn",
+    "meaning": "giải thích",
+    "examples": ["Please give a clear explanation."],
+    "collocations": ["a clear explanation"],
+    "verbPatterns": ["explain something to someone"],
+    "mistakes": [
+      "Use explanation as a noun and explanatory as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f18",
+    "root": "apply",
+    "cefr": "B2",
+    "topic": "Work",
+    "forms": {
+      "noun": ["application"],
+      "verb": ["apply"],
+      "adjective": ["applicable"],
+      "adverb": []
+    },
+    "ipa": "əˈplaɪ",
+    "meaning": "áp dụng; nộp đơn",
+    "examples": ["This rule is applicable to all employees."],
+    "collocations": ["submit an application"],
+    "verbPatterns": ["apply for a job; apply to an organization"],
+    "mistakes": [
+      "Use application as a noun and applicable as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f19",
+    "root": "compete",
+    "cefr": "B1",
+    "topic": "Work",
+    "forms": {
+      "noun": ["competition"],
+      "verb": ["compete"],
+      "adjective": ["competitive"],
+      "adverb": ["competitively"]
+    },
+    "ipa": "kəmˈpiːt",
+    "meaning": "cạnh tranh",
+    "examples": ["The market is highly competitive."],
+    "collocations": ["strong competition"],
+    "verbPatterns": ["compete with someone for something"],
+    "mistakes": [
+      "Use competition as a noun and competitive as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f20",
+    "root": "encourage",
+    "cefr": "B2",
+    "topic": "Education",
+    "forms": {
+      "noun": ["encouragement"],
+      "verb": ["encourage"],
+      "adjective": ["encouraging"],
+      "adverb": ["encouragingly"]
+    },
+    "ipa": "ɪnˈkʌrɪdʒ",
+    "meaning": "khuyến khích",
+    "examples": ["The results are encouraging."],
+    "collocations": ["offer encouragement"],
+    "verbPatterns": ["encourage someone to + verb"],
+    "mistakes": [
+      "Use encouragement as a noun and encouraging as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f21",
+    "root": "care",
+    "cefr": "B1",
+    "topic": "Health",
+    "forms": {
+      "noun": ["care"],
+      "verb": ["care"],
+      "adjective": ["careful", "careless"],
+      "adverb": ["carefully", "carelessly"]
+    },
+    "ipa": "keə",
+    "meaning": "chăm sóc; cẩn thận",
+    "examples": ["Please read the instructions carefully."],
+    "collocations": ["take care"],
+    "verbPatterns": ["care for someone; care about something"],
+    "mistakes": [
+      "Use care as a noun and careful as an adjective; they are not interchangeable.",
+      "careful = cẩn thận; careless = bất cẩn. Hai tính từ có nghĩa đối lập."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f22",
+    "root": "help",
+    "cefr": "B2",
+    "topic": "Community",
+    "forms": {
+      "noun": ["help"],
+      "verb": ["help"],
+      "adjective": ["helpful", "helpless"],
+      "adverb": ["helpfully", "helplessly"]
+    },
+    "ipa": "help",
+    "meaning": "giúp đỡ",
+    "examples": ["The staff were very helpful."],
+    "collocations": ["ask for help"],
+    "verbPatterns": ["help someone (to) + verb"],
+    "mistakes": [
+      "Use help as a noun and helpful as an adjective; they are not interchangeable.",
+      "helpful = hữu ích; helpless = bất lực. Không thay thế cho nhau."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f23",
+    "root": "act",
+    "cefr": "B1",
+    "topic": "Health",
+    "forms": {
+      "noun": ["action", "activity"],
+      "verb": ["act"],
+      "adjective": ["active", "inactive"],
+      "adverb": ["actively"]
+    },
+    "ipa": "ækt",
+    "meaning": "hành động",
+    "examples": ["Residents actively support the scheme."],
+    "collocations": ["take action"],
+    "verbPatterns": ["act on advice; act as a guide"],
+    "mistakes": [
+      "Use action as a noun and active as an adjective; they are not interchangeable.",
+      "action = hành động; activity = hoạt động. Chọn theo nghĩa của câu."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f24",
+    "root": "respond",
+    "cefr": "B2",
+    "topic": "Work",
+    "forms": {
+      "noun": ["response"],
+      "verb": ["respond"],
+      "adjective": ["responsive"],
+      "adverb": ["responsively"]
+    },
+    "ipa": "rɪˈspɒnd",
+    "meaning": "phản hồi",
+    "examples": ["We are waiting for a response."],
+    "collocations": ["a quick response"],
+    "verbPatterns": ["respond to + noun"],
+    "mistakes": [
+      "Use response as a noun and responsive as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  },
+  {
+    "id": "f25",
+    "root": "prepare",
+    "cefr": "B1",
+    "topic": "Education",
+    "forms": {
+      "noun": ["preparation"],
+      "verb": ["prepare"],
+      "adjective": ["prepared"],
+      "adverb": []
+    },
+    "ipa": "prɪˈpeə",
+    "meaning": "chuẩn bị",
+    "examples": ["Careful preparation takes time."],
+    "collocations": ["careful preparation"],
+    "verbPatterns": ["prepare for + noun; prepare to + verb"],
+    "mistakes": [
+      "Use preparation as a noun and prepared as an adjective; they are not interchangeable."
+    ],
+    "rules": ["word-class", "word-formation"]
+  }
+]
