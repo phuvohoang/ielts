@@ -389,7 +389,8 @@
       "The company grew significantly."
     ],
     "acceptedVariants": [
-      "The company grew substantially."
+      "The company grew substantially.",
+      "The company grew considerably."
     ],
     "grammarRules": [
       "Noun → Verb; Adjective → Adverb; Past Simple"
@@ -401,7 +402,7 @@
       "Intensity"
     ],
     "explanation": "Noun growth → Verb grew; Adjective significant → Adverb significantly. Giữ Past Simple và mức độ đáng kể.",
-    "rubric": "Past Simple; significant intensity; subject company; begin The company grew. In this ordinary business context, significant and substantial both describe a large increase; grew substantially is fully correct.",
+    "rubric": "Past Simple; significant intensity; subject company; begin The company grew. In this ordinary business context, significant and substantial both describe a large increase; grew substantially is fully correct. Considerably is also an acceptable comparable-degree synonym here.",
     "objective": false
   },
   {
@@ -443,7 +444,8 @@
       "The government decided rapidly."
     ],
     "acceptedVariants": [
-      "The government decided quickly."
+      "The government decided quickly.",
+      "The government quickly decided."
     ],
     "grammarRules": [
       "make a decision → decide; Past Simple"
@@ -455,7 +457,7 @@
       "Intensity"
     ],
     "explanation": "make a decision → decide; rapid → rapidly hoặc quickly. Giữ Past Simple và ý quyết định nhanh.",
-    "rubric": "Past Simple; government made a decision quickly; rapid/quick equivalent here.",
+    "rubric": "Past Simple; government made a decision quickly; rapid/quick equivalent here. Both decided quickly and quickly decided are grammatical and preserve the intended meaning; ordinary Adverb placement before or after the Verb is not an error.",
     "objective": false
   },
   {
