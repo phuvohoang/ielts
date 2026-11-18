@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 async function begin(page: import("@playwright/test").Page, id: string) {
-  await page.goto(`/practice?question=${id}`);
+  await page.goto(`/practice?advanced=1&question=${id}`);
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();
@@ -87,7 +87,7 @@ test("preserves duplicate tokens, accepts an alternate word order for review and
 test("All Types and All Topics mix categories and exclude recently completed IDs on a new session", async ({
   page,
 }) => {
-  await page.goto("/practice");
+  await page.goto("/practice?advanced=1");
   await page
     .getByRole("button", { name: "Start practice", exact: true })
     .click();

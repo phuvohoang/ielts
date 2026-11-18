@@ -10,16 +10,22 @@ test("GitHub Pages assets, hash navigation, and refresh work under the repositor
     page.getByRole("heading", { name: "Make room for progress." }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Start learning", exact: true }).click();
-  await expect(page).toHaveURL(/\/ielts\/#\/lessons$/);
+  await expect(page).toHaveURL(/\/ielts\/#\/path$/);
   await expect(
-    page.getByRole("heading", { name: "Parts of Speech & Word Formation." }),
+    page.getByRole("heading", {
+      name: "Understand first. Practise with purpose.",
+    }),
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Parts of Speech & Word Formation." }),
+    page.getByRole("heading", {
+      name: "Understand first. Practise with purpose.",
+    }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Practise 01A" }).click();
-  await page.getByRole("button", { name: "Start practice" }).click();
+  await page.goto("/ielts/#/practice?advanced=1");
+  await page
+    .getByRole("button", { name: "Start practice", exact: true })
+    .click();
   await expect(page.locator(".practice-card h2")).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -35,4 +41,22 @@ test("Pages opens four-field family recall through the library link", async ({
   await expect(
     page.getByRole("button", { name: "Check all four forms" }),
   ).toBeDisabled();
+});
+
+test("Pages opens and refreshes Lesson 01.2 with answers hidden", async ({
+  page,
+}) => {
+  await page.goto("/ielts/#/lessons/01.2");
+  await expect(
+    page.getByRole("heading", { name: "Word Formation B2", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("checkbox").check();
+  await expect(page.getByLabel("Your answer", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Reference answer", exact: true }),
+  ).toHaveCount(0);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Word Formation B2", exact: true }),
+  ).toBeVisible();
 });

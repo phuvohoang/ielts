@@ -1,3 +1,9 @@
+import { GrammarExercise } from "./components/ai/GrammarExercise";
+import { LearningPath } from "./components/learning/LearningPath";
+import { LessonFlow } from "./components/learning/LessonFlow";
+import { RuleFeedback } from "./components/learning/RuleFeedback";
+import { canPractise, lessonById } from "./lib/foundation";
+import { syncLearningAttempt } from "./lib/learning";
 import { QuestionPrompt, HighlightedText } from "./components/QuestionPrompt";
 import { selectSession, questionStates } from "./lib/selection";
 import { quarantinedIds } from "./lib/importer";
@@ -46,7 +52,6 @@ import {
   importBackup,
   resolveAttempt,
 } from "./lib/db";
-import curriculum from "./data/curriculum.json";
 import { sections } from "./data/lessons";
 const nav = [
   ["/", "Dashboard", LayoutDashboard],
@@ -59,6 +64,13 @@ const nav = [
   ["/progress", "Progress & Analytics", ChartNoAxesCombined],
   ["/settings", "Settings", SettingsIcon],
 ] as const;
+const weakRuleIds = (attempts: { questionId: string; result: string }[]) => [
+  ...new Set(
+    attempts
+      .filter((a) => a.result === "incorrect")
+      .flatMap((a) => questionById.get(a.questionId)?.grammar_rule_ids ?? []),
+  ),
+];
 const pct = (n: number, d: number) => (d ? Math.round((n / d) * 100) : 0);
 function useStats() {
   const s = useLearning();
@@ -83,23 +95,18 @@ function useStats() {
       production.filter((a) => a.result === "correct").length,
       production.length,
     ),
-    due: selectSession(questions, s.attempts, {
-      now: Date.now(),
-      limit: questions.length,
-      dueOnly: true,
-    }),
-    mastered:
-      recognition.length >= 10 &&
-      production.length >= 20 &&
-      pct(
-        recognition.filter((a) => a.result === "correct").length,
-        recognition.length,
-      ) >= 90 &&
-      pct(
-        production.filter((a) => a.result === "correct").length,
-        production.length,
-      ) >= 80 &&
-      s.writing.some((w) => w.applied),
+    due: selectSession(
+      questions.filter((q) => canPractise(q, s.lessons)),
+      s.attempts,
+      {
+        now: Date.now(),
+        limit: questions.length,
+        dueOnly: true,
+      },
+    ),
+    mastered: s.lessons.filter(
+      (p) => p.completed.includes("mastery") && p.masteredAt,
+    ).length,
   };
 }
 // GitHub Pages cannot rewrite application paths; hashes keep deep links refreshable.
@@ -179,8 +186,11 @@ function App() {
             ) : (
               <Routes>
                 <Route path="/" element={<Dashboard />} />
-                <Route path="/path" element={<Curriculum />} />
-                <Route path="/lessons" element={<Lessons />} />
+                <Route path="/path" element={<LearningPath />} />
+                <Route path="/learn/:lessonId" element={<LessonFlow />} />
+                <Route path="/lessons/01.2" element={<GrammarExercise />} />
+                <Route path="/lessons" element={<LearningPath />} />
+                <Route path="/lessons/legacy" element={<Lessons />} />
                 <Route path="/families" element={<Families />} />
                 <Route path="/families/recall" element={<FamilyRecall />} />
                 <Route path="/practice" element={<Practice />} />
@@ -261,23 +271,23 @@ function Dashboard() {
       </Heading>
       <section className="hero">
         <div>
-          <span className="pill">YOUR NEXT STEP · LESSON 01</span>
+          <span className="pill">YOUR NEXT STEP · SENTENCE FOUNDATIONS</span>
           <h2>
             Good writing starts
             <br />
-            with the right words.
+            with a clear sentence.
           </h2>
           <p>
-            Understand the role of every word.
+            Study one grammar rule in Vietnamese.
             <br />
-            Then put your knowledge into practice.
+            Understand the examples, then put it into practice.
           </p>
-          <Link className="button button-primary" to="/lessons">
+          <Link className="button button-primary" to="/path">
             {s.attempts.length ? "Continue learning" : "Start learning"}{" "}
             <ArrowRight size={17} />
           </Link>
           <span className="hero-meta">
-            Parts of Speech & Word Formation · 4 sections
+            Sentence Foundations · 4 rule-based lessons
           </span>
         </div>
         <div className="word-art" aria-hidden="true">
@@ -310,11 +320,7 @@ function Dashboard() {
             `${s.progress.length} / 25`,
             "Your vocabulary, taking shape",
           ],
-          [
-            "Lesson mastery",
-            s.mastered ? "1 / 1" : "0 / 1",
-            "Foundation starts here",
-          ],
+          ["Lesson mastery", `${s.mastered} / 4`, "Foundation starts here"],
         ].map(([label, value, hint]) => (
           <div className="stat" key={label}>
             <span>{label}</span>
@@ -333,7 +339,7 @@ function Dashboard() {
             [
               "01",
               "Learn the foundations",
-              "Grammar lesson + active recall",
+              "Theory + annotated examples",
               "45 min",
               "/lessons",
             ],
@@ -443,7 +449,10 @@ function Dashboard() {
           </h3>
           <p>
             {s.attempts.some((a) => a.result === "incorrect")
-              ? "Focus rule: word class and word formation."
+              ? `Focus rules: ${weakRuleIds(s.attempts)
+                  .slice(0, 2)
+                  .map((id) => lessonById.get(id)?.title ?? id)
+                  .join(" · ")}`
               : "Weak grammar rules appear after your first corrections."}
           </p>
           <Link to="/errors">Review your errors →</Link>
@@ -452,45 +461,13 @@ function Dashboard() {
     </>
   );
 }
-function Curriculum() {
-  return (
-    <>
-      <Heading tag="THE BIG PICTURE" title="Your learning path.">
-        Eight weeks of foundations within your 24-week IELTS journey.
-      </Heading>
-      <div className="notice">
-        Lesson 01 is ready. Lessons 02–32 are upcoming and stay locked after
-        mastery.
-      </div>
-      {Array.from({ length: 8 }, (_, i) => (
-        <section className="panel curriculum" key={i}>
-          <h2>Week {i + 1}</h2>
-          {curriculum
-            .filter((l) => l.week === i + 1)
-            .map((l) => (
-              <div className="curriculum-row" key={l.id}>
-                <span>{String(l.id).padStart(2, "0")}</span>
-                <strong>{l.title}</strong>
-                {l.available ? (
-                  <Link to="/lessons">Start lesson →</Link>
-                ) : (
-                  <span className="badge">Upcoming</span>
-                )}
-              </div>
-            ))}
-        </section>
-      ))}
-    </>
-  );
-}
 function Lessons() {
   const [active, setActive] = useState(0);
   const s = sections[active];
-  const stats = useStats();
   return (
     <>
       <Heading
-        tag="GRAMMAR FOUNDATION · LESSON 01"
+        tag="LEGACY GRAMMAR REFERENCE · LESSON 01"
         title="Parts of Speech & Word Formation."
       >
         Learn the pattern. Notice the difference. Build your own sentence.
@@ -536,17 +513,15 @@ function Lessons() {
         )}
         <Link
           className="button button-primary"
-          to={`/practice?section=${active}`}
+          to={`/practice?section=${active}&advanced=1`}
         >
           Practise {s.code} <ArrowRight size={16} />
         </Link>
       </section>
       <div className="notice">
-        Mastery: recognition {stats.recognition}% / 90% · production{" "}
-        {stats.production}% / 80% · writing application{" "}
-        {stats.writing.some((w) => w.applied) ? "self-reviewed" : "pending"}.
-        Minimum 10 recognition and 20 production attempts.{" "}
-        {stats.mastered ? "Mastered." : "Keep practising."}
+        This previous reference remains available. Use the Learning Path for
+        prerequisite theory, focused practice and lesson mastery checks.{" "}
+        <Link to="/path">Open Learning Path →</Link>
       </div>
     </>
   );
@@ -649,6 +624,7 @@ function Families() {
 function Practice() {
   const [params] = useSearchParams();
   const stats = useStats();
+  const [advanced, setAdvanced] = useState(params.get("advanced") === "1");
   const [kind, setKind] = useState("all");
   const [family, setFamily] = useState(params.get("family") || "all");
   const [topic, setTopic] = useState("all");
@@ -675,6 +651,7 @@ function Practice() {
             ? ["Sentence Correction", "Writing Error Recall"]
             : null;
   useEffect(() => {
+    setAdvanced(params.get("advanced") === "1");
     setStarted(false);
     setResult("");
     setAnswer("");
@@ -685,10 +662,15 @@ function Practice() {
     setDifficulty("all");
   }, [params]);
   const requestedQuestion = questionById.get(params.get("question") || "");
-  const sourcePool =
+  const unrestricted =
     requestedQuestion && !quarantinedIds.has(requestedQuestion.id)
       ? [requestedQuestion]
       : questions;
+  const sourcePool = unrestricted.filter(
+    (q) =>
+      q.learning_stage !== "mastery" &&
+      (advanced || canPractise(q, stats.lessons)),
+  );
   const pool = sourcePool.filter(
     (q) =>
       (kind === "all" || q.type === kind) &&
@@ -723,6 +705,8 @@ function Practice() {
     setBusy(true);
     try {
       const q = queue[index];
+      if (!advanced && !canPractise(q, stats.lessons))
+        throw Error("Study the prerequisite theory first.");
       const r = grade(q, answer);
       await record({
         questionId: q.id,
@@ -751,6 +735,39 @@ function Practice() {
         Think first. Write it yourself. Learn from the correction.
       </Heading>
       {!started && (
+        <section className="panel">
+          <h2>
+            {advanced
+              ? "Advanced Mixed Practice"
+              : "Practice what you have learned"}
+          </h2>
+          <p>
+            Default practice includes only rules whose theory and annotated
+            examples you completed. Mastery questions stay inside the learning
+            flow.
+          </p>
+          <label className="check-row">
+            <input
+              type="checkbox"
+              checked={advanced}
+              onChange={(e) => setAdvanced(e.target.checked)}
+            />
+            Advanced Mixed Practice — include unlearned rules
+          </label>
+          {advanced ? (
+            <p className="notice">
+              Unrestricted mode can include grammar you have not studied.
+              Results stay in history but do not complete theory or award lesson
+              mastery.
+            </p>
+          ) : (
+            <Link className="button button-primary" to="/path">
+              Study the next grammar rule →
+            </Link>
+          )}
+        </section>
+      )}
+      {!started && advanced && (
         <section className="panel recall-intro">
           <div>
             <h2>Word-family recall</h2>
@@ -791,9 +808,11 @@ function Practice() {
               Topic
               <select value={topic} onChange={(e) => setTopic(e.target.value)}>
                 <option value="all">All topics</option>
-                {[...new Set(questions.map((q) => q.topic))].sort().map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
+                {[...new Set(sourcePool.map((q) => q.topic))]
+                  .sort()
+                  .map((t) => (
+                    <option key={t}>{t}</option>
+                  ))}
               </select>
             </label>
             <label className="field">
@@ -908,6 +927,7 @@ function Practice() {
                     ? "Needs review."
                     : "Let’s learn from this."}
               </h3>
+              <RuleFeedback question={q} />
               <p lang="vi">{q.explanation}</p>
               {q.auditNote && (
                 <p className="audit-note">Content note: {q.auditNote}</p>
@@ -1092,6 +1112,7 @@ function Errors() {
   async function resolve(id: number, result: "correct" | "incorrect") {
     try {
       await resolveAttempt(id, result);
+      await syncLearningAttempt(id);
       await refresh();
     } catch {
       setMessage("Could not save review.");
@@ -1154,7 +1175,9 @@ function Errors() {
                   to={
                     a.type === "Word Family Recall"
                       ? `/families/recall?family=${a.family}`
-                      : `/practice?question=${a.questionId}`
+                      : a.lessonId
+                        ? `/learn/${a.lessonId}`
+                        : `/practice?question=${a.questionId}&advanced=1`
                   }
                 >
                   Practise this family →
@@ -1223,17 +1246,28 @@ function Progress() {
         <h3>Weak grammar rules</h3>
         {s.attempts.some((a) => a.result === "incorrect") ? (
           <p>
-            Word class and word formation need review. Revisit the relevant
-            corrections in your <Link to="/errors">Error Bank</Link>.
+            {weakRuleIds(s.attempts).map((id) => (
+              <span className="weak-rule" key={id}>
+                {lessonById.get(id)?.title ?? id}{" "}
+                {lessonById.get(id)?.available ? (
+                  <Link to={`/learn/${id}`}>Revisit rule →</Link>
+                ) : (
+                  <span className="badge">Theory upcoming · Advanced rule</span>
+                )}
+                <br />
+              </span>
+            ))}
+            Revisit your specific corrections in the{" "}
+            <Link to="/errors">Error Bank</Link>.
           </p>
         ) : (
           <p>No recorded grammar errors yet.</p>
         )}
         <h3>Mastery requirements</h3>
         <p>
-          Recognition ≥90% (10+ attempts), production ≥80% (20+ attempts), and a
-          self-reviewed writing application. Lesson 01:{" "}
-          {s.mastered ? "mastered" : "in progress"}.
+          Lesson mastery requires the full learning cycle, a due review, and a
+          completed mastery check with at least 80%. Sentence Foundations:{" "}
+          {s.mastered} / 4 lessons mastered.
         </p>
       </section>
     </>
@@ -1297,7 +1331,7 @@ function Settings() {
                 setMessage("Backup restored.");
               } catch {
                 setMessage(
-                  "Invalid backup or restore failed. Your backup must match version 1.",
+                  "Invalid backup or restore failed. Use a valid version 1 or version 2 backup.",
                 );
               }
             }}

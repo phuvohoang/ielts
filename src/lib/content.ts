@@ -1,3 +1,5 @@
+import { linkGrammar } from "./foundation-links";
+import foundationData from "../data/foundation/questions.json";
 import { z } from "zod";
 import familyData from "../data/families.json";
 import questionData from "../data/questions.json";
@@ -7,12 +9,28 @@ import { adaptImport, quarantinedIds } from "./importer";
 import importedData from "../data/lesson01-import.json";
 export const families = z.array(familySchema).parse(familyData);
 // Archived IDs remain resolvable for existing attempts and Error Bank entries.
-export const legacyQuestions = z.array(questionSchema).parse(questionData);
-export const importedQuestions = adaptImport(importedData, families);
-export const questions = importedQuestions.filter(
+export const legacyQuestions = z
+  .array(questionSchema)
+  .parse(questionData)
+  .map(linkGrammar);
+export const importedQuestions = adaptImport(importedData, families).map(
+  linkGrammar,
+);
+export const bankQuestions = importedQuestions.filter(
   (q) => !quarantinedIds.has(q.id),
 );
-export const allQuestions = [...legacyQuestions, ...importedQuestions];
+export const foundationQuestions = z
+  .array(questionSchema)
+  .parse(foundationData);
+export const questions = [
+  ...bankQuestions,
+  ...foundationQuestions.filter((q) => q.learning_stage === "independent"),
+];
+export const allQuestions = [
+  ...legacyQuestions,
+  ...importedQuestions,
+  ...foundationQuestions,
+];
 export const questionById = new Map(allQuestions.map((q) => [q.id, q]));
 export type Question = z.infer<typeof questionSchema>;
 export function normalize(s: string) {
@@ -28,6 +46,37 @@ export function grade(
   q: Question,
   answer: string,
 ): "correct" | "incorrect" | "review" {
+  if (q.choices.length) {
+    const choiceKey = (s: string) =>
+      s
+        .normalize("NFKC")
+        .toLowerCase()
+        .replace(/[’‘]/g, "'")
+        .trim()
+        .replace(/\s+/g, " ")
+        .replace(/[.!?]+$/, "");
+    return q.answers.some((a) => choiceKey(a) === choiceKey(answer))
+      ? "correct"
+      : q.requiresReview
+        ? "review"
+        : "incorrect";
+  }
+  if (q.strictPunctuation) {
+    const punctuationKey = (s: string) =>
+      s
+        .normalize("NFKC")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, " ")
+        .replace(/\s*([.!?])\s*/g, "$1 ")
+        .trim()
+        .replace(/[.!?]$/, "");
+    if (q.answers.some((a) => punctuationKey(a) === punctuationKey(answer)))
+      return "correct";
+    if (q.answers.some((a) => normalize(a) === normalize(answer)))
+      return "incorrect";
+    return "review";
+  }
   if (q.tokens && !sameTokens(q.tokens, answer)) return "incorrect";
   if (q.answers.some((a) => canonical(a) === canonical(answer)))
     return "correct";

@@ -1,0 +1,645 @@
+[
+  {
+    "id": "wf-b2-001",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "A",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "The report analyses the ___ impact of unemployment.",
+    "rootWord": "ECONOMY",
+    "referenceAnswers": [
+      "economic"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "economic vs economical"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "economic = liên quan đến nền kinh tế; economical = tiết kiệm chi phí.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-002",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "A",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "This small car is ___ to run because it uses little fuel.",
+    "rootWord": "ECONOMY",
+    "referenceAnswers": [
+      "economical"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "economic vs economical"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "economical mô tả việc sử dụng ít tiền hoặc nhiên liệu; economic mô tả nền kinh tế.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-003",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "A",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "The new timetable has saved us a ___ amount of time.",
+    "rootWord": "CONSIDER",
+    "referenceAnswers": [
+      "considerable"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "considerable vs considerate"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "considerable = đáng kể, chỉ số lượng hoặc mức độ; considerate = chu đáo với người khác.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-004",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "A",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "It was ___ of you to lower the music while the baby was asleep.",
+    "rootWord": "CONSIDER",
+    "referenceAnswers": [
+      "considerate"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "considerable vs considerate"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "considerate of someone to do something = ai đó chu đáo khi làm việc gì.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-005",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "A",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "The first moon landing was a ___ achievement that changed human history.",
+    "rootWord": "HISTORY",
+    "referenceAnswers": [
+      "historic"
+    ],
+    "acceptedVariants": [
+      "historical"
+    ],
+    "grammarRules": [
+      "historic vs historical"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "historic nhấn mạnh tầm quan trọng lịch sử. historical cũng có thể mô tả sự kiện thuộc lịch sử nên không tự động đánh sai; historic chính xác hơn trong ngữ cảnh này.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-006",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "A",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "The archive contains ___ records from the eighteenth century.",
+    "rootWord": "HISTORY",
+    "referenceAnswers": [
+      "historical"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "historic vs historical"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "historical records = tư liệu về quá khứ. historic records chỉ phù hợp nếu nhấn mạnh bản thân tài liệu có tầm quan trọng đặc biệt.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-007",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "A",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "Taking an umbrella when heavy rain is forecast is a ___ precaution.",
+    "rootWord": "SENSE",
+    "referenceAnswers": [
+      "sensible"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "sensible vs sensitive"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "sensible = hợp lý, có óc phán đoán; sensitive = nhạy cảm.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-008",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "A",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "Her skin is very ___ to strong sunlight.",
+    "rootWord": "SENSE",
+    "referenceAnswers": [
+      "sensitive"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "sensible vs sensitive"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "sensitive to = nhạy cảm với; sensible không có nghĩa này.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-009",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "B",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "The company’s response to the crisis was ___.",
+    "rootWord": "EFFECT",
+    "referenceAnswers": [
+      "effective"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "be + Adjective Complement"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "Sau linking Verb was, Adjective effective làm Subject Complement, mô tả hiệu quả của phản ứng.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-010",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "B",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "Clients praised her ___ when she handled their complaints calmly and respectfully.",
+    "rootWord": "PROFESSIONAL",
+    "referenceAnswers": [
+      "professionalism"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "possessive + Noun: professionalism"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "Sau possessive her cần Noun professionalism, chỉ tác phong chuyên nghiệp, không phải người làm nghề professional.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-011",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "B",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "There was a ___ improvement in his pronunciation.",
+    "rootWord": "NOTICE",
+    "referenceAnswers": [
+      "noticeable"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "Adjective + Noun"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "Adjective noticeable bổ nghĩa Noun improvement: sự cải thiện có thể nhận thấy.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-012",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "B",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "The instructions were ___, so nobody knew which button to press.",
+    "rootWord": "CLEAR",
+    "referenceAnswers": [
+      "unclear"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "be + Adjective: unclear vs unclearly"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "Sau were cần Adjective unclear. Unclearly là Adverb; confused mô tả người hoặc thông điệp theo cách khác.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-013",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "B",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "The difference was ___ significant (p < 0.01).",
+    "rootWord": "STATISTICS",
+    "referenceAnswers": [
+      "statistically"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "Adverb + Adjective: statistically significant"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "Adverb statistically bổ nghĩa Adjective significant: có ý nghĩa thống kê. Không đồng nghĩa chắc chắn với tác động lớn trong thực tế.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-014",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "B",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "The plan is ___ because it requires more staff than we can hire.",
+    "rootWord": "PRACTICAL",
+    "referenceAnswers": [
+      "impractical"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "negative prefix im-: impractical"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "impractical = không khả thi trong thực tế. impracticable cũng có thể phù hợp nhưng không cùng root yêu cầu; AI cần xét chỉ dẫn.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-015",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "word_formation",
+    "difficulty": "B2",
+    "part": "B",
+    "instruction": "Điền một từ từ Word Family của từ gốc, phù hợp với ngữ cảnh.",
+    "question": "Her conclusion follows from the evidence and is therefore ___.",
+    "rootWord": "LOGIC",
+    "referenceAnswers": [
+      "logical"
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "be + Adjective: logical"
+    ],
+    "targetSkills": [
+      "Word Formation",
+      "Context"
+    ],
+    "explanation": "logical là Adjective sau linking Verb is; logically là Adverb.",
+    "rubric": "Choose a natural form from the given root family fitting the whole sentence. Accept contextual alternatives; do not reject a plausible sense without considering context.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-016",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite beginning with “The company grew”.",
+    "question": "The company achieved significant growth.",
+    "referenceAnswers": [
+      "The company grew significantly."
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "Noun → Verb; Adjective → Adverb; Past Simple"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "Noun growth → Verb grew; Adjective significant → Adverb significantly. Giữ Past Simple và mức độ đáng kể.",
+    "rubric": "Past Simple; significant intensity; subject company; begin The company grew.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-017",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite beginning with “She explained”.",
+    "question": "She gave an extremely clear explanation of it.",
+    "referenceAnswers": [
+      "She explained it extremely clearly."
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "Adjective → Adverb; preserve degree"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "explanation → explained; clear → clearly; extremely thể hiện mức độ rất cao. Chỉ clearly làm giảm mức độ nên chỉ được một phần điểm.",
+    "rubric": "Preserve past tense, object it and very high clarity; extremely clearly or an equivalently intense expression acceptable; very clearly is potentially weaker and requires contextual evaluation; clearly alone partial.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-018",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite using the Verb “decide”.",
+    "question": "The government made a rapid decision.",
+    "referenceAnswers": [
+      "The government decided rapidly."
+    ],
+    "acceptedVariants": [
+      "The government decided quickly."
+    ],
+    "grammarRules": [
+      "make a decision → decide; Past Simple"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "make a decision → decide; rapid → rapidly hoặc quickly. Giữ Past Simple và ý quyết định nhanh.",
+    "rubric": "Past Simple; government made a decision quickly; rapid/quick equivalent here.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-019",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite using the Noun “success”.",
+    "question": "The project succeeded.",
+    "referenceAnswers": [
+      "The project was a success."
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "succeed → be a success; Past Simple"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "succeeded → was a success. success là Noun đếm được khi chỉ một việc thành công nên dùng a.",
+    "rubric": "Past Simple; project successful; use noun success.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-020",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite beginning with “There was”.",
+    "question": "Her English improved considerably last year.",
+    "referenceAnswers": [
+      "There was a considerable improvement in her English last year."
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "Verb → Noun; preserve Past Simple and degree"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "improved → improvement; considerably → considerable. last year xác định thời gian quá khứ nên không chuyển thành Present Perfect.",
+    "rubric": "Must begin There was; simple past, last year and considerable degree preserved. Present perfect answer partial if otherwise equivalent.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-021",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite beginning with “The teacher explained”.",
+    "question": "The teacher gave an accurate explanation of it.",
+    "referenceAnswers": [
+      "The teacher explained it accurately."
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "Adjective → Adverb: accurate → accurately"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "accurate explanation → explained accurately. accurately chỉ tính chính xác, không nhất thiết là clearly.",
+    "rubric": "Past Simple; preserve accuracy; teacher explained it; begin specified words.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-022",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite beginning with “The company’s response”.",
+    "question": "The company responded effectively to the crisis.",
+    "referenceAnswers": [
+      "The company’s response to the crisis was effective."
+    ],
+    "acceptedVariants": [
+      "The company's response to the crisis was effective."
+    ],
+    "grammarRules": [
+      "Verb → Noun: respond → response"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "responded effectively → response was effective; giữ Past Simple và cụm to the crisis.",
+    "rubric": "Past tense; effective response to same crisis; begin company response.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-023",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite in the Passive Voice, beginning with “The researchers”.",
+    "question": "The results surprised the researchers.",
+    "referenceAnswers": [
+      "The researchers were surprised by the results."
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "Past Simple Passive: was/were + past participle"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "Object the researchers trở thành Subject; Past Simple Passive = were + surprised. Giữ tác nhân the results.",
+    "rubric": "Passive past; same experiencers and cause; no stronger intensity.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-024",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "sentence_transformation",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Rewrite beginning with “The beginners found”.",
+    "question": "The instructions confused the beginners.",
+    "referenceAnswers": [
+      "The beginners found the instructions confusing."
+    ],
+    "acceptedVariants": [
+      "The beginners found that the instructions were confusing."
+    ],
+    "grammarRules": [
+      "find + Object + Adjective; find + that-clause"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "find + Object + Adjective: found + the instructions + confusing. Không thêm are trong Object Complement. Với mệnh đề that, dùng were để giữ Past Simple.",
+    "rubric": "Past Simple; beginners confused by instructions; begin The beginners found; allow that clause with were; found the instructions are confusing is incorrect.",
+    "objective": false
+  },
+  {
+    "id": "wf-b2-025",
+    "version": 1,
+    "lessonId": "grammar-01.2",
+    "type": "paraphrasing",
+    "difficulty": "B2",
+    "part": "C",
+    "instruction": "Paraphrase using “appeared”.",
+    "question": "The manager seemed very confident during the interview.",
+    "referenceAnswers": [
+      "The manager appeared very confident during the interview."
+    ],
+    "acceptedVariants": [],
+    "grammarRules": [
+      "linking Verbs seem/appear + Adjective; preserve degree"
+    ],
+    "targetSkills": [
+      "Sentence Transformation",
+      "Meaning",
+      "Tense",
+      "Intensity"
+    ],
+    "explanation": "seemed và appeared đều thể hiện vẻ bề ngoài, chưa khẳng định sự tự tin thực tế. Giữ very và during the interview. demonstrated confidence không có cùng sắc thái chắc chắn.",
+    "rubric": "Preserve appearance rather than proven confidence, past tense, very degree and interview context; use appeared.",
+    "objective": false
+  }
+]

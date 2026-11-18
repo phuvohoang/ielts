@@ -1,0 +1,1718 @@
+[
+  {
+    "id": "SF1-guided-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete standalone statement.",
+    "answers": [
+      "My sister works."
+    ],
+    "explanation": "Trong câu mẫu “My sister works.”, “My sister” là chủ ngữ và “works” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "My sister works.",
+      "My sister to work."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-guided-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the sentence with a subject and a finite verb.",
+    "answers": [
+      "The students can help."
+    ],
+    "explanation": "Trong câu mẫu “The students can help.”, “The students” là chủ ngữ và “can” là phần động từ chia thì. Can kết hợp với động từ nguyên mẫu phía sau; không thay can bằng to.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "The students can help.",
+      "The students to help."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-guided-3",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete standalone statement.",
+    "answers": [
+      "The room is quiet."
+    ],
+    "explanation": "Trong câu mẫu “The room is quiet.”, “The room” là chủ ngữ và “is” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "The room is quiet.",
+      "The quiet room."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-independent-1",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Make this a complete statement by removing only the unnecessary word: I to work here.",
+    "answers": [
+      "I work here."
+    ],
+    "explanation": "Trong câu mẫu “I work here.”, “I” là chủ ngữ và “work” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-independent-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Make this a complete statement using the supplied finite verb: My brother. (works)",
+    "answers": [
+      "My brother works."
+    ],
+    "explanation": "Trong câu mẫu “My brother works.”, “My brother” là chủ ngữ và “works” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-independent-3",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct this fragment using is: The office quiet.",
+    "answers": [
+      "The office is quiet."
+    ],
+    "explanation": "Trong câu mẫu “The office is quiet.”, “The office” là chủ ngữ và “is” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-apply-1",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the fragment using can: I to help.",
+    "answers": [
+      "I can help."
+    ],
+    "explanation": "Trong câu mẫu “I can help.”, “I” là chủ ngữ và “can” là phần động từ chia thì. Can kết hợp với động từ nguyên mẫu phía sau; không thay can bằng to.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "apply",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-apply-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Write one complete standalone sentence about your routine. Include a subject and a finite verb.",
+    "answers": [
+      "I study every evening."
+    ],
+    "explanation": "Trong câu mẫu “I study every evening.”, “I” là chủ ngữ và “study” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "apply",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-review-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete standalone statement.",
+    "answers": [
+      "Our neighbours work."
+    ],
+    "explanation": "Trong câu mẫu “Our neighbours work.”, “Our neighbours” là chủ ngữ và “work” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "Our neighbours work.",
+      "Our neighbours to work."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "review",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-review-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the fragment using is: The library open.",
+    "answers": [
+      "The library is open."
+    ],
+    "explanation": "Trong câu mẫu “The library is open.”, “The library” là chủ ngữ và “is” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "review",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-mastery-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete standalone statement.",
+    "answers": [
+      "The children play."
+    ],
+    "explanation": "Trong câu mẫu “The children play.”, “The children” là chủ ngữ và “play” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "The children play.",
+      "The children to play."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-mastery-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete standalone statement.",
+    "answers": [
+      "Our teacher can help."
+    ],
+    "explanation": "Trong câu mẫu “Our teacher can help.”, “Our teacher” là chủ ngữ và “can” là phần động từ chia thì. Can kết hợp với động từ nguyên mẫu phía sau; không thay can bằng to.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "Our teacher can help.",
+      "Our teacher to help."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-mastery-3",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete standalone statement.",
+    "answers": [
+      "The shop is open."
+    ],
+    "explanation": "Trong câu mẫu “The shop is open.”, “The shop” là chủ ngữ và “is” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "The shop is open.",
+      "The open shop."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-mastery-4",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the fragment using works: My aunt.",
+    "answers": [
+      "My aunt works."
+    ],
+    "explanation": "Trong câu mẫu “My aunt works.”, “My aunt” là chủ ngữ và “works” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-mastery-5",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Remove only the unnecessary word to form a complete statement: We to study here.",
+    "answers": [
+      "We study here."
+    ],
+    "explanation": "Trong câu mẫu “We study here.”, “We” là chủ ngữ và “study” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF1-mastery-6",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the fragment using is: The class ready.",
+    "answers": [
+      "The class is ready."
+    ],
+    "explanation": "Trong câu mẫu “The class is ready.”, “The class” là chủ ngữ và “is” là phần động từ chia thì. Một cụm danh từ hoặc to + động từ đứng riêng chưa tạo lời khẳng định độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-complete-clause"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause"
+    ],
+    "lesson_id": "sf-complete-clause",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-complete-clause"
+  },
+  {
+    "id": "SF2-guided-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the neutral statement meaning tôi đọc sách.",
+    "answers": [
+      "I read books."
+    ],
+    "explanation": "Câu mẫu: I read books. “I” là S, “read” là V, “books” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "I read books.",
+      "I books read."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-guided-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the neutral statement meaning cô ấy cần sự giúp đỡ.",
+    "answers": [
+      "She needs help."
+    ],
+    "explanation": "Câu mẫu: She needs help. “She” là S, “needs” là V, “help” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "She needs help.",
+      "Needs she help."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-guided-3",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the neutral statement meaning con chó đi theo đứa trẻ.",
+    "answers": [
+      "The dog follows the child."
+    ],
+    "explanation": "Câu mẫu: The dog follows the child. “The dog” là S, “follows” là V, “the child” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "The dog follows the child.",
+      "The child follows the dog."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-independent-1",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Reorder into a neutral statement without changing who performs the action: emails / writes / she",
+    "answers": [
+      "She writes emails."
+    ],
+    "explanation": "Câu mẫu: She writes emails. “She” là S, “writes” là V, “emails” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-independent-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the word order: We help need.",
+    "answers": [
+      "We need help."
+    ],
+    "explanation": "Câu mẫu: We need help. “We” là S, “need” là V, “help” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-independent-3",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Reorder into a neutral statement: the teacher / students / helps",
+    "answers": [
+      "The teacher helps students."
+    ],
+    "explanation": "Câu mẫu: The teacher helps students. “The teacher” là S, “helps” là V, “students” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-apply-1",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the order while keeping I as the subject: I food buy.",
+    "answers": [
+      "I buy food."
+    ],
+    "explanation": "Câu mẫu: I buy food. “I” là S, “buy” là V, “food” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "apply",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-apply-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Write one neutral S + V + O sentence about something you do.",
+    "answers": [
+      "I read books."
+    ],
+    "explanation": "Câu mẫu: I read books. “I” là S, “read” là V, “books” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "apply",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-review-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the statement meaning họ mua vé.",
+    "answers": [
+      "They buy tickets."
+    ],
+    "explanation": "Câu mẫu: They buy tickets. “They” là S, “buy” là V, “tickets” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "They buy tickets.",
+      "Buy they tickets."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "review",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-review-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the neutral statement: We English study.",
+    "answers": [
+      "We study English."
+    ],
+    "explanation": "Câu mẫu: We study English. “We” là S, “study” là V, “English” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "review",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-mastery-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the neutral statement meaning cô ấy uống nước.",
+    "answers": [
+      "She drinks water."
+    ],
+    "explanation": "Câu mẫu: She drinks water. “She” là S, “drinks” là V, “water” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "She drinks water.",
+      "She water drinks."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-mastery-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the statement meaning người cha giúp đứa trẻ.",
+    "answers": [
+      "The father helps the child."
+    ],
+    "explanation": "Câu mẫu: The father helps the child. “The father” là S, “helps” là V, “the child” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "The father helps the child.",
+      "The child helps the father."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-mastery-3",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the neutral statement meaning chúng tôi thích âm nhạc.",
+    "answers": [
+      "We like music."
+    ],
+    "explanation": "Câu mẫu: We like music. “We” là S, “like” là V, “music” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "We like music.",
+      "Like we music."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-mastery-4",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Reorder into a neutral statement: they / help / neighbours",
+    "answers": [
+      "They help neighbours."
+    ],
+    "explanation": "Câu mẫu: They help neighbours. “They” là S, “help” là V, “neighbours” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-mastery-5",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the neutral statement: I emails write.",
+    "answers": [
+      "I write emails."
+    ],
+    "explanation": "Câu mẫu: I write emails. “I” là S, “write” là V, “emails” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF2-mastery-6",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Reorder into a neutral statement: we / tickets / need",
+    "answers": [
+      "We need tickets."
+    ],
+    "explanation": "Câu mẫu: We need tickets. “We” là S, “need” là V, “tickets” là O. Đảo S và O sẽ đổi người làm hành động; đặt O trước V không phải thứ tự trung tính đang luyện.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-svo-order"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order"
+    ],
+    "lesson_id": "sf-svo-order",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-svo-order"
+  },
+  {
+    "id": "SF3-guided-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete state description.",
+    "answers": [
+      "I am ready."
+    ],
+    "explanation": "Trong “I am ready.”, “I” là chủ ngữ, “am” là be chia thì và “ready” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "I am ready.",
+      "I ready."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-guided-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the correct description of his state.",
+    "answers": [
+      "He is quiet."
+    ],
+    "explanation": "Trong “He is quiet.”, “He” là chủ ngữ, “is” là be chia thì và “quiet” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "He is quiet.",
+      "He is quietly."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-guided-3",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the correct description of their location.",
+    "answers": [
+      "They are at home."
+    ],
+    "explanation": "Trong “They are at home.”, “They” là chủ ngữ, “are” là be chia thì và “at home” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "They are at home.",
+      "They at home."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-independent-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Add the present form of be: She ___ tired.",
+    "answers": [
+      "is"
+    ],
+    "explanation": "Ô trống cần be chia ở hiện tại: “is”. I đi với am, he/she/it và chủ ngữ số ít đi với is, you/we/they đi với are. Be nối chủ ngữ với trạng thái hoặc vị trí, không phải một hành động khác.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-independent-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Add the present form of be: They ___ ready.",
+    "answers": [
+      "are"
+    ],
+    "explanation": "Ô trống cần be chia ở hiện tại: “are”. I đi với am, he/she/it và chủ ngữ số ít đi với is, you/we/they đi với are. Be nối chủ ngữ với trạng thái hoặc vị trí, không phải một hành động khác.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-independent-3",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the state description: He is happily.",
+    "answers": [
+      "He is happy."
+    ],
+    "explanation": "Trong “He is happy.”, “He” là chủ ngữ, “is” là be chia thì và “happy” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-apply-1",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the state description: We ready.",
+    "answers": [
+      "We are ready."
+    ],
+    "explanation": "Trong “We are ready.”, “We” là chủ ngữ, “are” là be chia thì và “ready” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "apply",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-apply-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Write one sentence describing your present state with be + complement.",
+    "answers": [
+      "I am happy."
+    ],
+    "explanation": "Trong “I am happy.”, “I” là chủ ngữ, “am” là be chia thì và “happy” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "apply",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-review-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the correct state description.",
+    "answers": [
+      "The room is quiet."
+    ],
+    "explanation": "Trong “The room is quiet.”, “The room” là chủ ngữ, “is” là be chia thì và “quiet” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "The room is quiet.",
+      "The room is quietly."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "review",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-review-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Add the present form of be: I ___ at home.",
+    "answers": [
+      "am"
+    ],
+    "explanation": "Ô trống cần be chia ở hiện tại: “am”. I đi với am, he/she/it và chủ ngữ số ít đi với is, you/we/they đi với are. Be nối chủ ngữ với trạng thái hoặc vị trí, không phải một hành động khác.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "review",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-mastery-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the correct state description.",
+    "answers": [
+      "She is calm."
+    ],
+    "explanation": "Trong “She is calm.”, “She” là chủ ngữ, “is” là be chia thì và “calm” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "She is calm.",
+      "She is calmly."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-mastery-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete state description.",
+    "answers": [
+      "We are tired."
+    ],
+    "explanation": "Trong “We are tired.”, “We” là chủ ngữ, “are” là be chia thì và “tired” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "We are tired.",
+      "We tired."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-mastery-3",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the correct action sentence.",
+    "answers": [
+      "I read books."
+    ],
+    "explanation": "Read đã là động từ chính ở hiện tại trong “I read books”. Không thêm am trước động từ nguyên mẫu read trong ý này; đây không phải cấu trúc be + bổ ngữ.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "I read books.",
+      "I am read books."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-mastery-4",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Add the present form of be: He ___ ready.",
+    "answers": [
+      "is"
+    ],
+    "explanation": "Ô trống cần be chia ở hiện tại: “is”. I đi với am, he/she/it và chủ ngữ số ít đi với is, you/we/they đi với are. Be nối chủ ngữ với trạng thái hoặc vị trí, không phải một hành động khác.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-mastery-5",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the state description: They are quietly.",
+    "answers": [
+      "They are quiet."
+    ],
+    "explanation": "Trong “They are quiet.”, “They” là chủ ngữ, “are” là be chia thì và “quiet” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF3-mastery-6",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Correct the state description: I happy.",
+    "answers": [
+      "I am happy."
+    ],
+    "explanation": "Trong “I am happy.”, “I” là chủ ngữ, “am” là be chia thì và “happy” là bổ ngữ. Dùng từ mô tả chủ ngữ sau be; không thay tính từ bằng trạng từ -ly.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-be-complement"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement"
+    ],
+    "lesson_id": "sf-be-complement",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-be-complement"
+  },
+  {
+    "id": "SF4-guided-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the two clearly separated complete statements.",
+    "answers": [
+      "I work here. The office is small."
+    ],
+    "explanation": "“I work here” và “The office is small” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "I work here. The office is small.",
+      "I work here the office is small."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-guided-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the version without a comma splice.",
+    "answers": [
+      "She is tired. She needs rest."
+    ],
+    "explanation": "“She is tired” và “She needs rest” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "She is tired. She needs rest.",
+      "She is tired, she needs rest."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-guided-3",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the complete standalone statement for formal writing.",
+    "answers": [
+      "The room is quiet."
+    ],
+    "explanation": "“The room is quiet.” là lời khẳng định có thể đứng riêng. Because biến ý này thành mệnh đề phụ; nếu giữ because thì cần thêm mệnh đề chính, còn đề yêu cầu bỏ từ nối để có câu độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "The room is quiet.",
+      "Because the room is quiet."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "guided",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-independent-1",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Separate the two statements with a full stop; keep all words: I work here the office is small.",
+    "answers": [
+      "I work here. The office is small."
+    ],
+    "explanation": "“I work here” và “The office is small” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "independent",
+    "strictPunctuation": true,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-independent-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Replace the comma splice with a full stop: We are ready, the class starts now.",
+    "answers": [
+      "We are ready. The class starts now."
+    ],
+    "explanation": "“We are ready” và “The class starts now” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "independent",
+    "strictPunctuation": true,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-independent-3",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Make this statement independent by removing only the joining word: Because I work here.",
+    "answers": [
+      "I work here."
+    ],
+    "explanation": "“I work here.” là lời khẳng định có thể đứng riêng. Because biến ý này thành mệnh đề phụ; nếu giữ because thì cần thêm mệnh đề chính, còn đề yêu cầu bỏ từ nối để có câu độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "independent",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-apply-1",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Separate the two statements with a full stop; keep all words: The bus is late we wait here.",
+    "answers": [
+      "The bus is late. We wait here."
+    ],
+    "explanation": "“The bus is late” và “We wait here” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "apply",
+    "strictPunctuation": true,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-apply-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Write two short standalone statements with a full stop between them.",
+    "answers": [
+      "I work here. I like my job."
+    ],
+    "explanation": "“I work here” và “I like my job” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "apply",
+    "strictPunctuation": true,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-review-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the version with clear sentence boundaries.",
+    "answers": [
+      "He is calm. He can help."
+    ],
+    "explanation": "“He is calm” và “He can help” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "He is calm. He can help.",
+      "He is calm he can help."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "review",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-review-2",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Separate the statements with a full stop: I study here I like the class.",
+    "answers": [
+      "I study here. I like the class."
+    ],
+    "explanation": "“I study here” và “I like the class” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "review",
+    "strictPunctuation": true,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-mastery-1",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the version without a comma splice.",
+    "answers": [
+      "We work here. We like the office."
+    ],
+    "explanation": "“We work here” và “We like the office” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "We work here. We like the office.",
+      "We work here, we like the office."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-mastery-2",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the standalone statement.",
+    "answers": [
+      "She needs rest."
+    ],
+    "explanation": "“She needs rest.” là lời khẳng định có thể đứng riêng. Because biến ý này thành mệnh đề phụ; nếu giữ because thì cần thêm mệnh đề chính, còn đề yêu cầu bỏ từ nối để có câu độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "She needs rest.",
+      "Because she needs rest."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-mastery-3",
+    "family": "",
+    "type": "Fill in the Blank",
+    "prompt": "Choose the version with clear boundaries.",
+    "answers": [
+      "They are ready. They can help."
+    ],
+    "explanation": "“They are ready” và “They can help” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [
+      "They are ready. They can help.",
+      "They are ready they can help."
+    ],
+    "requiresReview": false,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-mastery-4",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Separate the statements with a full stop: The shop is open we need food.",
+    "answers": [
+      "The shop is open. We need food."
+    ],
+    "explanation": "“The shop is open” và “We need food” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "mastery",
+    "strictPunctuation": true,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-mastery-5",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Remove only the joining word to make this statement independent: Because the shop is open.",
+    "answers": [
+      "The shop is open."
+    ],
+    "explanation": "“The shop is open.” là lời khẳng định có thể đứng riêng. Because biến ý này thành mệnh đề phụ; nếu giữ because thì cần thêm mệnh đề chính, còn đề yêu cầu bỏ từ nối để có câu độc lập.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "mastery",
+    "strictPunctuation": false,
+    "ruleId": "sf-sentence-boundary"
+  },
+  {
+    "id": "SF4-mastery-6",
+    "family": "",
+    "type": "Sentence Correction",
+    "prompt": "Replace the comma splice with a full stop: I am tired, I need rest.",
+    "answers": [
+      "I am tired. I need rest."
+    ],
+    "explanation": "“I am tired” và “I need rest” đều là ý độc lập. Dùng dấu chấm giữa hai ý và viết hoa đầu câu sau; dấu phẩy đơn hoặc khoảng trắng không đủ cho cấu trúc này.",
+    "difficulty": "B1",
+    "topic": "sentence-foundations",
+    "choices": [],
+    "requiresReview": true,
+    "grammar_rule_ids": [
+      "sf-sentence-boundary"
+    ],
+    "prerequisite_lesson_ids": [
+      "sf-complete-clause",
+      "sf-svo-order",
+      "sf-be-complement",
+      "sf-sentence-boundary"
+    ],
+    "lesson_id": "sf-sentence-boundary",
+    "learning_stage": "mastery",
+    "strictPunctuation": true,
+    "ruleId": "sf-sentence-boundary"
+  }
+]

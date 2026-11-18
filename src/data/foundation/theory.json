@@ -1,0 +1,170 @@
+[
+  {
+    "id": "sf-complete-clause",
+    "what": "Một câu trần thuật độc lập thường có chủ ngữ và cụm động từ có động từ chia thì. Chủ ngữ cho biết ta đang nói về ai hoặc điều gì; cụm động từ nói hành động hoặc trạng thái của chủ ngữ. Động từ chia thì là phần gắn với thời gian hoặc chủ ngữ: works, worked, is, can. Trong “She can swim”, can là phần chia thì, còn swim ở dạng nguyên mẫu.",
+    "why": "Tiếng Anh dùng cụm động từ để tạo lời khẳng định. Một danh từ đứng cạnh một tính từ hoặc một cụm bắt đầu bằng to chưa đủ để tạo lời khẳng định độc lập. Tiếng Việt có thể nói “Tôi rất bận”; tiếng Anh cần “I am busy”. Nhận ra thành phần còn thiếu giúp bạn sửa câu trước khi chọn từ khó.",
+    "when": "Dùng khi kiểm tra một câu đơn trong thư, bài luận hoặc câu trả lời nói. Bước 1: tìm chủ ngữ. Bước 2: tìm động từ chia thì. Bước 3: kiểm tra câu đã diễn đạt một ý độc lập chưa. Đừng coi chữ viết hoa và dấu chấm là bằng chứng câu đã đủ.",
+    "exceptions": "Câu mệnh lệnh như “Please sit down” thường lược chủ ngữ you. Tiêu đề, nhãn và câu trả lời ngắn như “At home” có thể là cụm từ trong giao tiếp; chúng không phải mô hình câu trần thuật đầy đủ cần luyện ở đây. Một mệnh đề có chủ ngữ và động từ vẫn có thể phụ thuộc, ví dụ “Because I work”; cách xử lý được học trong bài ranh giới câu.",
+    "mistakes": [
+      [
+        "She very busy.",
+        "She is very busy.",
+        "Thiếu động từ chia thì; is nối chủ ngữ She với trạng thái busy."
+      ],
+      [
+        "I to study every evening.",
+        "I study every evening.",
+        "To study là dạng nguyên mẫu có to, không tự làm động từ chia thì của câu này."
+      ],
+      [
+        "The new student.",
+        "The new student studies.",
+        "Cụm danh từ mới chỉ gọi tên chủ ngữ; studies thêm hành động để tạo câu."
+      ]
+    ],
+    "examples": [
+      [
+        "My sister works.",
+        "Chị tôi làm việc.",
+        "My sister = chủ ngữ; works = động từ chia thì ở hiện tại."
+      ],
+      [
+        "The room is quiet.",
+        "Căn phòng yên tĩnh.",
+        "The room = chủ ngữ; is = động từ chia thì; quiet mô tả trạng thái."
+      ],
+      [
+        "I can help.",
+        "Tôi có thể giúp.",
+        "I = chủ ngữ; can = động từ tình thái chia thì; help đi cùng can ở dạng nguyên mẫu."
+      ]
+    ],
+    "hint": "Tìm người/vật được nói đến và động từ chia thì. Với câu trần thuật, đừng chọn một cụm chỉ có danh từ hoặc chỉ có to + động từ."
+  },
+  {
+    "id": "sf-svo-order",
+    "what": "Trong câu trần thuật trung tính có động từ cần tân ngữ, trật tự cơ bản là Subject + Verb + Object (S + V + O). Chủ ngữ thực hiện hành động, động từ nêu hành động, tân ngữ chỉ người/vật chịu tác động. “I read books”: I = S, read = V, books = O.",
+    "why": "Vị trí từ giúp người đọc xác định ai làm gì cho ai. “The dog follows the child” và “The child follows the dog” đều có các từ quen thuộc nhưng đảo chủ ngữ và tân ngữ làm đổi nghĩa. Không dịch từng từ rồi xếp theo thói quen của tiếng Việt.",
+    "when": "Dùng để xây câu đơn có tân ngữ trong thư hoặc bài luận. Chọn chủ ngữ trước, đặt động từ sau chủ ngữ, rồi thêm tân ngữ nếu động từ cần. Khi kiểm tra bài viết, đọc ba phần theo thứ tự: ai/cái gì → làm gì → tác động đến ai/cái gì.",
+    "exceptions": "Không phải động từ nào cũng có tân ngữ: “Birds fly” là câu S + V hoàn chỉnh. Câu hỏi, câu bị động, đảo ngữ và nhấn mạnh có quy tắc khác; bài này chỉ luyện câu trần thuật chủ động trung tính. Cụm chỉ thời gian có thể đứng đầu hoặc cuối câu nhưng không làm đổi vai trò S, V, O.",
+    "mistakes": [
+      [
+        "I books read.",
+        "I read books.",
+        "Trong câu trần thuật trung tính này, động từ read đứng trước tân ngữ books."
+      ],
+      [
+        "Buys she food.",
+        "She buys food.",
+        "Chủ ngữ She đứng trước động từ buys; đây không phải câu hỏi."
+      ],
+      [
+        "The cat the dog follows.",
+        "The cat follows the dog.",
+        "Đặt follows giữa chủ ngữ the cat và tân ngữ the dog để giữ nghĩa con mèo đi theo con chó."
+      ]
+    ],
+    "examples": [
+      [
+        "We need help.",
+        "Chúng tôi cần sự giúp đỡ.",
+        "We = S; need = V; help = O."
+      ],
+      [
+        "She writes emails.",
+        "Cô ấy viết thư điện tử.",
+        "She thực hiện hành động writes; emails là thứ được viết."
+      ],
+      [
+        "The teacher helps students.",
+        "Giáo viên giúp học sinh.",
+        "The teacher = S; helps = V; students = O; đổi hai cụm danh từ sẽ đổi người giúp."
+      ]
+    ],
+    "hint": "Xác định ai làm hành động, rồi xếp chủ ngữ → động từ → tân ngữ. Giữ nguyên người thực hiện và người/vật chịu tác động."
+  },
+  {
+    "id": "sf-be-complement",
+    "what": "Khi mô tả chủ ngữ bằng một trạng thái, nghề/vai trò hoặc vị trí, ta thường dùng S + be + complement. Ở hiện tại: I am; he/she/it is; you/we/they are. Bổ ngữ bổ sung thông tin về chính chủ ngữ, không phải vật nhận một hành động. “She is tired”: tired nói trạng thái của She.",
+    "why": "Trong câu trần thuật tiếng Anh, tính từ không tự làm động từ chia thì. Vì vậy “She tired” thiếu động từ, còn “She is tired” đủ phần chia thì is. Sau be, dùng từ/cụm mô tả chủ ngữ; không tự thêm -ly vì thấy có động từ.",
+    "when": "Dùng khi giới thiệu bản thân, nêu trạng thái hoặc vị trí: “I am ready”, “He is a teacher”, “They are at home”. Hãy hỏi: câu đang kể một hành động hay đang mô tả chủ ngữ? Nếu đã có động từ hành động làm vị ngữ, không thêm be một cách máy móc.",
+    "exceptions": "Không phải mọi động từ đều là be: “She works” đã đủ, không viết “She is works”. “She is working” là cấu trúc tiếp diễn riêng, không phải be + động từ nguyên mẫu. Bổ ngữ sau be có thể là cụm danh từ hoặc cụm giới từ, không chỉ tính từ. Các dạng quá khứ was/were sẽ được học sâu hơn ở mô-đun thì.",
+    "mistakes": [
+      [
+        "They happy.",
+        "They are happy.",
+        "Thiếu are trước tính từ chỉ trạng thái; They đi với are ở hiện tại."
+      ],
+      [
+        "He is quietly.",
+        "He is quiet.",
+        "Quiet mô tả He; quietly thường mô tả cách một hành động diễn ra."
+      ],
+      [
+        "I am read books.",
+        "I read books.",
+        "Read đã là động từ chính ở hiện tại trong ý này; không thêm am trước động từ nguyên mẫu."
+      ]
+    ],
+    "examples": [
+      [
+        "I am ready.",
+        "Tôi đã sẵn sàng.",
+        "I = chủ ngữ; am = be chia thì; ready = bổ ngữ chỉ trạng thái."
+      ],
+      [
+        "She is a teacher.",
+        "Cô ấy là giáo viên.",
+        "A teacher là cụm danh từ nói nghề của She, không phải tân ngữ nhận hành động."
+      ],
+      [
+        "They are at home.",
+        "Họ đang ở nhà.",
+        "At home là cụm giới từ chỉ vị trí của They, làm bổ ngữ sau are."
+      ]
+    ],
+    "hint": "Nếu câu mô tả trạng thái mà chưa có động từ, dùng am/is/are phù hợp. Sau be, từ mô tả chủ ngữ thường là tính từ, không phải trạng từ -ly."
+  },
+  {
+    "id": "sf-sentence-boundary",
+    "what": "Trong văn viết thông thường, mỗi câu cần một ý độc lập và ranh giới rõ. Một mệnh đề độc lập có thể đứng riêng. Hai mệnh đề độc lập không nên dính nhau chỉ bằng khoảng trắng hoặc dấu phẩy. Cách an toàn ở giai đoạn này là tách chúng bằng dấu chấm và viết hoa đầu câu sau.",
+    "why": "Người đọc cần biết một lời khẳng định kết thúc ở đâu và lời tiếp theo bắt đầu ở đâu. “I work here the office is small” chứa hai lời khẳng định nhưng không có ranh giới. “I work here. The office is small.” giúp người đọc theo dõi từng ý mà không cần cấu trúc nối câu phức tạp.",
+    "when": "Sau khi viết câu, tìm từng cặp chủ ngữ – động từ. Nếu có hai ý độc lập, kiểm tra dấu phân cách. Nếu câu bắt đầu bằng because hoặc although, kiểm tra xem nó có bị bỏ lửng không. Trong bài này, hãy ưu tiên tách thành hai câu hoàn chỉnh thay vì nối bằng dấu phẩy.",
+    "exceptions": "Mệnh lệnh và câu trả lời ngắn có thể hợp lệ trong ngữ cảnh phù hợp. Một mệnh đề phụ không sai khi gắn với mệnh đề chính: “Because I work, I am busy.” Nhưng “Because I work.” đứng một mình trong bài luận thường là câu thiếu ý. Dấu chấm phẩy và liên từ như and có thể nối các mệnh đề đúng cách; sẽ có bài riêng trong Complex Sentences.",
+    "mistakes": [
+      [
+        "I study English I need it for work.",
+        "I study English. I need it for work.",
+        "Hai mệnh đề độc lập cần ranh giới; dấu chấm là cách tách rõ nhất."
+      ],
+      [
+        "I am ready, the class starts now.",
+        "I am ready. The class starts now.",
+        "Dấu phẩy đơn không đủ để nối hai mệnh đề độc lập trong văn viết chuẩn."
+      ],
+      [
+        "Because the room is quiet.",
+        "The room is quiet.",
+        "Nếu chỉ muốn nêu trạng thái, bỏ because để ý này đứng độc lập. Nếu muốn nêu lý do, cần thêm mệnh đề chính."
+      ]
+    ],
+    "examples": [
+      [
+        "I work here. The office is small.",
+        "Tôi làm việc ở đây. Văn phòng nhỏ.",
+        "Mỗi câu có chủ ngữ và động từ riêng; dấu chấm phân tách hai ý."
+      ],
+      [
+        "She is tired. She needs rest.",
+        "Cô ấy mệt. Cô ấy cần nghỉ ngơi.",
+        "She is tired và She needs rest đều có thể đứng riêng; viết hoa She sau dấu chấm."
+      ],
+      [
+        "The bus is late. We wait here.",
+        "Xe buýt đến muộn. Chúng tôi đợi ở đây.",
+        "Hai lời khẳng định có ranh giới rõ, không nối chỉ bằng dấu phẩy."
+      ]
+    ],
+    "hint": "Tìm hai ý có thể đứng riêng. Tách bằng dấu chấm và viết hoa câu sau. Nếu bắt đầu bằng because mà không có ý chính, câu có thể đang bị bỏ lửng."
+  }
+]
