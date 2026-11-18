@@ -2,11 +2,60 @@
   "name": "ielts-grammar-grader",
   "main": "index.ts",
   "compatibility_date": "2026-11-12",
-  "ai": {"binding":"AI"},
-  "vars": {"ALLOWED_ORIGINS":"https://phuvohoang.github.io,http://localhost:5173", "AI_MODEL":""},
+  "ai": {
+    "binding": "AI"
+  },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://phuvohoang.github.io",
+    "AI_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+  },
   "ratelimits": [
-    {"name":"GRADE_LIMIT","namespace_id":"2901","simple":{"limit":12,"period":60}},
-    {"name":"GLOBAL_LIMIT","namespace_id":"2902","simple":{"limit":60,"period":60}}
+    {
+      "name": "GRADE_LIMIT",
+      "namespace_id": "2901",
+      "simple": {
+        "limit": 12,
+        "period": 60
+      }
+    },
+    {
+      "name": "GLOBAL_LIMIT",
+      "namespace_id": "2902",
+      "simple": {
+        "limit": 60,
+        "period": 60
+      }
+    }
   ],
-  "observability":{"enabled":false}
+  "observability": {
+    "enabled": false
+  },
+  "workers_dev": true,
+  "previews": {
+    "ai": {
+      "binding": "AI"
+    },
+    "vars": {
+      "ALLOWED_ORIGINS": "https://phuvohoang.github.io",
+      "AI_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    },
+    "ratelimits": [
+      {
+        "name": "GRADE_LIMIT",
+        "namespace_id": "3901",
+        "simple": {
+          "limit": 6,
+          "period": 60
+        }
+      },
+      {
+        "name": "GLOBAL_LIMIT",
+        "namespace_id": "3902",
+        "simple": {
+          "limit": 30,
+          "period": 60
+        }
+      }
+    ]
+  }
 }

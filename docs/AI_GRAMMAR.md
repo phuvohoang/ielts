@@ -6,7 +6,7 @@ The IELTS app uses React/TypeScript/Vite, React Router (hash navigation on GitHu
 
 Inspected `phuvohoang/english-steps/worker/index.mjs` and `worker/wrangler.jsonc` through GitHub. Its source declares `POST /grade`, Workers AI `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, Vietnamese feedback, JSON-schema inference, `ALLOWED_ORIGIN`, an AI binding and a 6/minute global rate limiter. It has no separate application authentication. Its config names the Worker `english-steps-writing`, which differs from the supplied reference hostname. Neither its deployed model availability nor hostname was assumed from these files. No reference Worker was modified, redeployed or sent student answers.
 
-The separate IELTS Worker uses these compatible conventions with server-owned exercises, stricter runtime validation, per-client and global limits, bounded retries/concurrency, timeouts and per-question batch failures. AI_MODEL deliberately has no default: choose an available, JSON-schema-capable Workers AI model in the target account and run the live evaluation checklist before release.
+The separate IELTS Worker uses these compatible conventions with server-owned exercises, stricter runtime validation, per-client and global limits, bounded retries/concurrency, timeouts and per-question batch failures. Production AI_MODEL is configured as @cf/meta/llama-3.3-70b-instruct-fp8-fast, verified against Cloudflare’s JSON Mode support list and active-variant deprecation notice on 2026-11-18. Keep it configurable and run the live evaluation checklist in the target account. Sources: https://developers.cloudflare.com/workers-ai/features/json-mode/ and https://developers.cloudflare.com/changelog/post/2026-05-08-planned-model-deprecations/.
 
 ## Files
 
@@ -44,7 +44,7 @@ Returns `{"results":[{"exerciseId":"wf-b2-016","result":{...}}]}`. Each item ind
 Worker:
 
 - `AI`: Workers AI binding.
-- `AI_MODEL`: an explicitly verified model ID with JSON-schema output support (required, no assumed availability).
+- `AI_MODEL`: the configured model ID with JSON-schema output support; verify availability and response quality when changing it.
 - `ALLOWED_ORIGINS`: comma-separated exact origins, production `https://phuvohoang.github.io`; remove localhost for production.
 - `GRADE_LIMIT`: Cloudflare rate-limit binding, 12 requests per client IP per minute.
 - `GLOBAL_LIMIT`: separate global binding, 60 requests per minute.
@@ -52,7 +52,7 @@ Worker:
 Frontend:
 
 - `VITE_GRAMMAR_API_URL`: public complete endpoint URL, e.g. `https://<approved-ielts-worker-host>/api/grammar/grade`. Without it, the client tries the same-origin `/api/grammar/grade`; static Pages returns an unscored service error.
-- GitHub repository Actions variable `VITE_GRAMMAR_API_URL` is injected by the Pages build workflow.
+- The Pages build defaults to the owner-provided endpoint https://ielts-grammar-grader.phu-vohoang89.workers.dev/api/grammar/grade. GitHub repository Actions variable `VITE_GRAMMAR_API_URL` can override it.
 
 Deployment credentials: Cloudflare CLI login or server-side `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. They are CLI/CI secrets, never VITE variables, JSON content or checked-in files. The AI binding does not require a client API key. `.dev.vars` files are ignored. No credentials are included in this implementation.
 
@@ -89,7 +89,7 @@ In this managed workspace use `npm_config_cache=/tmp/npm-cache`, `PLAYWRIGHT_BRO
 4. Set repository Actions variable VITE_GRAMMAR_API_URL to that actual URL plus `/api/grammar/grade`.
 5. Review and merge the theory-first prerequisite and this feature only with approval. Main pushes automatically deploy GitHub Pages. Verify the actual Pages lesson and AI network flow after deployment.
 
-No production deployment or configuration change has been executed. A successful dry-run proves bundling, not model availability, account permission or remote correctness.
+The website was deployed after approval. The owner reports a successful separate Worker build; live AI inference still requires endpoint verification. A successful dry-run proves bundling, not account permission or remote correctness.
 
 ## Content audit and grading limitations
 
@@ -108,3 +108,7 @@ Manual local browser checked: advanced theory gate, empty input disabled, first 
 Before production: run the ten semantic regression examples with the selected model and the actual source/instructions (especially the interview context and There was instruction); check confidence/uncertain outputs; test prompt injection as student data; verify Vietnamese feedback with an English teacher; test keyboard/screen reader on target devices; verify rate limits/CORS on Cloudflare and export/import a real browser backup.
 
 Local verification results: 64 unit/Worker tests passed; the complete 30-case desktop/mobile suite passed before the final mixed-order addition, followed by the focused 8-case AI lesson suite (including mixed mode); 6 Pages preview tests passed; TypeScript/production builds and Worker dry-run passed. These are local results; GitHub CI and live model evaluation are separate checks.
+
+The owner enabled the Worker domain. A direct browser visit to the grade endpoint returned the expected Origin not allowed response, confirming the service is reachable; direct terminal requests from this workspace still receive a Cloudflare edge rejection. workers_dev is explicit in the deployment config to retain the public Worker address. Live grading from the IELTS origin remains the next verification step.
+
+Cloudflare Workers Builds runs `wrangler preview` for non-production branches. The Worker config includes an explicit previews block with AI, variables and separate lower-limit rate bindings because preview settings do not inherit production bindings. Production deploy command: `npx wrangler deploy --config worker/wrangler.jsonc`. Preview command: `npx wrangler preview --config worker/wrangler.jsonc`. Do not deploy the grading Worker as a Vite static-assets site. Reference: https://developers.cloudflare.com/workers/previews/configuration/.
