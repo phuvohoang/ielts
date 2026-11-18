@@ -16,6 +16,8 @@ interface Env {
     ): Promise<unknown>;
   };
   AI_MODEL: string;
+  AI_SCHEMA_STYLE?: string;
+  AI_DISABLE_THINKING?: string;
   ALLOWED_ORIGINS: string;
   GRADE_LIMIT: { limit(input: { key: string }): Promise<{ success: boolean }> };
   GLOBAL_LIMIT: {
@@ -33,6 +35,7 @@ const modelSchema = z.object({
   confidence: resultSchema.shape.confidence,
 });
 const resultJson = z.toJSONSchema(modelSchema);
+const GRADER_REVISION = "multilingual-semantic-review-1";
 const cache = new Map<string, { expires: number; result: GradeResult }>();
 const pending = new Map<string, Promise<GradeResult>>();
 export const AI_TIMEOUT_MS = 25000;
@@ -131,7 +134,16 @@ export async function infer(
             ],
             temperature: 0.1,
             max_tokens: 1600,
-            response_format: { type: "json_schema", json_schema: resultJson },
+            ...(env.AI_DISABLE_THINKING === "true"
+              ? { chat_template_kwargs: { enable_thinking: false } }
+              : {}),
+            response_format: {
+              type: "json_schema",
+              json_schema:
+                env.AI_SCHEMA_STYLE === "openai"
+                  ? { name: "grammar_grade", schema: resultJson }
+                  : resultJson,
+            },
           },
           { signal },
         ),
@@ -219,7 +231,14 @@ async function cachedGrade(env: Env, q: Exercise, answer: string) {
       await crypto.subtle.digest(
         "SHA-256",
         new TextEncoder().encode(
-          JSON.stringify([env.AI_MODEL, q.id, q.version, answer]),
+          JSON.stringify([
+            GRADER_REVISION,
+            env.AI_MODEL,
+            env.AI_SCHEMA_STYLE,
+            q.id,
+            q.version,
+            answer,
+          ]),
         ),
       ),
     ),
@@ -292,6 +311,7 @@ export default {
         .includes(origin);
     const headers: Record<string, string> = {
       "Cache-Control": "no-store",
+      "X-Grader-Revision": GRADER_REVISION,
       Vary: "Origin",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
