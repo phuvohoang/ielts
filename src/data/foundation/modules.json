@@ -1,0 +1,312 @@
+[
+  {
+    "id": "sentence-foundations",
+    "title": "Sentence Foundations",
+    "available": true,
+    "lessons": [
+      {
+        "id": "sf-complete-clause",
+        "grammar_rule_id": "sf-complete-clause",
+        "title": "Câu hoàn chỉnh: chủ ngữ và động từ chia thì",
+        "available": true,
+        "prerequisite_lesson_ids": []
+      },
+      {
+        "id": "sf-svo-order",
+        "grammar_rule_id": "sf-svo-order",
+        "title": "Trật tự chủ ngữ – động từ – tân ngữ",
+        "available": true,
+        "prerequisite_lesson_ids": [
+          "sf-complete-clause"
+        ]
+      },
+      {
+        "id": "sf-be-complement",
+        "grammar_rule_id": "sf-be-complement",
+        "title": "Be + bổ ngữ: diễn tả trạng thái",
+        "available": true,
+        "prerequisite_lesson_ids": [
+          "sf-svo-order"
+        ]
+      },
+      {
+        "id": "sf-sentence-boundary",
+        "grammar_rule_id": "sf-sentence-boundary",
+        "title": "Ranh giới câu: tránh câu thiếu và câu dính",
+        "available": true,
+        "prerequisite_lesson_ids": [
+          "sf-be-complement"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "parts-of-speech",
+    "title": "Parts of Speech",
+    "available": false,
+    "lessons": [
+      {
+        "id": "pos-noun",
+        "grammar_rule_id": "pos-noun",
+        "title": "Danh từ trong cụm danh từ",
+        "available": false,
+        "prerequisite_lesson_ids": []
+      },
+      {
+        "id": "pos-verb",
+        "grammar_rule_id": "pos-verb",
+        "title": "Động từ và vị trí trong câu",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "pos-noun"
+        ]
+      },
+      {
+        "id": "pos-adjective",
+        "grammar_rule_id": "pos-adjective",
+        "title": "Tính từ bổ nghĩa danh từ",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "pos-verb"
+        ]
+      },
+      {
+        "id": "pos-adverb",
+        "grammar_rule_id": "pos-adverb",
+        "title": "Trạng từ bổ nghĩa hành động",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "pos-adjective"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nouns-articles",
+    "title": "Nouns & Articles",
+    "available": false,
+    "lessons": [
+      {
+        "id": "na-countability",
+        "grammar_rule_id": "na-countability",
+        "title": "Danh từ đếm được và không đếm được",
+        "available": false,
+        "prerequisite_lesson_ids": []
+      },
+      {
+        "id": "na-articles",
+        "grammar_rule_id": "na-articles",
+        "title": "A, an và the",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "na-countability"
+        ]
+      },
+      {
+        "id": "na-quantifiers",
+        "grammar_rule_id": "na-quantifiers",
+        "title": "Lượng từ với danh từ",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "na-articles"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "adjectives-adverbs",
+    "title": "Adjectives & Adverbs",
+    "available": false,
+    "lessons": [
+      {
+        "id": "aa-modifiers",
+        "grammar_rule_id": "aa-modifiers",
+        "title": "Chọn tính từ hay trạng từ",
+        "available": false,
+        "prerequisite_lesson_ids": []
+      },
+      {
+        "id": "aa-comparison",
+        "grammar_rule_id": "aa-comparison",
+        "title": "So sánh hơn và so sánh nhất",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "aa-modifiers"
+        ]
+      },
+      {
+        "id": "aa-participles",
+        "grammar_rule_id": "aa-participles",
+        "title": "Tính từ -ed và -ing",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "aa-comparison"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "word-families",
+    "title": "Word Formation & Word Families",
+    "available": false,
+    "lessons": [
+      {
+        "id": "wf-derivation",
+        "grammar_rule_id": "wf-derivation",
+        "title": "Đổi dạng từ theo vị trí",
+        "available": false,
+        "prerequisite_lesson_ids": []
+      },
+      {
+        "id": "wf-suffixes",
+        "grammar_rule_id": "wf-suffixes",
+        "title": "Hậu tố và ngoại lệ",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "wf-derivation"
+        ]
+      },
+      {
+        "id": "wf-meaning",
+        "grammar_rule_id": "wf-meaning",
+        "title": "Phân biệt nghĩa trong một họ từ",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "wf-suffixes"
+        ]
+      },
+      {
+        "id": "wf-collocations",
+        "grammar_rule_id": "wf-collocations",
+        "title": "Kết hợp từ tự nhiên",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "wf-meaning"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "verb-patterns",
+    "title": "Verb Patterns",
+    "available": false,
+    "lessons": [
+      {
+        "id": "vp-infinitive",
+        "grammar_rule_id": "vp-infinitive",
+        "title": "Động từ + to-infinitive",
+        "available": false,
+        "prerequisite_lesson_ids": []
+      },
+      {
+        "id": "vp-gerund",
+        "grammar_rule_id": "vp-gerund",
+        "title": "Động từ + V-ing",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "vp-infinitive"
+        ]
+      },
+      {
+        "id": "vp-prepositions",
+        "grammar_rule_id": "vp-prepositions",
+        "title": "Động từ và tính từ + giới từ",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "vp-gerund"
+        ]
+      },
+      {
+        "id": "vp-transitivity",
+        "grammar_rule_id": "vp-transitivity",
+        "title": "Tân ngữ trực tiếp và cấu trúc với to",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "vp-prepositions"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "verb-forms",
+    "title": "Tenses & Verb Forms",
+    "available": false,
+    "lessons": [
+      {
+        "id": "tv-present",
+        "grammar_rule_id": "tv-present",
+        "title": "Hiện tại đơn và tiếp diễn",
+        "available": false,
+        "prerequisite_lesson_ids": []
+      },
+      {
+        "id": "tv-past",
+        "grammar_rule_id": "tv-past",
+        "title": "Quá khứ đơn và tiếp diễn",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "tv-present"
+        ]
+      },
+      {
+        "id": "tv-perfect",
+        "grammar_rule_id": "tv-perfect",
+        "title": "Hiện tại hoàn thành",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "tv-past"
+        ]
+      },
+      {
+        "id": "tv-agreement",
+        "grammar_rule_id": "tv-agreement",
+        "title": "Chủ ngữ và dạng động từ",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "tv-perfect"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "complex-sentences",
+    "title": "Complex Sentences",
+    "available": false,
+    "lessons": [
+      {
+        "id": "cs-coordination",
+        "grammar_rule_id": "cs-coordination",
+        "title": "Nối hai mệnh đề độc lập",
+        "available": false,
+        "prerequisite_lesson_ids": []
+      },
+      {
+        "id": "cs-subordination",
+        "grammar_rule_id": "cs-subordination",
+        "title": "Mệnh đề phụ với because và although",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "cs-coordination"
+        ]
+      },
+      {
+        "id": "cs-relative",
+        "grammar_rule_id": "cs-relative",
+        "title": "Mệnh đề quan hệ",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "cs-subordination"
+        ]
+      },
+      {
+        "id": "cs-conditional",
+        "grammar_rule_id": "cs-conditional",
+        "title": "Câu điều kiện",
+        "available": false,
+        "prerequisite_lesson_ids": [
+          "cs-relative"
+        ]
+      }
+    ]
+  }
+]

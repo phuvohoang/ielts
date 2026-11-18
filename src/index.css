@@ -993,3 +993,85 @@ textarea {
   border-left: 3px solid #b2a56c;
   padding-left: 12px;
 }
+
+.learning-statuses {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin: 20px 0;
+}
+.learning-steps {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.theory {
+  max-width: 900px;
+}
+.theory article {
+  padding: 15px 0;
+  border-bottom: 1px solid #e6ebdf;
+}
+.theory p {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.theory .button {
+  margin-top: 20px;
+}
+.annotated-example h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+.annotation {
+  border-left: 3px solid #90a97a;
+  background: #f2f6ed;
+  padding: 12px 16px;
+}
+.guided-hint {
+  border: 1px solid #d6e1c9;
+  background: #f1f6e8;
+  padding: 18px;
+  border-radius: 8px;
+  margin: 18px 0;
+}
+.guided-hint p {
+  margin: 7px 0 0;
+  font-size: 14px;
+}
+.prerequisite {
+  display: block;
+  font-weight: 400;
+  color: #6d7b66;
+  margin-top: 5px;
+}
+.rule-feedback {
+  margin: 15px 0;
+  border-left: 3px solid #8da878;
+  padding-left: 14px;
+}
+.rule-feedback a {
+  display: inline-block;
+  margin-left: 10px;
+  text-decoration: underline;
+}
+@media (max-width: 760px) {
+  .learning-statuses {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .curriculum-row {
+    flex-wrap: wrap;
+  }
+  .curriculum-row > div {
+    flex: 1 1 100%;
+  }
+  .learning-steps .button {
+    font-size: 10px;
+    padding: 8px;
+  }
+}
+.feedback > .button {
+  margin-right: 10px;
+  margin-top: 8px;
+}

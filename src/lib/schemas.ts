@@ -39,4 +39,11 @@ export const questionSchema = z.object({
   tokens: z.array(z.string()).optional(),
   group: z.string().optional(),
   auditNote: z.string().optional(),
+  grammar_rule_ids: z.array(z.string()).default([]),
+  prerequisite_lesson_ids: z.array(z.string()).default([]),
+  lesson_id: z.string().optional(),
+  learning_stage: z
+    .enum(["guided", "independent", "apply", "review", "mastery"])
+    .optional(),
+  strictPunctuation: z.boolean().optional(),
 });

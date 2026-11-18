@@ -1,3 +1,9 @@
+import {
+  learningProgressSchema,
+  checkSchema,
+  type LearningProgress,
+  type MasteryCheck,
+} from "./learning-model";
 import { schedule } from "./schedule";
 import Dexie, { type Table } from "dexie";
 import { z } from "zod";
@@ -10,6 +16,11 @@ export const attemptSchema = z.object({
   result: z.enum(["correct", "incorrect", "review"]),
   date: z.number(),
   reviewedAt: z.number().optional(),
+  lessonId: z.string().optional(),
+  learningStage: z
+    .enum(["guided", "independent", "apply", "review", "mastery"])
+    .optional(),
+  checkId: z.string().optional(),
 });
 export type Attempt = z.infer<typeof attemptSchema>;
 export const progressSchema = z.object({
@@ -35,12 +46,18 @@ class LearningDB extends Dexie {
   attempts!: Table<Attempt, number>;
   progress!: Table<Progress, string>;
   writing!: Table<Writing, number>;
+  lessons!: Table<LearningProgress, string>;
+  checks!: Table<MasteryCheck, string>;
   constructor() {
     super("ielts-grammar-mastery");
     this.version(1).stores({
       attempts: "++id,questionId,family,date,result",
       progress: "id,next",
       writing: "++id,date",
+    });
+    this.version(2).stores({
+      lessons: "id,reviewDueAt",
+      checks: "id,lessonId,startedAt",
     });
   }
 }
@@ -59,32 +76,83 @@ export async function record(a: Attempt) {
       );
   });
 }
-export const backupSchema = z.object({
-  version: z.literal(1),
-  attempts: z.array(attemptSchema),
-  progress: z.array(progressSchema),
-  writing: z.array(writingSchema),
-});
+export const backupSchema = z.union([
+  z.object({
+    version: z.literal(1),
+    attempts: z.array(attemptSchema),
+    progress: z.array(progressSchema),
+    writing: z.array(writingSchema),
+  }),
+  z
+    .object({
+      version: z.literal(2),
+      attempts: z.array(attemptSchema),
+      progress: z.array(progressSchema),
+      writing: z.array(writingSchema),
+      lessons: z.array(learningProgressSchema),
+      checks: z.array(checkSchema),
+    })
+    .refine(
+      (b) =>
+        b.lessons.every(
+          (l) =>
+            !l.masteredAt ||
+            b.checks.some(
+              (c) =>
+                c.lessonId === l.id &&
+                c.passed === true &&
+                c.finishedAt !== undefined &&
+                (c.score ?? 0) >= 80,
+            ),
+        ),
+      "Mastered lessons require a passed mastery check",
+    ),
+]);
 export async function exportBackup() {
-  return {
-    version: 1 as const,
-    attempts: await db.attempts.toArray(),
-    progress: await db.progress.toArray(),
-    writing: await db.writing.toArray(),
-  };
+  return db.transaction(
+    "r",
+    db.attempts,
+    db.progress,
+    db.writing,
+    db.lessons,
+    db.checks,
+    async () => ({
+      version: 2 as const,
+      attempts: await db.attempts.toArray(),
+      progress: await db.progress.toArray(),
+      writing: await db.writing.toArray(),
+      lessons: await db.lessons.toArray(),
+      checks: await db.checks.toArray(),
+    }),
+  );
 }
 export async function importBackup(input: unknown) {
   const b = backupSchema.parse(input);
-  await db.transaction("rw", db.attempts, db.progress, db.writing, async () => {
-    await Promise.all([
-      db.attempts.clear(),
-      db.progress.clear(),
-      db.writing.clear(),
-    ]);
-    await db.attempts.bulkAdd(b.attempts);
-    await db.progress.bulkAdd(b.progress);
-    await db.writing.bulkAdd(b.writing);
-  });
+  await db.transaction(
+    "rw",
+    db.attempts,
+    db.progress,
+    db.writing,
+    db.lessons,
+    db.checks,
+    async () => {
+      await Promise.all([
+        db.attempts.clear(),
+        db.progress.clear(),
+        db.writing.clear(),
+      ]);
+      await db.attempts.bulkAdd(b.attempts);
+      await db.progress.bulkAdd(b.progress);
+      await db.writing.bulkAdd(b.writing);
+      // A v1 backup predates learning progress: preserve the new tables when restoring it.
+      if (b.version === 2) {
+        await db.lessons.clear();
+        await db.checks.clear();
+        await db.lessons.bulkAdd(b.lessons);
+        await db.checks.bulkAdd(b.checks);
+      }
+    },
+  );
 }
 
 export async function resolveAttempt(

@@ -10,16 +10,22 @@ test("GitHub Pages assets, hash navigation, and refresh work under the repositor
     page.getByRole("heading", { name: "Make room for progress." }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Start learning", exact: true }).click();
-  await expect(page).toHaveURL(/\/ielts\/#\/lessons$/);
+  await expect(page).toHaveURL(/\/ielts\/#\/path$/);
   await expect(
-    page.getByRole("heading", { name: "Parts of Speech & Word Formation." }),
+    page.getByRole("heading", {
+      name: "Understand first. Practise with purpose.",
+    }),
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Parts of Speech & Word Formation." }),
+    page.getByRole("heading", {
+      name: "Understand first. Practise with purpose.",
+    }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Practise 01A" }).click();
-  await page.getByRole("button", { name: "Start practice" }).click();
+  await page.goto("/ielts/#/practice?advanced=1");
+  await page
+    .getByRole("button", { name: "Start practice", exact: true })
+    .click();
   await expect(page.locator(".practice-card h2")).toBeVisible();
   expect(errors).toEqual([]);
 });

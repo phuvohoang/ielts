@@ -9,7 +9,7 @@ import {
 } from "./importer";
 import {
   families,
-  questions,
+  bankQuestions as questions,
   importedQuestions,
   legacyQuestions,
   questionById,
