@@ -295,7 +295,7 @@ it("computes score with pending excluded, keeps retries and includes attempts in
 
 it("deduplicates unknown answers in a batch and accepts an AI-verified unseen alternative", async () => {
   const q = b2Exercises[17],
-    answer = "The government quickly decided.";
+    answer = "The government swiftly decided.";
   const e = env();
   e.AI.run.mockResolvedValue({ response: report(q.id, answer) });
   const body = (await (
