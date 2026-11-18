@@ -30,5 +30,32 @@
   "observability": {
     "enabled": false
   },
-  "workers_dev": true
+  "workers_dev": true,
+  "previews": {
+    "ai": {
+      "binding": "AI"
+    },
+    "vars": {
+      "ALLOWED_ORIGINS": "https://phuvohoang.github.io",
+      "AI_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    },
+    "ratelimits": [
+      {
+        "name": "GRADE_LIMIT",
+        "namespace_id": "3901",
+        "simple": {
+          "limit": 6,
+          "period": 60
+        }
+      },
+      {
+        "name": "GLOBAL_LIMIT",
+        "namespace_id": "3902",
+        "simple": {
+          "limit": 30,
+          "period": 60
+        }
+      }
+    ]
+  }
 }
