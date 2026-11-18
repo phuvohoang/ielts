@@ -513,3 +513,24 @@ it("keeps public feedback consistent with the assessed facts and falls back from
       "Đúng. Câu trả lời giữ được ngữ pháp, ý nghĩa và các yêu cầu của bài.",
   });
 });
+
+it("uses reviewed grammar explanations even when model prose invents an unsupported rule", async () => {
+  const e = env(),
+    q = b2Exercises[15],
+    answer = "The company grew a great deal.";
+  e.AI.run.mockResolvedValue({
+    response: {
+      ...report(q.id, answer),
+      explanationVi:
+        "A long unsupported grammar claim that must not be presented as an authoritative lesson rule.",
+      criteria: allCriteria,
+    },
+  });
+  expect(
+    await infer({ ...e, AI_CRITERIA_GRADING: "true" }, q, answer),
+  ).toMatchObject({
+    status: "correct",
+    score: 1,
+    explanationVi: q.explanation,
+  });
+});
