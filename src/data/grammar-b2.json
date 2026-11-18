@@ -388,7 +388,9 @@
     "referenceAnswers": [
       "The company grew significantly."
     ],
-    "acceptedVariants": [],
+    "acceptedVariants": [
+      "The company grew substantially."
+    ],
     "grammarRules": [
       "Noun → Verb; Adjective → Adverb; Past Simple"
     ],
@@ -399,7 +401,7 @@
       "Intensity"
     ],
     "explanation": "Noun growth → Verb grew; Adjective significant → Adverb significantly. Giữ Past Simple và mức độ đáng kể.",
-    "rubric": "Past Simple; significant intensity; subject company; begin The company grew.",
+    "rubric": "Past Simple; significant intensity; subject company; begin The company grew. In this ordinary business context, significant and substantial both describe a large increase; grew substantially is fully correct.",
     "objective": false
   },
   {
@@ -505,7 +507,7 @@
       "Intensity"
     ],
     "explanation": "improved → improvement; considerably → considerable. last year xác định thời gian quá khứ nên không chuyển thành Present Perfect.",
-    "rubric": "Must begin There was; simple past, last year and considerable degree preserved. Present perfect answer partial if otherwise equivalent.",
+    "rubric": "Must begin There was; simple past, last year and considerable degree preserved. Present perfect answer partial if otherwise equivalent. A grammatical answer such as Her English has improved considerably conveys the same core improvement but misses the simple past, last year and required opening; award partially_correct (0.5), even with these multiple compliance omissions. Reserve incorrect for substantive grammar errors or different core meaning.",
     "objective": false
   },
   {
