@@ -63,3 +63,19 @@ CEFR levels are study guidance. Lexical examples and Vietnamese explanations are
 4. `public/_redirects` serves `index.html` for application routes, supporting direct links and refreshes.
 
 The app is ready for a Pages deployment; this repository change does not deploy a live site.
+
+## GitHub Pages
+
+The primary hosted version is https://phuvohoang.github.io/ielts/.
+
+`.github/workflows/pages.yml` validates, builds and deploys `main` to GitHub Pages using GitHub Actions. Repository Settings → Pages → Source must be **GitHub Actions**. The build sets `PAGES_BASE_PATH=/ielts/` for asset URLs and `VITE_ROUTER_MODE=hash` for routes such as `/ielts/#/practice`, so refreshing any learning screen works on static hosting. Root-hosted local and Cloudflare builds keep browser history routing.
+
+To preview the GitHub Pages build locally:
+
+```sh
+PAGES_BASE_PATH=/ielts/ VITE_ROUTER_MODE=hash npm run build
+PAGES_BASE_PATH=/ielts/ npm run preview -- --host 0.0.0.0
+# Open http://localhost:4173/ielts/
+```
+
+Learning progress is stored separately for each origin. To move existing study history from the Sites-hosted app, export a JSON backup in its Settings, then restore it in Settings on GitHub Pages.

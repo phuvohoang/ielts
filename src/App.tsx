@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   BrowserRouter,
+  HashRouter,
   NavLink,
   Route,
   Routes,
@@ -93,6 +94,9 @@ function useStats() {
       s.writing.some((w) => w.applied),
   };
 }
+// GitHub Pages cannot rewrite application paths; hashes keep deep links refreshable.
+const AppRouter = import.meta.env.VITE_ROUTER_MODE === "hash" ? HashRouter : BrowserRouter;
+
 function App() {
   const [open, setOpen] = useState(false);
   const { refresh, error } = useLearning();
@@ -100,7 +104,7 @@ function App() {
     void refresh();
   }, [refresh]);
   return (
-    <BrowserRouter>
+    <AppRouter>
       <div className="app">
         <aside className={open ? "sidebar open" : "sidebar"}>
           <Link className="brand" to="/">
@@ -188,7 +192,7 @@ function App() {
           </footer>
         </main>
       </div>
-    </BrowserRouter>
+    </AppRouter>
   );
 }
 function Heading({
