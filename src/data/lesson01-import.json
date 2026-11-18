@@ -1,0 +1,5680 @@
+{
+  "schema_version": "1.0",
+  "title": "IELTS Lesson 01 — Parts of Speech & Word Formation",
+  "count": 300,
+  "questions": [
+    {
+      "id": "PSWF-001",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: Her [[decision]] surprised the entire team.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Decision gọi tên một quyết định, đứng sau tính từ sở hữu her.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-002",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: They will [[decide]] after the interview.",
+      "answer": [
+        "verb"
+      ],
+      "explanation_vi": "Decide diễn tả hành động quyết định, đứng sau will.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-003",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The committee reached a [[decisive]] conclusion.",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Decisive bổ nghĩa cho danh từ conclusion.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-004",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: She responded [[decisively]] to the complaint.",
+      "answer": [
+        "adverb"
+      ],
+      "explanation_vi": "Decisively bổ nghĩa cho động từ responded.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-005",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The [[development]] of the city has accelerated.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Development là danh từ chỉ quá trình phát triển.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-006",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The company plans to [[develop]] a new product.",
+      "answer": [
+        "verb"
+      ],
+      "explanation_vi": "Develop là động từ nguyên mẫu sau to.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-007",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: We live in a highly [[developed]] area.",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Developed mô tả area; highly bổ nghĩa cho tính từ.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-008",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The report describes the issue [[accurately]].",
+      "answer": [
+        "adverb"
+      ],
+      "explanation_vi": "Accurately bổ nghĩa cho động từ describes.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-009",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The figures in the report are [[accurate]].",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Accurate là tính từ sau linking verb are.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-010",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The [[accuracy]] of the results matters.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Accuracy là danh từ sau the.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-011",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "speaking",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: She spoke with remarkable [[confidence]].",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Confidence là danh từ sau giới từ with.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-012",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "speaking",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: He answered the questions [[confidently]].",
+      "answer": [
+        "adverb"
+      ],
+      "explanation_vi": "Confidently bổ nghĩa cho answered.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-013",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The new policy is [[effective]].",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Effective mô tả chủ ngữ policy sau is.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-014",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The changes were implemented [[effectively]].",
+      "answer": [
+        "adverb"
+      ],
+      "explanation_vi": "Effectively bổ nghĩa cho implemented.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-015",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The [[effectiveness]] of the training was measured.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Effectiveness là danh từ trung tâm của cụm chủ ngữ.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-016",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: Students need to [[analyse]] evidence carefully.",
+      "answer": [
+        "verb"
+      ],
+      "explanation_vi": "Analyse là động từ sau need to.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-017",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: Her [[analysis]] was detailed and balanced.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Analysis là danh từ sau her.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-018",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: This is an [[analytical]] approach.",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Analytical bổ nghĩa cho approach.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-019",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: He considered the problem [[analytically]].",
+      "answer": [
+        "adverb"
+      ],
+      "explanation_vi": "Analytically bổ nghĩa cho considered.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-020",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The course provides [[practical]] experience.",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Practical bổ nghĩa cho experience.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-021",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: They [[practise]] speaking every evening.",
+      "answer": [
+        "verb"
+      ],
+      "explanation_vi": "Practise là động từ chính (chính tả Anh-Anh).",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-022",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: Regular [[practice]] improves fluency.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Practice là danh từ làm chủ ngữ.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-023",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The price increased [[dramatically]] last year.",
+      "answer": [
+        "adverb"
+      ],
+      "explanation_vi": "Dramatically bổ nghĩa cho increased.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-024",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: There was a [[dramatic]] increase in prices.",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Dramatic bổ nghĩa cho increase.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-025",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The sudden [[increase]] worried customers.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Increase ở đây là danh từ sau the sudden.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-026",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: Prices may [[increase]] next month.",
+      "answer": [
+        "verb"
+      ],
+      "explanation_vi": "Increase sau may là động từ nguyên mẫu.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-027",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The [[research]] was published yesterday.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Research là danh từ không đếm được trong câu này.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-028",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: Researchers [[research]] how children learn.",
+      "answer": [
+        "verb"
+      ],
+      "explanation_vi": "Research là động từ chính, theo sau chủ ngữ researchers.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-029",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The system works [[reliably]] under pressure.",
+      "answer": [
+        "adverb"
+      ],
+      "explanation_vi": "Reliably bổ nghĩa cho works.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-030",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: We need a [[reliable]] internet connection.",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Reliable bổ nghĩa cho connection.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-031",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The [[reliability]] of the data is uncertain.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Reliability là danh từ sau the.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-032",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The teacher gave a clear [[explanation]].",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Explanation là danh từ sau tính từ clear.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-033",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: Could you [[explain]] the process to me?",
+      "answer": [
+        "verb"
+      ],
+      "explanation_vi": "Explain là động từ nguyên mẫu sau could.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-034",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The document contains [[explanatory]] notes.",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Explanatory bổ nghĩa cho notes.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-035",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The instructions were surprisingly [[simple]].",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Simple là tính từ sau were.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-036",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The app was designed [[simply]].",
+      "answer": [
+        "adverb"
+      ],
+      "explanation_vi": "Simply bổ nghĩa cho was designed.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-037",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The [[simplicity]] of the interface helps users.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Simplicity là danh từ sau the.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-038",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The applicant is [[qualified]] for the role.",
+      "answer": [
+        "adjective"
+      ],
+      "explanation_vi": "Qualified là tính từ chỉ trạng thái/đủ điều kiện.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-039",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: She hopes to [[qualify]] for the programme.",
+      "answer": [
+        "verb"
+      ],
+      "explanation_vi": "Qualify là động từ sau to.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-040",
+      "lesson": "01",
+      "type": "identify_word_class",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "parts-of-speech",
+      "prompt": "Identify the part of speech of the highlighted word: The [[qualification]] is recognised internationally.",
+      "answer": [
+        "noun"
+      ],
+      "explanation_vi": "Qualification là danh từ làm chủ ngữ.",
+      "review_priority": 1,
+      "options": [
+        "noun",
+        "verb",
+        "adjective",
+        "adverb"
+      ]
+    },
+    {
+      "id": "PSWF-041",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The instructions were written with great ______. (CLEAR)",
+      "answer": [
+        "clarity"
+      ],
+      "explanation_vi": "Sau with great cần danh từ clarity.",
+      "review_priority": 1,
+      "meta": {
+        "root": "CLEAR"
+      }
+    },
+    {
+      "id": "PSWF-042",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: Please explain the procedure ______. (CLEAR)",
+      "answer": [
+        "clearly"
+      ],
+      "explanation_vi": "Bổ nghĩa cho explain cần trạng từ clearly.",
+      "review_priority": 1,
+      "meta": {
+        "root": "CLEAR"
+      }
+    },
+    {
+      "id": "PSWF-043",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: Her ______ to continue studying impressed us. (DETERMINE)",
+      "answer": [
+        "determination"
+      ],
+      "explanation_vi": "Sau her cần danh từ determination.",
+      "review_priority": 1,
+      "meta": {
+        "root": "DETERMINE"
+      }
+    },
+    {
+      "id": "PSWF-044",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: She remained ______ despite the setbacks. (DETERMINE)",
+      "answer": [
+        "determined"
+      ],
+      "explanation_vi": "Sau remained cần tính từ determined.",
+      "review_priority": 1,
+      "meta": {
+        "root": "DETERMINE"
+      }
+    },
+    {
+      "id": "PSWF-045",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The team worked ______ to meet the deadline. (EFFICIENT)",
+      "answer": [
+        "efficiently"
+      ],
+      "explanation_vi": "Bổ nghĩa cho worked cần trạng từ efficiently.",
+      "review_priority": 1,
+      "meta": {
+        "root": "EFFICIENT"
+      }
+    },
+    {
+      "id": "PSWF-046",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The new system improved operational ______. (EFFICIENT)",
+      "answer": [
+        "efficiency"
+      ],
+      "explanation_vi": "Sau operational cần danh từ efficiency.",
+      "review_priority": 1,
+      "meta": {
+        "root": "EFFICIENT"
+      }
+    },
+    {
+      "id": "PSWF-047",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: We need a more ______ solution to this problem. (PRACTICE)",
+      "answer": [
+        "practical"
+      ],
+      "explanation_vi": "Bổ nghĩa cho solution cần practical, không phải practice.",
+      "review_priority": 1,
+      "meta": {
+        "root": "PRACTICE"
+      }
+    },
+    {
+      "id": "PSWF-048",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: She gave a very ______ presentation. (INFORM)",
+      "answer": [
+        "informative"
+      ],
+      "explanation_vi": "Informative = cung cấp nhiều thông tin; bổ nghĩa cho presentation.",
+      "review_priority": 1,
+      "meta": {
+        "root": "INFORM"
+      }
+    },
+    {
+      "id": "PSWF-049",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The public needs reliable ______ about the policy. (INFORM)",
+      "answer": [
+        "information"
+      ],
+      "explanation_vi": "Information là danh từ không đếm được.",
+      "review_priority": 1,
+      "meta": {
+        "root": "INFORM"
+      }
+    },
+    {
+      "id": "PSWF-050",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: His answer contradicted the evidence and was completely ______. (LOGIC)",
+      "answer": [
+        "illogical"
+      ],
+      "explanation_vi": "Illogical = thiếu logic; completely bổ nghĩa cho tính từ.",
+      "review_priority": 2,
+      "meta": {
+        "root": "LOGIC"
+      }
+    },
+    {
+      "id": "PSWF-051",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The argument was presented ______. (LOGIC)",
+      "answer": [
+        "logically"
+      ],
+      "explanation_vi": "Trạng từ logically bổ nghĩa cho presented.",
+      "review_priority": 1,
+      "meta": {
+        "root": "LOGIC"
+      }
+    },
+    {
+      "id": "PSWF-052",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "society",
+      "level": "B2",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The programme aims to reduce social ______. (EQUAL)",
+      "answer": [
+        "inequality"
+      ],
+      "explanation_vi": "Reduce social inequality = giảm bất bình đẳng xã hội.",
+      "review_priority": 2,
+      "meta": {
+        "root": "EQUAL"
+      }
+    },
+    {
+      "id": "PSWF-053",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: Everyone deserves ______ treatment. (EQUAL)",
+      "answer": [
+        "equal"
+      ],
+      "explanation_vi": "Equal là tính từ bổ nghĩa cho treatment.",
+      "review_priority": 1,
+      "meta": {
+        "root": "EQUAL"
+      }
+    },
+    {
+      "id": "PSWF-054",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The company must act ______ when hiring staff. (FAIR)",
+      "answer": [
+        "fairly"
+      ],
+      "explanation_vi": "Fairly bổ nghĩa cho act, nghĩa là công bằng.",
+      "review_priority": 1,
+      "meta": {
+        "root": "FAIR"
+      }
+    },
+    {
+      "id": "PSWF-055",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The decision raised concerns about ______. (FAIR)",
+      "answer": [
+        "fairness"
+      ],
+      "explanation_vi": "Sau about cần danh từ fairness.",
+      "review_priority": 1,
+      "meta": {
+        "root": "FAIR"
+      }
+    },
+    {
+      "id": "PSWF-056",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The report provides a ______ comparison. (DETAIL)",
+      "answer": [
+        "detailed"
+      ],
+      "explanation_vi": "Detailed bổ nghĩa cho comparison.",
+      "review_priority": 1,
+      "meta": {
+        "root": "DETAIL"
+      }
+    },
+    {
+      "id": "PSWF-057",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: She described the incident in ______. (DETAIL)",
+      "answer": [
+        "detail"
+      ],
+      "explanation_vi": "In detail là cụm cố định.",
+      "review_priority": 1,
+      "meta": {
+        "root": "DETAIL"
+      }
+    },
+    {
+      "id": "PSWF-058",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The machine operates ______. (AUTOMATIC)",
+      "answer": [
+        "automatically"
+      ],
+      "explanation_vi": "Automatically là trạng từ bổ nghĩa cho operates.",
+      "review_priority": 1,
+      "meta": {
+        "root": "AUTOMATIC"
+      }
+    },
+    {
+      "id": "PSWF-059",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The process is almost entirely ______. (AUTOMATE)",
+      "answer": [
+        "automated"
+      ],
+      "explanation_vi": "Automated mô tả quy trình đã được tự động hóa.",
+      "review_priority": 1,
+      "meta": {
+        "root": "AUTOMATE"
+      }
+    },
+    {
+      "id": "PSWF-060",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The results were statistically ______. (SIGNIFICANCE)",
+      "answer": [
+        "significant"
+      ],
+      "explanation_vi": "Statistically significant là collocation học thuật.",
+      "review_priority": 1,
+      "meta": {
+        "root": "SIGNIFICANCE"
+      }
+    },
+    {
+      "id": "PSWF-061",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The price has risen ______ over the past decade. (SIGNIFICANT)",
+      "answer": [
+        "significantly"
+      ],
+      "explanation_vi": "Significantly bổ nghĩa cho risen.",
+      "review_priority": 1,
+      "meta": {
+        "root": "SIGNIFICANT"
+      }
+    },
+    {
+      "id": "PSWF-062",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The company announced a major ______. (EXPAND)",
+      "answer": [
+        "expansion"
+      ],
+      "explanation_vi": "Sau a major cần danh từ expansion.",
+      "review_priority": 1,
+      "meta": {
+        "root": "EXPAND"
+      }
+    },
+    {
+      "id": "PSWF-063",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: They plan to ______ their services abroad. (EXPANSION)",
+      "answer": [
+        "expand"
+      ],
+      "explanation_vi": "Sau plan to cần động từ expand.",
+      "review_priority": 1,
+      "meta": {
+        "root": "EXPANSION"
+      }
+    },
+    {
+      "id": "PSWF-064",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The new evidence is highly ______. (PERSUADE)",
+      "answer": [
+        "persuasive"
+      ],
+      "explanation_vi": "Persuasive là tính từ nghĩa là có sức thuyết phục.",
+      "review_priority": 1,
+      "meta": {
+        "root": "PERSUADE"
+      }
+    },
+    {
+      "id": "PSWF-065",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: She argued ______ for additional funding. (PERSUADE)",
+      "answer": [
+        "persuasively"
+      ],
+      "explanation_vi": "Persuasively bổ nghĩa cho argued.",
+      "review_priority": 2,
+      "meta": {
+        "root": "PERSUADE"
+      }
+    },
+    {
+      "id": "PSWF-066",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The manager handled the situation ______. (PROFESSION)",
+      "answer": [
+        "professionally"
+      ],
+      "explanation_vi": "Professionally bổ nghĩa cho handled.",
+      "review_priority": 1,
+      "meta": {
+        "root": "PROFESSION"
+      }
+    },
+    {
+      "id": "PSWF-067",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: He showed a high level of ______. (PROFESSIONAL)",
+      "answer": [
+        "professionalism"
+      ],
+      "explanation_vi": "Sau of cần danh từ professionalism.",
+      "review_priority": 2,
+      "meta": {
+        "root": "PROFESSIONAL"
+      }
+    },
+    {
+      "id": "PSWF-068",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The instructions were ______ to beginners. (CONFUSE)",
+      "answer": [
+        "confusing"
+      ],
+      "explanation_vi": "Confusing mô tả điều gây khó hiểu; không dùng confused.",
+      "review_priority": 1,
+      "meta": {
+        "root": "CONFUSE"
+      }
+    },
+    {
+      "id": "PSWF-069",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The students felt ______ by the instructions. (CONFUSE)",
+      "answer": [
+        "confused"
+      ],
+      "explanation_vi": "Confused mô tả cảm xúc của students.",
+      "review_priority": 1,
+      "meta": {
+        "root": "CONFUSE"
+      }
+    },
+    {
+      "id": "PSWF-070",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The software has been ______ improved. (CONTINUE)",
+      "answer": [
+        "continuously"
+      ],
+      "explanation_vi": "Continuously bổ nghĩa cho improved, nhấn mạnh tính liên tục.",
+      "review_priority": 1,
+      "meta": {
+        "root": "CONTINUE"
+      }
+    },
+    {
+      "id": "PSWF-071",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: There has been a ______ improvement in quality. (NOTICE)",
+      "answer": [
+        "noticeable"
+      ],
+      "explanation_vi": "Noticeable bổ nghĩa cho improvement.",
+      "review_priority": 1,
+      "meta": {
+        "root": "NOTICE"
+      }
+    },
+    {
+      "id": "PSWF-072",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The proposal was rejected because it was ______. (REAL)",
+      "answer": [
+        "unrealistic"
+      ],
+      "explanation_vi": "Unrealistic = không thực tế; vì thế bị từ chối.",
+      "review_priority": 2,
+      "meta": {
+        "root": "REAL"
+      }
+    },
+    {
+      "id": "PSWF-073",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The figures do not ______ reflect actual costs. (ACCURATE)",
+      "answer": [
+        "accurately"
+      ],
+      "explanation_vi": "Accurately bổ nghĩa cho reflect.",
+      "review_priority": 1,
+      "meta": {
+        "root": "ACCURATE"
+      }
+    },
+    {
+      "id": "PSWF-074",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The study highlights the ______ of early education. (IMPORTANT)",
+      "answer": [
+        "importance"
+      ],
+      "explanation_vi": "Sau the cần danh từ importance.",
+      "review_priority": 1,
+      "meta": {
+        "root": "IMPORTANT"
+      }
+    },
+    {
+      "id": "PSWF-075",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: She completed the assignment ______. (SUCCESS)",
+      "answer": [
+        "successfully"
+      ],
+      "explanation_vi": "Successfully bổ nghĩa cho completed.",
+      "review_priority": 1,
+      "meta": {
+        "root": "SUCCESS"
+      }
+    },
+    {
+      "id": "PSWF-076",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: He was ______ in securing a scholarship. (SUCCESS)",
+      "answer": [
+        "successful"
+      ],
+      "explanation_vi": "Successful là tính từ sau was.",
+      "review_priority": 1,
+      "meta": {
+        "root": "SUCCESS"
+      }
+    },
+    {
+      "id": "PSWF-077",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The two approaches differ ______. (CONSIDERABLE)",
+      "answer": [
+        "considerably"
+      ],
+      "explanation_vi": "Considerably bổ nghĩa cho differ.",
+      "review_priority": 2,
+      "meta": {
+        "root": "CONSIDERABLE"
+      }
+    },
+    {
+      "id": "PSWF-078",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: There is a ______ difference between the two methods. (CONSIDER)",
+      "answer": [
+        "considerable"
+      ],
+      "explanation_vi": "Considerable = đáng kể, bổ nghĩa cho difference.",
+      "review_priority": 1,
+      "meta": {
+        "root": "CONSIDER"
+      }
+    },
+    {
+      "id": "PSWF-079",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: The teacher encouraged ______ thinking. (CREATE)",
+      "answer": [
+        "creative"
+      ],
+      "explanation_vi": "Creative bổ nghĩa cho thinking.",
+      "review_priority": 1,
+      "meta": {
+        "root": "CREATE"
+      }
+    },
+    {
+      "id": "PSWF-080",
+      "lesson": "01",
+      "type": "word_formation",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-formation",
+      "prompt": "Complete the sentence using the correct form of the word in brackets: Her ______ helped solve the problem. (CREATE)",
+      "answer": [
+        "creativity"
+      ],
+      "explanation_vi": "Creativity là danh từ làm chủ ngữ.",
+      "review_priority": 1,
+      "meta": {
+        "root": "CREATE"
+      }
+    },
+    {
+      "id": "PSWF-081",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The teacher gave a clear ______ of the rule. [noun from EXPLAIN]",
+      "answer": [
+        "explanation"
+      ],
+      "explanation_vi": "Clear bổ nghĩa cho danh từ explanation.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-082",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "Could you ______ the rule to me? [verb from EXPLANATION]",
+      "answer": [
+        "explain"
+      ],
+      "explanation_vi": "Could + động từ nguyên mẫu explain.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-083",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The chart contains ______ notes for new users. [adjective from EXPLAIN]",
+      "answer": [
+        "explanatory"
+      ],
+      "explanation_vi": "Explanatory bổ nghĩa cho notes.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-084",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The team made an important ______ yesterday. [noun from DECIDE]",
+      "answer": [
+        "decision"
+      ],
+      "explanation_vi": "Make a decision là collocation.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-085",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "We must ______ whether to accept the offer. [verb from DECISION]",
+      "answer": [
+        "decide"
+      ],
+      "explanation_vi": "Must + động từ nguyên mẫu decide.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-086",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "She acted ______ when the system failed. [adverb from DECISIVE]",
+      "answer": [
+        "decisively"
+      ],
+      "explanation_vi": "Decisively bổ nghĩa cho acted.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-087",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The course improved her ______ in English. [noun from FLUENT]",
+      "answer": [
+        "fluency"
+      ],
+      "explanation_vi": "Fluency là danh từ sau her.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-088",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "speaking",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "He can speak English ______. [adverb from FLUENT]",
+      "answer": [
+        "fluently"
+      ],
+      "explanation_vi": "Fluently bổ nghĩa cho speak.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-089",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The applicant sounded ______ during the interview. [adjective from CONFIDENCE]",
+      "answer": [
+        "confident"
+      ],
+      "explanation_vi": "Sounded là linking verb, theo sau là tính từ.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-090",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "She answered every question ______. [adverb from CONFIDENCE]",
+      "answer": [
+        "confidently"
+      ],
+      "explanation_vi": "Confidently bổ nghĩa cho answered.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-091",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The data must be checked for ______. [noun from ACCURATE]",
+      "answer": [
+        "accuracy"
+      ],
+      "explanation_vi": "For accuracy là cụm giới từ cần danh từ.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-092",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "Please record the measurements ______. [adverb from ACCURATE]",
+      "answer": [
+        "accurately"
+      ],
+      "explanation_vi": "Accurately bổ nghĩa cho record.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-093",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "This training programme is highly ______. [adjective from EFFECT]",
+      "answer": [
+        "effective"
+      ],
+      "explanation_vi": "Effective là tính từ sau is.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-094",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The policy was implemented ______. [adverb from EFFECTIVE]",
+      "answer": [
+        "effectively"
+      ],
+      "explanation_vi": "Effectively bổ nghĩa cho implemented.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-095",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The firm wants to improve its ______. [noun from EFFICIENT]",
+      "answer": [
+        "efficiency"
+      ],
+      "explanation_vi": "Its + danh từ efficiency.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-096",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The staff completed the task ______. [adverb from EFFICIENT]",
+      "answer": [
+        "efficiently"
+      ],
+      "explanation_vi": "Efficiently bổ nghĩa cho completed.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-097",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The new evidence is ______. [adjective from SIGNIFICANCE]",
+      "answer": [
+        "significant"
+      ],
+      "explanation_vi": "Significant là tính từ sau is.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-098",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "Sales increased ______ last quarter. [adverb from SIGNIFICANT]",
+      "answer": [
+        "significantly"
+      ],
+      "explanation_vi": "Significantly bổ nghĩa cho increased.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-099",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The report includes a detailed ______ of the results. [noun from ANALYSE]",
+      "answer": [
+        "analysis"
+      ],
+      "explanation_vi": "Analysis là danh từ sau detailed.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-100",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "We need to ______ the results before publishing. [verb from ANALYSIS]",
+      "answer": [
+        "analyse"
+      ],
+      "explanation_vi": "Need to + động từ nguyên mẫu analyse.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-101",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "word-family",
+      "prompt": "She adopted an ______ approach to the problem. [adjective from ANALYSIS]",
+      "answer": [
+        "analytical"
+      ],
+      "explanation_vi": "Analytical bổ nghĩa cho approach.",
+      "review_priority": 2
+    },
+    {
+      "id": "PSWF-102",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The programme aims to ______ students' skills. [verb from IMPROVEMENT]",
+      "answer": [
+        "improve"
+      ],
+      "explanation_vi": "Aim to + động từ nguyên mẫu improve.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-103",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "There has been a steady ______ in performance. [noun from IMPROVE]",
+      "answer": [
+        "improvement"
+      ],
+      "explanation_vi": "A steady + danh từ improvement.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-104",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The company hired an experienced ______. [noun for a person from MANAGE]",
+      "answer": [
+        "manager"
+      ],
+      "explanation_vi": "Manager là người quản lý.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-105",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "She is responsible for project ______. [noun from MANAGE]",
+      "answer": [
+        "management"
+      ],
+      "explanation_vi": "Project management là cụm danh từ.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-106",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The plan seems ______ given the budget. [adjective from REALITY]",
+      "answer": [
+        "realistic"
+      ],
+      "explanation_vi": "Realistic mô tả tính khả thi của plan.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-107",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "We should assess the costs ______. [adverb from REALISTIC]",
+      "answer": [
+        "realistically"
+      ],
+      "explanation_vi": "Realistically bổ nghĩa cho assess.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-108",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The information is not ______ enough to use. [adjective from RELY]",
+      "answer": [
+        "reliable"
+      ],
+      "explanation_vi": "Reliable là tính từ nghĩa là đáng tin cậy.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-109",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The website performs ______ during peak hours. [adverb from RELIABLE]",
+      "answer": [
+        "reliably"
+      ],
+      "explanation_vi": "Reliably bổ nghĩa cho performs.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-110",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The article was written in ______ language. [adjective from SIMPLICITY]",
+      "answer": [
+        "simple"
+      ],
+      "explanation_vi": "Simple bổ nghĩa cho language.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-111",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "Please explain the process ______. [adverb from SIMPLE]",
+      "answer": [
+        "simply"
+      ],
+      "explanation_vi": "Simply bổ nghĩa cho explain.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-112",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The new rules created unnecessary ______. [noun from CONFUSE]",
+      "answer": [
+        "confusion"
+      ],
+      "explanation_vi": "Confusion là danh từ sau unnecessary.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-113",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The instructions were ______, so nobody understood them. [adjective from CONFUSE]",
+      "answer": [
+        "confusing"
+      ],
+      "explanation_vi": "Confusing mô tả nguyên nhân gây khó hiểu.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-114",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The participants looked ______ after the lecture. [adjective describing people from CONFUSE]",
+      "answer": [
+        "confused"
+      ],
+      "explanation_vi": "Confused mô tả trạng thái của người.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-115",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The campaign raised public ______ of the issue. [noun from AWARE]",
+      "answer": [
+        "awareness"
+      ],
+      "explanation_vi": "Raise awareness là collocation.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-116",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "society",
+      "level": "B2",
+      "rule_id": "word-family",
+      "prompt": "Many residents are still ______ of the risks. [negative adjective from AWARE]",
+      "answer": [
+        "unaware"
+      ],
+      "explanation_vi": "Unaware of = không nhận thức được.",
+      "review_priority": 2
+    },
+    {
+      "id": "PSWF-117",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "word-family",
+      "prompt": "The team showed remarkable ______ under pressure. [noun from RESILIENT]",
+      "answer": [
+        "resilience"
+      ],
+      "explanation_vi": "Resilience là danh từ chỉ khả năng phục hồi.",
+      "review_priority": 2
+    },
+    {
+      "id": "PSWF-118",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "word-family",
+      "prompt": "She remained ______ despite several failures. [adjective from RESILIENCE]",
+      "answer": [
+        "resilient"
+      ],
+      "explanation_vi": "Resilient là tính từ sau remained.",
+      "review_priority": 2
+    },
+    {
+      "id": "PSWF-119",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "The project requires careful ______. [noun from PREPARE]",
+      "answer": [
+        "preparation"
+      ],
+      "explanation_vi": "Preparation là danh từ sau careful.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-120",
+      "lesson": "01",
+      "type": "fill_in_blank",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-family",
+      "prompt": "Students should ______ thoroughly for the exam. [verb from PREPARATION]",
+      "answer": [
+        "prepare"
+      ],
+      "explanation_vi": "Should + động từ nguyên mẫu prepare.",
+      "review_priority": 1
+    },
+    {
+      "id": "PSWF-121",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / speaks / English / fluent.",
+      "answer": [
+        "fluent."
+      ],
+      "explanation_vi": "Fluent là tính từ; cần fluently để bổ nghĩa cho speaks.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "speaks",
+        "English",
+        "fluent."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-122",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / informations / are / reliable.",
+      "answer": [
+        "informations"
+      ],
+      "explanation_vi": "Information là danh từ không đếm được; không thêm -s.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "informations",
+        "are",
+        "reliable."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-123",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: He / made / a / decide.",
+      "answer": [
+        "decide."
+      ],
+      "explanation_vi": "Sau a cần danh từ decision.",
+      "review_priority": 2,
+      "options": [
+        "He",
+        "made",
+        "a",
+        "decide."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-124",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: They / worked / very / efficient.",
+      "answer": [
+        "efficient."
+      ],
+      "explanation_vi": "Bổ nghĩa cho worked cần efficiently.",
+      "review_priority": 2,
+      "options": [
+        "They",
+        "worked",
+        "very",
+        "efficient."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-125",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: Her / explain / was / helpful.",
+      "answer": [
+        "explain"
+      ],
+      "explanation_vi": "Sau her làm chủ ngữ cần danh từ explanation.",
+      "review_priority": 2,
+      "options": [
+        "Her",
+        "explain",
+        "was",
+        "helpful."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-126",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / results / were / accuracy.",
+      "answer": [
+        "accuracy."
+      ],
+      "explanation_vi": "Sau were mô tả results cần tính từ accurate.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "results",
+        "were",
+        "accuracy."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-127",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "society",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: This / is / an / importance issue.",
+      "answer": [
+        "importance issue."
+      ],
+      "explanation_vi": "Trước issue cần tính từ important.",
+      "review_priority": 2,
+      "options": [
+        "This",
+        "is",
+        "an",
+        "importance issue."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-128",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: He / completed / the / task successful.",
+      "answer": [
+        "task successful."
+      ],
+      "explanation_vi": "Bổ nghĩa cho completed cần successfully.",
+      "review_priority": 2,
+      "options": [
+        "He",
+        "completed",
+        "the",
+        "task successful."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-129",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / training / was / effectiveness.",
+      "answer": [
+        "effectiveness."
+      ],
+      "explanation_vi": "Sau was cần tính từ effective.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "training",
+        "was",
+        "effectiveness."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-130",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: They / will / decision / tomorrow.",
+      "answer": [
+        "decision"
+      ],
+      "explanation_vi": "Sau will cần động từ decide.",
+      "review_priority": 2,
+      "options": [
+        "They",
+        "will",
+        "decision",
+        "tomorrow."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-131",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / is / a / confidence speaker.",
+      "answer": [
+        "confidence speaker."
+      ],
+      "explanation_vi": "Trước speaker cần tính từ confident.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "is",
+        "a",
+        "confidence speaker."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-132",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / manager / spoke / polite.",
+      "answer": [
+        "polite."
+      ],
+      "explanation_vi": "Bổ nghĩa cho spoke cần politely.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "manager",
+        "spoke",
+        "polite."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-133",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / proposal / sounds / reasonably.",
+      "answer": [
+        "reasonably."
+      ],
+      "explanation_vi": "Sau linking verb sounds cần reasonable.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "proposal",
+        "sounds",
+        "reasonably."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-134",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "daily-life",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / feels / happily / today.",
+      "answer": [
+        "happily"
+      ],
+      "explanation_vi": "Sau linking verb feels cần happy.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "feels",
+        "happily",
+        "today."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-135",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / solution / is / practically.",
+      "answer": [
+        "practically."
+      ],
+      "explanation_vi": "Sau is cần tính từ practical.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "solution",
+        "is",
+        "practically."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-136",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: They / gave / me / an advice.",
+      "answer": [
+        "an advice."
+      ],
+      "explanation_vi": "Advice không đếm được; dùng some advice hoặc a piece of advice.",
+      "review_priority": 2,
+      "options": [
+        "They",
+        "gave",
+        "me",
+        "an advice."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-137",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: We / need / more / equipments.",
+      "answer": [
+        "equipments."
+      ],
+      "explanation_vi": "Equipment không đếm được; không thêm -s.",
+      "review_priority": 2,
+      "options": [
+        "We",
+        "need",
+        "more",
+        "equipments."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-138",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / research / were / useful.",
+      "answer": [
+        "were"
+      ],
+      "explanation_vi": "Research là danh từ không đếm được trong ngữ cảnh này; dùng was.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "research",
+        "were",
+        "useful."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-139",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / provided / many / evidences.",
+      "answer": [
+        "evidences."
+      ],
+      "explanation_vi": "Evidence thông thường không đếm được; dùng pieces of evidence.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "provided",
+        "many",
+        "evidences."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-140",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: They / have / made / progresses.",
+      "answer": [
+        "progresses."
+      ],
+      "explanation_vi": "Progress nghĩa là sự tiến bộ thường không đếm được; dùng progress.",
+      "review_priority": 2,
+      "options": [
+        "They",
+        "have",
+        "made",
+        "progresses."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-141",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: Please / explain / me / the rule.",
+      "answer": [
+        "me"
+      ],
+      "explanation_vi": "Explain the rule to me; không dùng explain me the rule.",
+      "review_priority": 2,
+      "options": [
+        "Please",
+        "explain",
+        "me",
+        "the rule."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-142",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: He / suggested / me / a solution.",
+      "answer": [
+        "me"
+      ],
+      "explanation_vi": "Suggest a solution to me; không dùng suggest me a solution.",
+      "review_priority": 2,
+      "options": [
+        "He",
+        "suggested",
+        "me",
+        "a solution."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-143",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / described / me / the problem.",
+      "answer": [
+        "me"
+      ],
+      "explanation_vi": "Describe the problem to me.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "described",
+        "me",
+        "the problem."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-144",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: I / am / interested / on science.",
+      "answer": [
+        "on science."
+      ],
+      "explanation_vi": "Interested in science, không phải interested on.",
+      "review_priority": 2,
+      "options": [
+        "I",
+        "am",
+        "interested",
+        "on science."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-145",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: He / is / responsible / of training.",
+      "answer": [
+        "of training."
+      ],
+      "explanation_vi": "Responsible for training.",
+      "review_priority": 2,
+      "options": [
+        "He",
+        "is",
+        "responsible",
+        "of training."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-146",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: They / are / capable / to succeed.",
+      "answer": [
+        "to succeed."
+      ],
+      "explanation_vi": "Capable of succeeding; capable + of + V-ing.",
+      "review_priority": 2,
+      "options": [
+        "They",
+        "are",
+        "capable",
+        "to succeed."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-147",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / decided / studying / abroad.",
+      "answer": [
+        "studying"
+      ],
+      "explanation_vi": "Decide to study, không dùng decide studying.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "decided",
+        "studying",
+        "abroad."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-148",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: We / avoided / to make / mistakes.",
+      "answer": [
+        "to make"
+      ],
+      "explanation_vi": "Avoid + V-ing: avoided making.",
+      "review_priority": 2,
+      "options": [
+        "We",
+        "avoided",
+        "to make",
+        "mistakes."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-149",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: They / succeeded / to complete / the project.",
+      "answer": [
+        "to complete"
+      ],
+      "explanation_vi": "Succeed in + V-ing: succeeded in completing.",
+      "review_priority": 2,
+      "options": [
+        "They",
+        "succeeded",
+        "to complete",
+        "the project."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-150",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "daily-life",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: He / insisted / to pay / the bill.",
+      "answer": [
+        "to pay"
+      ],
+      "explanation_vi": "Insist on + V-ing: insisted on paying.",
+      "review_priority": 2,
+      "options": [
+        "He",
+        "insisted",
+        "to pay",
+        "the bill."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-151",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / team / discussed / about the issue.",
+      "answer": [
+        "about the issue."
+      ],
+      "explanation_vi": "Discuss the issue, không cần about.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "team",
+        "discussed",
+        "about the issue."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-152",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "daily-life",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / entered / into / the room.",
+      "answer": [
+        "into"
+      ],
+      "explanation_vi": "Enter the room (trong nghĩa đi vào phòng); không cần into.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "entered",
+        "into",
+        "the room."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-153",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / teacher / emphasized / on accuracy.",
+      "answer": [
+        "on accuracy."
+      ],
+      "explanation_vi": "Emphasize accuracy, không cần on.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "teacher",
+        "emphasized",
+        "on accuracy."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-154",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: His / performance / was / impressively.",
+      "answer": [
+        "impressively."
+      ],
+      "explanation_vi": "Sau was cần tính từ impressive.",
+      "review_priority": 2,
+      "options": [
+        "His",
+        "performance",
+        "was",
+        "impressively."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-155",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / answered / the question / confident.",
+      "answer": [
+        "confident."
+      ],
+      "explanation_vi": "Bổ nghĩa cho answered cần confidently.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "answered",
+        "the question",
+        "confident."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-156",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: Her / argument / was / persuasion.",
+      "answer": [
+        "persuasion."
+      ],
+      "explanation_vi": "Sau was cần tính từ persuasive.",
+      "review_priority": 2,
+      "options": [
+        "Her",
+        "argument",
+        "was",
+        "persuasion."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-157",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / document / contains / explain notes.",
+      "answer": [
+        "explain notes."
+      ],
+      "explanation_vi": "Trước notes cần tính từ explanatory.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "document",
+        "contains",
+        "explain notes."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-158",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: She / spoke / with / confident.",
+      "answer": [
+        "confident."
+      ],
+      "explanation_vi": "Sau with cần danh từ confidence.",
+      "review_priority": 2,
+      "options": [
+        "She",
+        "spoke",
+        "with",
+        "confident."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-159",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: The / system / operates / reliable.",
+      "answer": [
+        "reliable."
+      ],
+      "explanation_vi": "Bổ nghĩa cho operates cần reliably.",
+      "review_priority": 2,
+      "options": [
+        "The",
+        "system",
+        "operates",
+        "reliable."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-160",
+      "lesson": "01",
+      "type": "error_detection",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "error-detection",
+      "prompt": "Select the incorrect segment: They / demonstrated / great / creative.",
+      "answer": [
+        "creative."
+      ],
+      "explanation_vi": "Sau great cần danh từ creativity.",
+      "review_priority": 2,
+      "options": [
+        "They",
+        "demonstrated",
+        "great",
+        "creative."
+      ],
+      "meta": {
+        "corrected_segment_hint": "See explanation after submission"
+      }
+    },
+    {
+      "id": "PSWF-161",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: She speaks English fluent.",
+      "answer": [
+        "She speaks English fluently."
+      ],
+      "explanation_vi": "Fluently bổ nghĩa cho speaks.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-162",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: These informations are useful.",
+      "answer": [
+        "This information is useful."
+      ],
+      "explanation_vi": "Information không đếm được; dùng this và is.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-163",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: He made an important decide.",
+      "answer": [
+        "He made an important decision."
+      ],
+      "explanation_vi": "Make a decision; sau important cần danh từ.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-164",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The system works efficient.",
+      "answer": [
+        "The system works efficiently."
+      ],
+      "explanation_vi": "Efficiently bổ nghĩa cho works.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-165",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: Her explain was helpful.",
+      "answer": [
+        "Her explanation was helpful."
+      ],
+      "explanation_vi": "Sau her cần danh từ explanation.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-166",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The results are accuracy.",
+      "answer": [
+        "The results are accurate."
+      ],
+      "explanation_vi": "Sau are cần tính từ accurate.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-167",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "society",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: This is a significance change.",
+      "answer": [
+        "This is a significant change."
+      ],
+      "explanation_vi": "Significant bổ nghĩa cho change.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-168",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: She completed the task successful.",
+      "answer": [
+        "She completed the task successfully."
+      ],
+      "explanation_vi": "Successfully bổ nghĩa cho completed.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-169",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The training was effectiveness.",
+      "answer": [
+        "The training was effective."
+      ],
+      "explanation_vi": "Effective là tính từ sau was.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-170",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: We will decision tomorrow.",
+      "answer": [
+        "We will decide tomorrow."
+      ],
+      "explanation_vi": "Will + động từ nguyên mẫu decide.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-171",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: He is a confidence speaker.",
+      "answer": [
+        "He is a confident speaker."
+      ],
+      "explanation_vi": "Confident bổ nghĩa cho speaker.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-172",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The manager spoke polite.",
+      "answer": [
+        "The manager spoke politely."
+      ],
+      "explanation_vi": "Politely bổ nghĩa cho spoke.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-173",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The proposal sounds reasonably.",
+      "answer": [
+        "The proposal sounds reasonable."
+      ],
+      "explanation_vi": "Sound là linking verb; dùng tính từ reasonable.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-174",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "daily-life",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: She feels happily today.",
+      "answer": [
+        "She feels happy today."
+      ],
+      "explanation_vi": "Feel là linking verb; dùng tính từ happy.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-175",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The solution is practically.",
+      "answer": [
+        "The solution is practical."
+      ],
+      "explanation_vi": "Sau is cần tính từ practical.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-176",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: He gave me an advice.",
+      "answer": [
+        "He gave me a piece of advice."
+      ],
+      "explanation_vi": "Advice không đếm được; a piece of advice là một lời khuyên.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-177",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: We bought three equipments.",
+      "answer": [
+        "We bought three pieces of equipment."
+      ],
+      "explanation_vi": "Equipment không đếm được; dùng pieces of equipment.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-178",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The research were useful.",
+      "answer": [
+        "The research was useful."
+      ],
+      "explanation_vi": "Research dùng như danh từ không đếm được nên chia was.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-179",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: They found many evidences.",
+      "answer": [
+        "They found many pieces of evidence."
+      ],
+      "explanation_vi": "Evidence không đếm được trong cách dùng thông thường.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-180",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: I have made progresses.",
+      "answer": [
+        "I have made progress."
+      ],
+      "explanation_vi": "Make progress, không dùng progresses trong nghĩa này.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-181",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: Please explain me the rule.",
+      "answer": [
+        "Please explain the rule to me."
+      ],
+      "explanation_vi": "Explain something to someone.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-182",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: He suggested me a solution.",
+      "answer": [
+        "He suggested a solution to me."
+      ],
+      "explanation_vi": "Suggest something to someone.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-183",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: She described me the problem.",
+      "answer": [
+        "She described the problem to me."
+      ],
+      "explanation_vi": "Describe something to someone.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-184",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: I am interested on science.",
+      "answer": [
+        "I am interested in science."
+      ],
+      "explanation_vi": "Interested in + noun.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-185",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: He is responsible of training.",
+      "answer": [
+        "He is responsible for training."
+      ],
+      "explanation_vi": "Responsible for + noun/V-ing.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-186",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: They are capable to succeed.",
+      "answer": [
+        "They are capable of succeeding."
+      ],
+      "explanation_vi": "Capable of + V-ing.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-187",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: She decided studying abroad.",
+      "answer": [
+        "She decided to study abroad."
+      ],
+      "explanation_vi": "Decide to + verb.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-188",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: We avoided to make mistakes.",
+      "answer": [
+        "We avoided making mistakes."
+      ],
+      "explanation_vi": "Avoid + V-ing.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-189",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: They succeeded to complete the project.",
+      "answer": [
+        "They succeeded in completing the project."
+      ],
+      "explanation_vi": "Succeed in + V-ing.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-190",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "daily-life",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: He insisted to pay the bill.",
+      "answer": [
+        "He insisted on paying the bill."
+      ],
+      "explanation_vi": "Insist on + V-ing.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-191",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The team discussed about the issue.",
+      "answer": [
+        "The team discussed the issue."
+      ],
+      "explanation_vi": "Discuss là ngoại động từ; không cần about.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-192",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "daily-life",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: She entered into the room.",
+      "answer": [
+        "She entered the room."
+      ],
+      "explanation_vi": "Enter + place, không cần into trong ngữ cảnh này.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-193",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The teacher emphasized on accuracy.",
+      "answer": [
+        "The teacher emphasized accuracy."
+      ],
+      "explanation_vi": "Emphasize + object, không cần on.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-194",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: His performance was impressively.",
+      "answer": [
+        "His performance was impressive."
+      ],
+      "explanation_vi": "Impressive là tính từ sau was.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-195",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The document contains explain notes.",
+      "answer": [
+        "The document contains explanatory notes."
+      ],
+      "explanation_vi": "Explanatory là tính từ bổ nghĩa cho notes.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-196",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: She spoke with confident.",
+      "answer": [
+        "She spoke with confidence."
+      ],
+      "explanation_vi": "With + noun confidence.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-197",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The system operates reliable.",
+      "answer": [
+        "The system operates reliably."
+      ],
+      "explanation_vi": "Reliably bổ nghĩa cho operates.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-198",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: They demonstrated great creative.",
+      "answer": [
+        "They demonstrated great creativity."
+      ],
+      "explanation_vi": "Creativity là danh từ sau great.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-199",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The children were confusing by the instructions.",
+      "answer": [
+        "The children were confused by the instructions."
+      ],
+      "explanation_vi": "Confused mô tả cảm xúc của người; confusing mô tả điều gây bối rối.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-200",
+      "lesson": "01",
+      "type": "sentence_correction",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "sentence-correction",
+      "prompt": "Rewrite this sentence correctly without changing its meaning: The instructions were confused for beginners.",
+      "answer": [
+        "The instructions were confusing for beginners."
+      ],
+      "explanation_vi": "Confusing mô tả tính chất gây khó hiểu của instructions.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-201",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): clearly | explained | the | tutor | rule | the",
+      "answer": [
+        "The tutor explained the rule clearly."
+      ],
+      "explanation_vi": "Clearly là trạng từ bổ nghĩa cho explained.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "clearly",
+          "explained",
+          "the",
+          "tutor",
+          "rule",
+          "the"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-202",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): made | decision | she | a | difficult",
+      "answer": [
+        "She made a difficult decision."
+      ],
+      "explanation_vi": "Make a decision; difficult là tính từ.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "made",
+          "decision",
+          "she",
+          "a",
+          "difficult"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-203",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | confidently | answered | applicant | the | questions",
+      "answer": [
+        "The applicant answered the questions confidently."
+      ],
+      "explanation_vi": "Confidently bổ nghĩa cho answered.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "confidently",
+          "answered",
+          "applicant",
+          "the",
+          "questions"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-204",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): results | accurate | are | the",
+      "answer": [
+        "The results are accurate."
+      ],
+      "explanation_vi": "Accurate là tính từ sau are.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "results",
+          "accurate",
+          "are",
+          "the"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-205",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): an | explanation | provided | the | teacher",
+      "answer": [
+        "The teacher provided an explanation."
+      ],
+      "explanation_vi": "Explanation là danh từ.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "an",
+          "explanation",
+          "provided",
+          "the",
+          "teacher"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-206",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): works | efficiently | the | system",
+      "answer": [
+        "The system works efficiently."
+      ],
+      "explanation_vi": "Efficiently bổ nghĩa cho works.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "works",
+          "efficiently",
+          "the",
+          "system"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-207",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): to | develop | plan | we | new | skills",
+      "answer": [
+        "We plan to develop new skills."
+      ],
+      "explanation_vi": "Plan to + verb; new bổ nghĩa cho skills.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "to",
+          "develop",
+          "plan",
+          "we",
+          "new",
+          "skills"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-208",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): is | a | highly | reliable | source | this",
+      "answer": [
+        "This is a highly reliable source."
+      ],
+      "explanation_vi": "Highly bổ nghĩa cho reliable.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "is",
+          "a",
+          "highly",
+          "reliable",
+          "source",
+          "this"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-209",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): significantly | have | costs | increased",
+      "answer": [
+        "Costs have increased significantly."
+      ],
+      "explanation_vi": "Significantly bổ nghĩa cho increased.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "significantly",
+          "have",
+          "costs",
+          "increased"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-210",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | evidence | analysed | carefully | researcher | the",
+      "answer": [
+        "The researcher analysed the evidence carefully."
+      ],
+      "explanation_vi": "Carefully bổ nghĩa cho analysed.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "evidence",
+          "analysed",
+          "carefully",
+          "researcher",
+          "the"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-211",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): has | made | progress | considerable | she",
+      "answer": [
+        "She has made considerable progress."
+      ],
+      "explanation_vi": "Make progress; considerable bổ nghĩa cho progress.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "has",
+          "made",
+          "progress",
+          "considerable",
+          "she"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-212",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): to | explain | issue | me | the | please",
+      "answer": [
+        "Please explain the issue to me."
+      ],
+      "explanation_vi": "Explain something to someone.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "to",
+          "explain",
+          "issue",
+          "me",
+          "the",
+          "please"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-213",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | training | was | effective | extremely",
+      "answer": [
+        "The training was extremely effective."
+      ],
+      "explanation_vi": "Extremely bổ nghĩa cho effective.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "training",
+          "was",
+          "effective",
+          "extremely"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-214",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "speaking",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): with | confidence | spoke | she",
+      "answer": [
+        "She spoke with confidence."
+      ],
+      "explanation_vi": "With + noun confidence.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "with",
+          "confidence",
+          "spoke",
+          "she"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-215",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): students | need | information | reliable",
+      "answer": [
+        "Students need reliable information."
+      ],
+      "explanation_vi": "Information không đếm được; reliable là tính từ.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "students",
+          "need",
+          "information",
+          "reliable"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-216",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): a | creative | suggested | solution | he",
+      "answer": [
+        "He suggested a creative solution."
+      ],
+      "explanation_vi": "Creative bổ nghĩa cho solution.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "a",
+          "creative",
+          "suggested",
+          "solution",
+          "he"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-217",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): to | study | abroad | decided | she",
+      "answer": [
+        "She decided to study abroad."
+      ],
+      "explanation_vi": "Decide to + verb.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "to",
+          "study",
+          "abroad",
+          "decided",
+          "she"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-218",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): making | mistakes | avoided | they",
+      "answer": [
+        "They avoided making mistakes."
+      ],
+      "explanation_vi": "Avoid + V-ing.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "making",
+          "mistakes",
+          "avoided",
+          "they"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-219",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): responsible | for | is | quality | she",
+      "answer": [
+        "She is responsible for quality."
+      ],
+      "explanation_vi": "Responsible for + noun.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "responsible",
+          "for",
+          "is",
+          "quality",
+          "she"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-220",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): interested | in | are | technology | they",
+      "answer": [
+        "They are interested in technology."
+      ],
+      "explanation_vi": "Interested in + noun.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "interested",
+          "in",
+          "are",
+          "technology",
+          "they"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-221",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): was | the | explanation | clear",
+      "answer": [
+        "The explanation was clear."
+      ],
+      "explanation_vi": "Clear là tính từ sau was.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "was",
+          "the",
+          "explanation",
+          "clear"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-222",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): carefully | prepared | the | report | he",
+      "answer": [
+        "He prepared the report carefully."
+      ],
+      "explanation_vi": "Carefully bổ nghĩa cho prepared.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "carefully",
+          "prepared",
+          "the",
+          "report",
+          "he"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-223",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): achieved | a | successful | outcome | we",
+      "answer": [
+        "We achieved a successful outcome."
+      ],
+      "explanation_vi": "Successful là tính từ bổ nghĩa cho outcome.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "achieved",
+          "a",
+          "successful",
+          "outcome",
+          "we"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-224",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): importance | the | of | education | discussed | they",
+      "answer": [
+        "They discussed the importance of education."
+      ],
+      "explanation_vi": "Importance là danh từ; discuss không cần about.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "importance",
+          "the",
+          "of",
+          "education",
+          "discussed",
+          "they"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-225",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | policy | affected | people | differently",
+      "answer": [
+        "The policy affected people differently."
+      ],
+      "explanation_vi": "Differently bổ nghĩa cho affected.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "policy",
+          "affected",
+          "people",
+          "differently"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-226",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): was | the | procedure | unnecessarily | complicated",
+      "answer": [
+        "The procedure was unnecessarily complicated."
+      ],
+      "explanation_vi": "Unnecessarily bổ nghĩa cho complicated.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "was",
+          "the",
+          "procedure",
+          "unnecessarily",
+          "complicated"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-227",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | team | acted | professionally",
+      "answer": [
+        "The team acted professionally."
+      ],
+      "explanation_vi": "Professionally bổ nghĩa cho acted.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "team",
+          "acted",
+          "professionally"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-228",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | instructions | seemed | confusing",
+      "answer": [
+        "The instructions seemed confusing."
+      ],
+      "explanation_vi": "Confusing mô tả instructions.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "instructions",
+          "seemed",
+          "confusing"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-229",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | students | felt | confused",
+      "answer": [
+        "The students felt confused."
+      ],
+      "explanation_vi": "Confused mô tả students.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "students",
+          "felt",
+          "confused"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-230",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | proposal | sounds | realistic",
+      "answer": [
+        "The proposal sounds realistic."
+      ],
+      "explanation_vi": "Sau sounds cần tính từ realistic.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "proposal",
+          "sounds",
+          "realistic"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-231",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | service | improved | dramatically",
+      "answer": [
+        "The service improved dramatically."
+      ],
+      "explanation_vi": "Dramatically bổ nghĩa cho improved.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "service",
+          "improved",
+          "dramatically"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-232",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "daily-life",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): was | a | decisive | moment | it",
+      "answer": [
+        "It was a decisive moment."
+      ],
+      "explanation_vi": "Decisive bổ nghĩa cho moment.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "was",
+          "a",
+          "decisive",
+          "moment",
+          "it"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-233",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "economy",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | company | expanded | internationally",
+      "answer": [
+        "The company expanded internationally."
+      ],
+      "explanation_vi": "Internationally bổ nghĩa cho expanded.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "company",
+          "expanded",
+          "internationally"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-234",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "science",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | evidence | was | persuasive",
+      "answer": [
+        "The evidence was persuasive."
+      ],
+      "explanation_vi": "Persuasive là tính từ sau was.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "evidence",
+          "was",
+          "persuasive"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-235",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "society",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): she | argued | persuasively | for | change",
+      "answer": [
+        "She argued persuasively for change."
+      ],
+      "explanation_vi": "Persuasively bổ nghĩa cho argued.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "she",
+          "argued",
+          "persuasively",
+          "for",
+          "change"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-236",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | course | increased | awareness | public",
+      "answer": [
+        "The course increased public awareness."
+      ],
+      "explanation_vi": "Public bổ nghĩa cho awareness.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "course",
+          "increased",
+          "awareness",
+          "public"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-237",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "work",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): is | he | qualified | for | the | role",
+      "answer": [
+        "He is qualified for the role."
+      ],
+      "explanation_vi": "Qualified for + noun.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "is",
+          "he",
+          "qualified",
+          "for",
+          "the",
+          "role"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-238",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "education",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): she | completed | the | assessment | accurately",
+      "answer": [
+        "She completed the assessment accurately."
+      ],
+      "explanation_vi": "Accurately bổ nghĩa cho completed.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "she",
+          "completed",
+          "the",
+          "assessment",
+          "accurately"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-239",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | software | performs | reliably",
+      "answer": [
+        "The software performs reliably."
+      ],
+      "explanation_vi": "Reliably bổ nghĩa cho performs.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "software",
+          "performs",
+          "reliably"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-240",
+      "lesson": "01",
+      "type": "sentence_building",
+      "topic": "technology",
+      "level": "B1",
+      "rule_id": "word-order",
+      "prompt": "Reorder these tokens into one grammatical sentence (use every token once): the | new | design | improved | usability",
+      "answer": [
+        "The new design improved usability."
+      ],
+      "explanation_vi": "Usability là danh từ làm tân ngữ.",
+      "review_priority": 1,
+      "meta": {
+        "tokens": [
+          "the",
+          "new",
+          "design",
+          "improved",
+          "usability"
+        ],
+        "grading": "manual_or_semantic_review"
+      }
+    },
+    {
+      "id": "PSWF-241",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Cô ấy đã đưa ra một quyết định quan trọng.",
+      "answer": [
+        "She made an important decision."
+      ],
+      "explanation_vi": "Make an important decision là cụm tự nhiên.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-242",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Giáo viên giải thích quy tắc một cách rõ ràng.",
+      "answer": [
+        "The teacher explained the rule clearly."
+      ],
+      "explanation_vi": "Clearly bổ nghĩa cho explained.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-243",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Tôi cần một lời giải thích chi tiết.",
+      "answer": [
+        "I need a detailed explanation."
+      ],
+      "explanation_vi": "Detailed là tính từ; explanation là danh từ.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-244",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Anh ấy nói tiếng Anh trôi chảy.",
+      "answer": [
+        "He speaks English fluently."
+      ],
+      "explanation_vi": "Fluently là trạng từ bổ nghĩa cho speaks.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-245",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Sự tự tin của cô ấy đã tăng lên.",
+      "answer": [
+        "Her confidence has increased."
+      ],
+      "explanation_vi": "Confidence là danh từ.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-246",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Những hướng dẫn này gây khó hiểu.",
+      "answer": [
+        "These instructions are confusing."
+      ],
+      "explanation_vi": "Confusing mô tả điều gây bối rối.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-247",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Các học viên cảm thấy bối rối.",
+      "answer": [
+        "The students felt confused."
+      ],
+      "explanation_vi": "Confused mô tả trạng thái của người.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-248",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Thông tin này rất hữu ích.",
+      "answer": [
+        "This information is very useful."
+      ],
+      "explanation_vi": "Information không đếm được; this + is.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-249",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "daily-life",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Tôi đã nhận được một lời khuyên hữu ích.",
+      "answer": [
+        "I received a useful piece of advice."
+      ],
+      "explanation_vi": "A piece of advice vì advice không đếm được.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-250",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "economy",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Công ty hoạt động hiệu quả.",
+      "answer": [
+        "The company operates efficiently."
+      ],
+      "explanation_vi": "Efficiently bổ nghĩa cho operates.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-251",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "society",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Chính sách này có hiệu quả.",
+      "answer": [
+        "This policy is effective."
+      ],
+      "explanation_vi": "Effective là tính từ sau is.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-252",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "economy",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Chi phí đã tăng đáng kể.",
+      "answer": [
+        "Costs have increased significantly."
+      ],
+      "explanation_vi": "Significantly bổ nghĩa cho increased.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-253",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Chúng ta cần phân tích kết quả cẩn thận.",
+      "answer": [
+        "We need to analyse the results carefully."
+      ],
+      "explanation_vi": "Need to + verb; carefully là trạng từ.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-254",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Đó là một phương pháp có tính phân tích.",
+      "answer": [
+        "That is an analytical approach."
+      ],
+      "explanation_vi": "Analytical là tính từ bổ nghĩa cho approach.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-255",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Cô ấy quyết định học ở nước ngoài.",
+      "answer": [
+        "She decided to study abroad."
+      ],
+      "explanation_vi": "Decide to + verb.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-256",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Chúng tôi tránh mắc những lỗi không cần thiết.",
+      "answer": [
+        "We avoid making unnecessary mistakes."
+      ],
+      "explanation_vi": "Avoid + V-ing; unnecessary bổ nghĩa cho mistakes.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-257",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Hãy giải thích vấn đề cho tôi.",
+      "answer": [
+        "Please explain the problem to me."
+      ],
+      "explanation_vi": "Explain something to someone.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-258",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Anh ấy đề xuất một giải pháp sáng tạo.",
+      "answer": [
+        "He suggested a creative solution."
+      ],
+      "explanation_vi": "Suggest + object; creative bổ nghĩa cho solution.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-259",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Cô ấy chịu trách nhiệm về chất lượng.",
+      "answer": [
+        "She is responsible for quality."
+      ],
+      "explanation_vi": "Responsible for + noun.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-260",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Tôi quan tâm đến nghiên cứu khoa học.",
+      "answer": [
+        "I am interested in scientific research."
+      ],
+      "explanation_vi": "Interested in; scientific bổ nghĩa cho research.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-261",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "science",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Kết quả có độ chính xác cao.",
+      "answer": [
+        "The results are highly accurate."
+      ],
+      "explanation_vi": "Highly bổ nghĩa cho accurate.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-262",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Phần mềm hoạt động đáng tin cậy.",
+      "answer": [
+        "The software operates reliably."
+      ],
+      "explanation_vi": "Reliably bổ nghĩa cho operates.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-263",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Thiết kế mới cải thiện khả năng sử dụng.",
+      "answer": [
+        "The new design improves usability."
+      ],
+      "explanation_vi": "Usability là danh từ chỉ khả năng sử dụng.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-264",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "technology",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Đó là một sự cải thiện đáng chú ý.",
+      "answer": [
+        "That is a noticeable improvement."
+      ],
+      "explanation_vi": "Noticeable là tính từ, improvement là danh từ.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-265",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Báo cáo đưa ra một sự so sánh chi tiết.",
+      "answer": [
+        "The report provides a detailed comparison."
+      ],
+      "explanation_vi": "Detailed bổ nghĩa cho comparison.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-266",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Cô ấy trình bày lập luận một cách thuyết phục.",
+      "answer": [
+        "She presented the argument persuasively."
+      ],
+      "explanation_vi": "Persuasively bổ nghĩa cho presented.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-267",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Chúng ta cần chuẩn bị kỹ cho kỳ thi.",
+      "answer": [
+        "We need to prepare thoroughly for the exam."
+      ],
+      "explanation_vi": "Prepare là động từ; thoroughly là trạng từ.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-268",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Đây là một mục tiêu có thể đạt được.",
+      "answer": [
+        "This is an achievable goal."
+      ],
+      "explanation_vi": "Achievable là tính từ bổ nghĩa cho goal.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-269",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "work",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Họ đã thể hiện sự sáng tạo tuyệt vời.",
+      "answer": [
+        "They demonstrated remarkable creativity."
+      ],
+      "explanation_vi": "Creativity là danh từ; remarkable là tính từ.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-270",
+      "lesson": "01",
+      "type": "vietnamese_to_english",
+      "topic": "society",
+      "level": "B2",
+      "rule_id": "translation",
+      "prompt": "Translate into natural English: Khóa học giúp nâng cao nhận thức của cộng đồng.",
+      "answer": [
+        "The course helps raise public awareness."
+      ],
+      "explanation_vi": "Raise awareness là collocation; public bổ nghĩa cho awareness.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "semantic_review_required",
+        "reference_only": true
+      }
+    },
+    {
+      "id": "PSWF-271",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "visa",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I want to achieve an Australian work permit.",
+      "answer": [
+        "I want to obtain an Australian work visa."
+      ],
+      "explanation_vi": "Obtain a visa là collocation; achieve a goal.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-272",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "ielts",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: My goal is to get IELTS brand 6.5.",
+      "answer": [
+        "My goal is to achieve an IELTS band score of 6.5."
+      ],
+      "explanation_vi": "Band score, không phải brand.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-273",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "visa",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I have English enough to apply.",
+      "answer": [
+        "My English is good enough to apply."
+      ],
+      "explanation_vi": "Good enough bổ nghĩa cho năng lực ngôn ngữ; have English không tự nhiên.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-274",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "visa",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I want to achieve a visa next year.",
+      "answer": [
+        "I want to obtain a visa next year."
+      ],
+      "explanation_vi": "Obtain a visa, achieve a goal.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-275",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: She has a basic skill in English.",
+      "answer": [
+        "She has basic English skills."
+      ],
+      "explanation_vi": "Basic English skills là cụm tự nhiên cho năng lực chung.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-276",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: Since my wife who has basic English, I help her.",
+      "answer": [
+        "Since my wife has basic English skills, I help her."
+      ],
+      "explanation_vi": "Since + mệnh đề có động từ chính; không thêm who.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-277",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "ielts",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I want to aim to PTE 36.",
+      "answer": [
+        "I want to aim for a PTE score of 36."
+      ],
+      "explanation_vi": "Aim for + noun; aim to + verb.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-278",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: She wants to improve her English fluent.",
+      "answer": [
+        "She wants to improve her English fluency."
+      ],
+      "explanation_vi": "Fluency là danh từ làm tân ngữ của improve.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-279",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: He wants to become more confidence.",
+      "answer": [
+        "He wants to become more confident."
+      ],
+      "explanation_vi": "Become + adjective.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-280",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I need to improve my communicate.",
+      "answer": [
+        "I need to improve my communication skills."
+      ],
+      "explanation_vi": "Communication là danh từ bổ nghĩa cho skills.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-281",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I want to speak English more confident.",
+      "answer": [
+        "I want to speak English more confidently."
+      ],
+      "explanation_vi": "Confidently bổ nghĩa cho speak.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-282",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: The teacher gave me many advices.",
+      "answer": [
+        "The teacher gave me a lot of advice."
+      ],
+      "explanation_vi": "Advice không đếm được.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-283",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: This informations are very helpful.",
+      "answer": [
+        "This information is very helpful."
+      ],
+      "explanation_vi": "Information không đếm được; this + is.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-284",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: Please explain me this grammar.",
+      "answer": [
+        "Please explain this grammar rule to me."
+      ],
+      "explanation_vi": "Explain something to someone.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-285",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I am interesting in studying abroad.",
+      "answer": [
+        "I am interested in studying abroad."
+      ],
+      "explanation_vi": "Interested mô tả cảm xúc người; interesting mô tả thứ gây hứng thú.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-286",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: English is an importance skill.",
+      "answer": [
+        "English is an important skill."
+      ],
+      "explanation_vi": "Important là tính từ bổ nghĩa cho skill.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-287",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I can study more effective.",
+      "answer": [
+        "I can study more effectively."
+      ],
+      "explanation_vi": "Effectively bổ nghĩa cho study.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-288",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: The lesson is too difficulty for me.",
+      "answer": [
+        "The lesson is too difficult for me."
+      ],
+      "explanation_vi": "Difficult là tính từ sau is.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-289",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I made a good improve this month.",
+      "answer": [
+        "I made good progress this month."
+      ],
+      "explanation_vi": "Make progress là collocation; improvement cần a significant improvement.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-290",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: My pronunciation has improved significant.",
+      "answer": [
+        "My pronunciation has improved significantly."
+      ],
+      "explanation_vi": "Significantly bổ nghĩa cho improved.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-291",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "ielts",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I need to prepare careful for the test.",
+      "answer": [
+        "I need to prepare carefully for the test."
+      ],
+      "explanation_vi": "Carefully bổ nghĩa cho prepare.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-292",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: She decided learning English seriously.",
+      "answer": [
+        "She decided to learn English seriously."
+      ],
+      "explanation_vi": "Decide to + verb.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-293",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "ielts",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I avoided to answer difficult questions.",
+      "answer": [
+        "I avoided answering difficult questions."
+      ],
+      "explanation_vi": "Avoid + V-ing.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-294",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "ielts",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I want to success in the exam.",
+      "answer": [
+        "I want to succeed in the exam."
+      ],
+      "explanation_vi": "Want to + verb succeed.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-295",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: This strategy is very success.",
+      "answer": [
+        "This strategy is very successful."
+      ],
+      "explanation_vi": "Successful là tính từ sau is.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-296",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: I need a clearly explanation.",
+      "answer": [
+        "I need a clear explanation."
+      ],
+      "explanation_vi": "Clear là tính từ bổ nghĩa cho explanation.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-297",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: She can explain the topic very good.",
+      "answer": [
+        "She can explain the topic very well."
+      ],
+      "explanation_vi": "Well bổ nghĩa cho explain; good là tính từ.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-298",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "education",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: He is responsible of teaching her.",
+      "answer": [
+        "He is responsible for teaching her."
+      ],
+      "explanation_vi": "Responsible for + V-ing.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-299",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "ielts",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: The test requires candidates having a score.",
+      "answer": [
+        "The test requires candidates to have a score."
+      ],
+      "explanation_vi": "Require someone to do something.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    },
+    {
+      "id": "PSWF-300",
+      "lesson": "01",
+      "type": "writing_error_recall",
+      "topic": "speaking",
+      "level": "B2",
+      "rule_id": "writing-error-recall",
+      "prompt": "Correct the learner-style error and keep the intended meaning: My target is to become fluently in English.",
+      "answer": [
+        "My target is to become fluent in English."
+      ],
+      "explanation_vi": "Become + adjective fluent.",
+      "review_priority": 2,
+      "meta": {
+        "grading": "manual_or_semantic_review",
+        "source": "learner_error_pattern_or_transfer"
+      }
+    }
+  ]
+}

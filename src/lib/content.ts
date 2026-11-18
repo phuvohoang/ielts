@@ -1,44 +1,19 @@
 import { z } from "zod";
 import familyData from "../data/families.json";
 import questionData from "../data/questions.json";
-export const types = [
-  "Identify Word Class",
-  "Word Formation",
-  "Fill in the Blank",
-  "Error Detection",
-  "Sentence Correction",
-  "Sentence Building",
-  "Vietnamese to English",
-  "Writing Error Recall",
-] as const;
-export const familySchema = z.object({
-  id: z.string(),
-  root: z.string(),
-  cefr: z.string(),
-  topic: z.string(),
-  forms: z.record(z.string(), z.array(z.string())),
-  ipa: z.string(),
-  meaning: z.string(),
-  examples: z.array(z.string()),
-  collocations: z.array(z.string()),
-  verbPatterns: z.array(z.string()),
-  mistakes: z.array(z.string()),
-  rules: z.array(z.string()),
-});
-export const questionSchema = z.object({
-  id: z.string(),
-  family: z.string(),
-  type: z.enum(types),
-  prompt: z.string(),
-  answers: z.array(z.string()).min(1),
-  explanation: z.string(),
-  difficulty: z.string(),
-  topic: z.string(),
-  choices: z.array(z.string()),
-  requiresReview: z.boolean(),
-});
+import { familySchema, questionSchema } from "./schemas";
+export { types, familySchema, questionSchema } from "./schemas";
+import { adaptImport, quarantinedIds } from "./importer";
+import importedData from "../data/lesson01-import.json";
 export const families = z.array(familySchema).parse(familyData);
-export const questions = z.array(questionSchema).parse(questionData);
+// Archived IDs remain resolvable for existing attempts and Error Bank entries.
+export const legacyQuestions = z.array(questionSchema).parse(questionData);
+export const importedQuestions = adaptImport(importedData, families);
+export const questions = importedQuestions.filter(
+  (q) => !quarantinedIds.has(q.id),
+);
+export const allQuestions = [...legacyQuestions, ...importedQuestions];
+export const questionById = new Map(allQuestions.map((q) => [q.id, q]));
 export type Question = z.infer<typeof questionSchema>;
 export function normalize(s: string) {
   return s
@@ -53,8 +28,17 @@ export function grade(
   q: Question,
   answer: string,
 ): "correct" | "incorrect" | "review" {
-  if (q.answers.some((a) => normalize(a) === normalize(answer)))
+  if (q.tokens && !sameTokens(q.tokens, answer)) return "incorrect";
+  if (q.answers.some((a) => canonical(a) === canonical(answer)))
     return "correct";
+  // A root-to-form task needs a transformation unless its root is already a reference.
+  // Other unlisted derivatives need human review rather than guessing their validity.
+  if (
+    q.rootHint &&
+    q.id !== "PSWF-072" &&
+    canonical(answer) === canonical(q.rootHint)
+  )
+    return "incorrect";
   return q.requiresReview ? "review" : "incorrect";
 }
 export function shuffle<T>(items: T[], random = Math.random) {
@@ -64,4 +48,34 @@ export function shuffle<T>(items: T[], random = Math.random) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+export function canonical(value: string) {
+  return normalize(value).replace(
+    /\b(?:analyze|analyzed|analyzes|analyzing|organize|organized|organizes|organizing|practice|practiced|practices|practicing)\b/g,
+    (word) =>
+      ({
+        analyze: "analyse",
+        analyzed: "analysed",
+        analyzes: "analyses",
+        analyzing: "analysing",
+        organize: "organise",
+        organized: "organised",
+        organizes: "organises",
+        organizing: "organising",
+        practice: "practise",
+        practiced: "practised",
+        practices: "practises",
+        practicing: "practising",
+      })[word]!,
+  );
+}
+export function sameTokens(tokens: string[], answer: string) {
+  return (
+    tokens
+      .flatMap((t) => canonical(t).split(" "))
+      .sort()
+      .join("|") ===
+    canonical(answer).split(" ").filter(Boolean).sort().join("|")
+  );
 }

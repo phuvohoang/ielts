@@ -28,15 +28,15 @@ Vitest covers content references, the 30/70 exercise distribution, answer normal
 - Nine functional navigation sections, responsive dashboard, and eight-week / 32-lesson curriculum metadata.
 - Lesson 01: four bilingual learning sections with English examples, incorrect/correct comparisons, suffixes, exceptions, linking verbs, collocations and writing applications. Lessons 02–32 are explicitly upcoming, and never unlock automatically.
 - 25 lexical families stored separately from learner activity, including arrays for multiple forms, absent forms, root IPA, Vietnamese meaning, examples, collocations and verb patterns.
-- 200 authored exercises across eight types: 60 recognition / 140 production. Filter by family, type, topic and difficulty; choose 10, 20, 50, 100 or unlimited; retry incorrect answers and view session summaries.
-- Deterministic review schedule: 1, 3, 7, 14, 30 and 60 days for consecutive successes; an error resets the streak and is due after 10 minutes. Weak families are prioritized. Open responses awaiting review do not affect accuracy or the schedule. Reviewing an open answer recalculates its family's schedule from judged history.
+- 300 imported Lesson 01 records across eight types, with 295 active after audit (78 recognition / 217 production). Five ambiguous records are held for editorial review. Filter by family, type, topic and difficulty; choose 10, 20, 50, 100 or unlimited. The original 200 questions remain archived for existing learner history.
+- Deterministic review intervals: 1, 3, 7, 14, 30 and 60 days. Question-bank mistakes return after one day; the separate four-field family recall retains its existing family schedule. Unseen questions are prioritized before completed IDs. Pending review answers do not affect accuracy or scheduling until resolved.
 - Writing journal with first draft, revision and self-review checklist. Completing at least 150 words and all three checklist items records a self-reviewed application.
 - Lesson mastery requires at least 10 recognition and 20 production attempts, accuracy ≥90% and ≥80% respectively, plus a self-reviewed writing application. This is a study signal, not an externally assessed IELTS result.
 - Error Bank, actual activity analytics, local persistence and versioned JSON export/restore.
 
 ## Grading policy
 
-Case, whitespace, punctuation and Unicode variants are normalized. Reference variants include common British/American spelling alternatives. Constrained word-form questions are graded deterministically. Non-matching sentence correction, building, translation and recall answers require review because other correct answers can exist. The learner can confirm a valid alternative or mark it for correction in the Error Bank. Answers and explanations are shown after submission.
+Case, whitespace, punctuation and Unicode variants are normalized. Reference variants include common British/American spelling alternatives. Reference answers and known unchanged-root errors are graded deterministically. Other unlisted word forms and non-matching sentence correction, building, translation and recall answers require review because other correct answers can exist. The learner can confirm a valid alternative or mark it for correction in the Error Bank. Answers and explanations are shown after submission.
 
 Writing feedback is **self-review**, not AI or teacher assessment. The app does not claim to detect all writing errors or estimate an IELTS band. The Writing Errors metric counts unresolved writing-related exercise responses. General Listening, Reading and Speaking modules and automated writing evaluation are upcoming; the daily plan reserves independent practice time for those skills.
 
@@ -87,3 +87,9 @@ Open **Word Families → Practise word-family recall** (also available in Practi
 The default harder goal requires all forms taught in the library, separated by commas, semicolons or newlines. A lighter goal accepts one known form per class. Enter `none`, `—` or `N/A` when no common form is taught; empty input does not count as recalling an absent form. British/American organize spelling variants are accepted. Unlisted words require verification rather than being automatically rejected; known forms placed in the wrong word class need correction.
 
 Feedback identifies recalled classes and missing forms. Retry missed families from the session summary. Each submitted family is one production attempt with four typed answers; it is saved to existing attempt history, backups, analytics and spaced review without altering existing data. Error Bank links back to the four-field recall mode for retrying these attempts.
+
+## Audited Lesson 01 import
+
+The attached 300-question pack is adapted through `src/lib/importer.ts`; see [the audit report](docs/imports/LESSON01_AUDIT.md) for type counts, five quarantined items and grading limitations. Ordinary sessions use 295 active questions, while all 300 source records and the original 200-question pool remain available for traceability and existing learner history. Importing content never clears IndexedDB.
+
+Practice balances types, topics and B1/B2 levels, prioritizes unseen IDs, and schedules missed questions for the following day instead of replaying them immediately. Unknown English alternatives use **Needs review**. No external grammar service is configured. All source explanations remain unchanged and are shown only after submission.

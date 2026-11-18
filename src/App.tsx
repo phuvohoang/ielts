@@ -1,3 +1,6 @@
+import { QuestionPrompt, HighlightedText } from "./components/QuestionPrompt";
+import { selectSession, questionStates } from "./lib/selection";
+import { quarantinedIds } from "./lib/importer";
 import { FamilyRecall } from "./components/FamilyRecall";
 import { useEffect, useState } from "react";
 import {
@@ -32,7 +35,7 @@ import {
   questions,
   types,
   grade,
-  shuffle,
+  questionById,
   type Question,
 } from "./lib/content";
 import { useLearning } from "./lib/store";
@@ -80,7 +83,11 @@ function useStats() {
       production.filter((a) => a.result === "correct").length,
       production.length,
     ),
-    due: s.progress.filter((p) => p.next <= Date.now()),
+    due: selectSession(questions, s.attempts, {
+      now: Date.now(),
+      limit: questions.length,
+      dueOnly: true,
+    }),
     mastered:
       recognition.length >= 10 &&
       production.length >= 20 &&
@@ -101,7 +108,7 @@ const AppRouter =
 
 function App() {
   const [open, setOpen] = useState(false);
-  const { refresh, error } = useLearning();
+  const { refresh, error, loaded } = useLearning();
   useEffect(() => {
     void refresh();
   }, [refresh]);
@@ -167,27 +174,31 @@ function App() {
             </p>
           )}
           <div className="page">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/path" element={<Curriculum />} />
-              <Route path="/lessons" element={<Lessons />} />
-              <Route path="/families" element={<Families />} />
-              <Route path="/families/recall" element={<FamilyRecall />} />
-              <Route path="/practice" element={<Practice />} />
-              <Route path="/writing" element={<Writing />} />
-              <Route path="/errors" element={<Errors />} />
-              <Route path="/progress" element={<Progress />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route
-                path="*"
-                element={
-                  <>
-                    <h1>Page not found</h1>
-                    <Link to="/">Return to dashboard</Link>
-                  </>
-                }
-              />
-            </Routes>
+            {!loaded ? (
+              <p role="status">Loading your saved learning history…</p>
+            ) : (
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/path" element={<Curriculum />} />
+                <Route path="/lessons" element={<Lessons />} />
+                <Route path="/families" element={<Families />} />
+                <Route path="/families/recall" element={<FamilyRecall />} />
+                <Route path="/practice" element={<Practice />} />
+                <Route path="/writing" element={<Writing />} />
+                <Route path="/errors" element={<Errors />} />
+                <Route path="/progress" element={<Progress />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route
+                  path="*"
+                  element={
+                    <>
+                      <h1>Page not found</h1>
+                      <Link to="/">Return to dashboard</Link>
+                    </>
+                  }
+                />
+              </Routes>
+            )}
           </div>
           <footer>
             BUILT FOR STEADY PROGRESS{" "}
@@ -396,7 +407,8 @@ function Dashboard() {
           {s.due.length ? (
             <p>
               {s.due
-                .map((p) => families.find((f) => f.id === p.id)?.root)
+                .slice(0, 4)
+                .map((q) => q.type)
                 .join(", ")}
             </p>
           ) : (
@@ -662,30 +674,49 @@ function Practice() {
           : section === "3"
             ? ["Sentence Correction", "Writing Error Recall"]
             : null;
-  const pool = questions.filter(
+  useEffect(() => {
+    setStarted(false);
+    setResult("");
+    setAnswer("");
+    setError("");
+    setFamily(params.get("family") || "all");
+    setKind("all");
+    setTopic("all");
+    setDifficulty("all");
+  }, [params]);
+  const requestedQuestion = questionById.get(params.get("question") || "");
+  const sourcePool =
+    requestedQuestion && !quarantinedIds.has(requestedQuestion.id)
+      ? [requestedQuestion]
+      : questions;
+  const pool = sourcePool.filter(
     (q) =>
       (kind === "all" || q.type === kind) &&
       (family === "all" || q.family === family) &&
       (topic === "all" || q.topic === topic) &&
       (difficulty === "all" || q.difficulty === difficulty) &&
-      (!due || stats.due.some((p) => p.id === q.family)) &&
       (!sectionTypes || sectionTypes.includes(q.type)),
   );
-  function start(items = pool) {
+  const savedQuestionStates = questionStates(stats.attempts);
+  const eligible = pool.filter((q) => {
+    const state = savedQuestionStates.get(q.id);
+    return state ? state.next <= Date.now() : !due;
+  });
+  function start() {
+    if (!stats.loaded || stats.error) return;
     setQueue(
-      shuffle(items)
-        .sort((a, b) => {
-          const pa = stats.progress.find((p) => p.id === a.family);
-          const pb = stats.progress.find((p) => p.id === b.family);
-          return (pb?.incorrect ?? 0) - (pa?.incorrect ?? 0);
-        })
-        .slice(0, count === "unlimited" ? items.length : Number(count)),
+      selectSession(pool, stats.attempts, {
+        now: Date.now(),
+        limit: count === "unlimited" ? pool.length : Number(count),
+        dueOnly: due,
+      }),
     );
     setIndex(0);
     setResults([]);
     setStarted(true);
     setResult("");
     setAnswer("");
+    setError("");
   }
   async function submit() {
     if (!answer.trim() || busy || result) return;
@@ -760,7 +791,7 @@ function Practice() {
               Topic
               <select value={topic} onChange={(e) => setTopic(e.target.value)}>
                 <option value="all">All topics</option>
-                {[...new Set(families.map((f) => f.topic))].map((t) => (
+                {[...new Set(questions.map((q) => q.topic))].sort().map((t) => (
                   <option key={t}>{t}</option>
                 ))}
               </select>
@@ -772,8 +803,11 @@ function Practice() {
                 onChange={(e) => setDifficulty(e.target.value)}
               >
                 <option value="all">All levels</option>
-                <option>foundation</option>
-                <option>stretch</option>
+                {[...new Set(sourcePool.map((q) => q.difficulty))]
+                  .sort()
+                  .map((level) => (
+                    <option key={level}>{level}</option>
+                  ))}
               </select>
             </label>
             <label className="field">
@@ -786,23 +820,30 @@ function Practice() {
             </label>
           </div>
           <p>
-            {pool.length} questions available.{" "}
-            {count === "unlimited"
-              ? "Unlimited mode repeats the pool until you end the session."
-              : "Sessions use available matching questions without duplicates."}
+            {!stats.loaded && (
+              <span role="status">Loading your saved learning history… </span>
+            )}
+            {eligible.length} eligible questions · {pool.length} match your
+            filters. Unseen questions come first. Completed questions return
+            only when their next review is due; missed questions wait at least
+            one day. Unlimited mode continues through eligible questions without
+            repeating IDs in the session.
           </p>
-          <Button disabled={!pool.length} onClick={() => start()}>
+          <Button
+            disabled={!stats.loaded || !!stats.error || !eligible.length}
+            onClick={() => start()}
+          >
             Start practice <ArrowRight size={16} />
           </Button>
-          {!pool.length && (
+          {!eligible.length && (
             <p>
-              No questions match.{" "}
+              No questions are eligible right now.{" "}
               {due ? "You have no reviews due today." : "Try broader filters."}
             </p>
           )}
         </section>
       ) : q ? (
-        <section className="panel practice-card">
+        <section className="panel practice-card" data-question-id={q.id}>
           <div className="section-heading">
             <span className="badge">{q.type}</span>
             <span>
@@ -810,7 +851,10 @@ function Practice() {
             </span>
           </div>
           <progress value={index} max={queue.length} />
-          <h2>{q.prompt}</h2>
+          <QuestionPrompt question={q} />
+          <p className="muted">
+            {q.topic} · {q.difficulty}
+          </p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -829,7 +873,7 @@ function Practice() {
                       name="answer"
                       value={c}
                       checked={answer === c}
-                      disabled={!!result}
+                      disabled={!!result || busy}
                       onChange={() => setAnswer(c)}
                     />
                     {c}
@@ -842,7 +886,7 @@ function Practice() {
                 <textarea
                   autoFocus
                   value={answer}
-                  disabled={!!result}
+                  disabled={!!result || busy}
                   onChange={(e) => setAnswer(e.target.value)}
                   placeholder="Write your answer here…"
                 />
@@ -861,10 +905,13 @@ function Practice() {
                 {result === "correct"
                   ? "Well done."
                   : result === "review"
-                    ? "Saved for review."
+                    ? "Needs review."
                     : "Let’s learn from this."}
               </h3>
-              <p>{q.explanation}</p>
+              <p lang="vi">{q.explanation}</p>
+              {q.auditNote && (
+                <p className="audit-note">Content note: {q.auditNote}</p>
+              )}
               {result !== "correct" && (
                 <p>
                   Reference answer: <strong>{q.answers[0]}</strong>
@@ -872,14 +919,23 @@ function Practice() {
               )}
               {result === "review" && (
                 <p>
-                  Open writing has many valid answers. This response is excluded
-                  from accuracy and awaits your review in the Error Bank.
+                  A different answer can still be valid. This response is
+                  excluded from accuracy and awaits your review in the Error
+                  Bank.
                 </p>
               )}
               <Button
                 onClick={() => {
                   if (count === "unlimited" && index === queue.length - 1)
-                    setQueue((old) => [...old, ...shuffle(pool)]);
+                    setQueue((old) => [
+                      ...old,
+                      ...selectSession(pool, stats.attempts, {
+                        now: Date.now(),
+                        limit: pool.length,
+                        dueOnly: due,
+                        exclude: old.map((item) => item.id),
+                      }),
+                    ]);
                   setIndex((i) => i + 1);
                   setAnswer("");
                   setResult("");
@@ -906,16 +962,13 @@ function Practice() {
             {results.filter((r) => r.r === "review").length} requiring review
           </p>
           <div className="actions">
-            <Button
-              onClick={() =>
-                start(
-                  results.filter((r) => r.r === "incorrect").map((r) => r.q),
-                )
-              }
-              disabled={!results.some((r) => r.r === "incorrect")}
-            >
-              Retry incorrect answers
-            </Button>
+            <Link className="button button-outline" to="/practice?due=1">
+              Open due review queue
+            </Link>
+            <p className="muted">
+              Missed questions are saved for spaced review, not repeated
+              immediately.
+            </p>
             <Button variant="outline" onClick={() => setStarted(false)}>
               New session
             </Button>
@@ -1056,7 +1109,7 @@ function Errors() {
           .slice()
           .reverse()
           .map((a) => {
-            const q = questions.find((q) => q.id === a.questionId);
+            const q = questionById.get(a.questionId);
             return (
               <section className="panel" key={a.id}>
                 <span className="badge">
@@ -1064,7 +1117,7 @@ function Errors() {
                   · {a.type}
                 </span>
                 <h3>
-                  {q?.prompt ??
+                  {(q ? <HighlightedText text={q.prompt} /> : undefined) ??
                     `Recall the ${families.find((f) => f.id === a.family)?.root ?? "word"} family`}
                 </h3>
                 <p className="preserve">Your answer: {a.answer}</p>
@@ -1101,7 +1154,7 @@ function Errors() {
                   to={
                     a.type === "Word Family Recall"
                       ? `/families/recall?family=${a.family}`
-                      : `/practice?family=${a.family}`
+                      : `/practice?question=${a.questionId}`
                   }
                 >
                   Practise this family →
