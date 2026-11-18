@@ -132,7 +132,7 @@ it("validates incorrect Object Complement model feedback without turning provide
   expect((await infer(e, q, answer)).status).toBe("incorrect");
   e.AI.run.mockResolvedValue({ response: "broken JSON" });
   await expect(infer(e, q, answer)).rejects.toThrow("AI unavailable");
-  expect(e.AI.run).toHaveBeenCalledTimes(3);
+  expect(e.AI.run).toHaveBeenCalledTimes(4);
 });
 it("keeps low confidence unscored and omits unverified error spans", async () => {
   const q = b2Exercises[0],
@@ -359,4 +359,51 @@ it("builds scores and original-answer identity from the request and validated se
   expect(
     Object.keys(input[1].response_format.json_schema.properties),
   ).not.toContain("userAnswer");
+});
+
+it("overturns an unjustified style penalty after an independent rubric review", async () => {
+  const e = env(),
+    q = b2Exercises[15],
+    answer = "The company grew by a significant amount.";
+  e.AI.run
+    .mockResolvedValueOnce({
+      response: report(q.id, answer, "partially_correct"),
+    })
+    .mockResolvedValueOnce({ response: report(q.id, answer, "correct") });
+  expect(await infer(e, q, answer)).toMatchObject({
+    status: "correct",
+    score: 1,
+    userAnswer: answer,
+  });
+  expect(e.AI.run).toHaveBeenCalledTimes(2);
+  const second = e.AI.run.mock.calls[1] as unknown as [
+    string,
+    { messages: { content: string }[] },
+  ];
+  expect(second[1].messages[0].content).toContain(
+    "Optional style preferences are not errors",
+  );
+});
+it("keeps a disputed or unavailable penalty review unscored", async () => {
+  const e = env(),
+    q = b2Exercises[23],
+    answer = "An alternative sentence.";
+  e.AI.run
+    .mockResolvedValueOnce({ response: report(q.id, answer, "incorrect") })
+    .mockRejectedValueOnce(Error("review unavailable"));
+  expect(await infer(e, q, answer)).toMatchObject({
+    status: "needs_review",
+    score: null,
+    needsReview: true,
+    explanationVi: q.explanation,
+  });
+  e.AI.run
+    .mockResolvedValueOnce({ response: report(q.id, answer, "incorrect") })
+    .mockResolvedValueOnce({
+      response: report(q.id, answer, "partially_correct"),
+    });
+  expect(await infer(e, q, answer)).toMatchObject({
+    status: "needs_review",
+    score: null,
+  });
 });
