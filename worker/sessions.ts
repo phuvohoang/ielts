@@ -263,8 +263,9 @@ export class GrammarSessions {
           const failure = error as { code?: string; reason?: string };
           return send(
             {
-              error:
-                "Không thể tạo bộ câu hỏi đã kiểm định. Hãy thử Retry Generation; các câu đã có vẫn được giữ.",
+              error: failure.reason?.includes("quota_exhausted")
+                ? "Cloudflare AI đã hết hạn mức hiện tại. Các câu hỏi và tiến độ đã lưu vẫn được giữ; hãy thử lại khi hạn mức được khôi phục."
+                : "Không thể tạo bộ câu hỏi đã kiểm định. Hãy thử Retry Generation; các câu đã có vẫn được giữ.",
               code: failure.code ?? "GENERATION_UNAVAILABLE",
               reason: failure.reason ?? "unknown",
             },
