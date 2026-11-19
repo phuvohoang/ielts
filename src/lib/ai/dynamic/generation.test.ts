@@ -235,7 +235,7 @@ describe("generation and durable batches", () => {
         ids.push(...body.questions.map((q) => q.id));
       }
       expect(new Set(ids).size).toBe(questionCount);
-      expect(AI.run).toHaveBeenCalledTimes((questionCount / 10) * 3);
+      expect(AI.run).toHaveBeenCalledTimes((questionCount / 10) * 11);
       // Object restart and a repeated batch reuse persisted keys and IDs without AI calls.
       objects.set(
         s.sessionId,
@@ -245,7 +245,7 @@ describe("generation and durable batches", () => {
       expect(replay.questions.map((q: { id: string }) => q.id)).toEqual(
         ids.slice(0, 10),
       );
-      expect(AI.run).toHaveBeenCalledTimes((questionCount / 10) * 3);
+      expect(AI.run).toHaveBeenCalledTimes((questionCount / 10) * 11);
     },
   );
   it("deduplicates simultaneous requests for the same batch", async () => {
@@ -254,18 +254,16 @@ describe("generation and durable batches", () => {
     const responses = await Promise.all([batch(env, s, 0), batch(env, s, 0)]);
     const bodies = await Promise.all(responses.map((r) => r.json()));
     expect(bodies[0].questions).toEqual(bodies[1].questions);
-    expect(AI.run).toHaveBeenCalledTimes(3);
+    expect(AI.run).toHaveBeenCalledTimes(11);
   });
   it("preserves an earlier batch when the next batch fails, and retries without changing prior questions", async () => {
     const { env, AI } = environment(),
       s = await create(env, { questionCount: 20 });
     const first = await (await batch(env, s, 0)).json();
-    AI.run
-      .mockRejectedValueOnce(Error("quota"))
-      .mockRejectedValueOnce(Error("quota"))
-      .mockRejectedValueOnce(Error("quota"))
-      .mockRejectedValueOnce(Error("quota"));
+    const standard = AI.run.getMockImplementation()!;
+    AI.run.mockRejectedValue(Error("quota"));
     expect((await batch(env, s, 1)).status).toBe(503);
+    AI.run.mockImplementation(standard);
     const retry = await (await batch(env, s, 1)).json();
     expect(retry.questions[0].ordinal).toBe(10);
     expect((await (await batch(env, s, 0)).json()).questions).toEqual(
@@ -275,13 +273,11 @@ describe("generation and durable batches", () => {
   it("does not publish invalid JSON or independently rejected questions and uses bounded retries", async () => {
     const { env, AI } = environment(),
       s = await create(env);
-    AI.run
-      .mockResolvedValueOnce({ response: "{invalid" } as never)
-      .mockResolvedValueOnce({ response: "still invalid" } as never)
-      .mockResolvedValueOnce({ response: "{invalid" } as never)
-      .mockResolvedValueOnce({ response: "still invalid" } as never);
+    const standard = AI.run.getMockImplementation()!;
+    AI.run.mockResolvedValue({ response: "{invalid" } as never);
     expect((await batch(env, s, 0)).status).toBe(503);
-    expect(AI.run).toHaveBeenCalledTimes(4);
+    expect(AI.run).toHaveBeenCalledTimes(20);
+    AI.run.mockImplementation(standard);
     const parsed = await (await batch(env, s, 0)).json();
     expect(parsed.questions).toHaveLength(10);
   });
@@ -304,7 +300,7 @@ describe("generation and durable batches", () => {
         [],
       ),
     ).rejects.toThrow("GENERATION_UNAVAILABLE");
-    expect(AI.run).toHaveBeenCalledTimes(6);
+    expect(AI.run).toHaveBeenCalledTimes(13);
   });
   it("times out an unresponsive model without publishing questions", async () => {
     vi.useFakeTimers();
@@ -338,7 +334,7 @@ describe("generation and durable batches", () => {
     );
     expect(JSON.stringify(AI.run.mock.calls[0])).toContain("Suffix selection");
     expect(JSON.stringify(AI.run.mock.calls[0])).toContain("Create ORIGINAL");
-    expect(JSON.stringify(AI.run.mock.calls[2])).toContain(
+    expect(JSON.stringify(AI.run.mock.calls[10])).toContain(
       "Independently audit",
     );
   });
@@ -630,7 +626,7 @@ it("accepts a complete 50-question exam payload exceeding the smaller generation
   );
 });
 
-it("uses two bounded fast authoring calls and keeps independent validation on the grading model", async () => {
+it("bounds single-question authoring concurrency and keeps independent validation on the grading model", async () => {
   const { env, AI } = environment();
   env.AI_GENERATION_MODEL = "fast-author";
   env.AI_GENERATION_SCHEMA_STYLE = "workers";
@@ -656,8 +652,7 @@ it("uses two bounded fast authoring calls and keeps independent validation on th
     [],
   );
   expect(AI.run.mock.calls.map((c) => c[0])).toEqual([
-    "fast-author",
-    "fast-author",
+    ...Array.from({ length: 10 }, () => "fast-author"),
     "test",
   ]);
   expect(peak).toBe(2);
@@ -665,7 +660,7 @@ it("uses two bounded fast authoring calls and keeps independent validation on th
     messages: { content: string }[];
     response_format: { json_schema: unknown };
   };
-  expect(JSON.parse(first.messages[1].content).plan).toHaveLength(5);
+  expect(JSON.parse(first.messages[1].content).plan).toHaveLength(1);
   expect(first.response_format.json_schema).toHaveProperty("properties");
 });
 
@@ -686,4 +681,48 @@ it("removes redundant key spellings without dropping distinct valid variants and
   expect(qualityIssues({ ...q, rootWord: q.referenceAnswers[0] })).toContain(
     "Root already supplies the answer; require a changed word form",
   );
+});
+
+it("retries only a failed item while retaining independently validated questions", async () => {
+  const { env, AI } = environment(),
+    standard = AI.run.getMockImplementation()!;
+  let failed = false;
+  AI.run.mockImplementation(async (model, input) => {
+    const messages = (input as { messages: { content: string }[] }).messages;
+    const payload = JSON.parse(messages[1].content);
+    if (
+      messages[0].content.startsWith("Create ORIGINAL") &&
+      payload.plan[0].ordinal === 3 &&
+      !failed
+    ) {
+      failed = true;
+      throw Error("transient provider failure");
+    }
+    return standard(model, input);
+  });
+  const questions = await generateBatch(
+    env,
+    settings,
+    crypto.randomUUID(),
+    makePlan(settings),
+    [],
+    [],
+  );
+  expect(questions.map((q) => q.ordinal)).toEqual(
+    Array.from({ length: 10 }, (_, i) => i),
+  );
+  const authored = AI.run.mock.calls.filter((c) =>
+    (
+      c[1] as { messages: { content: string }[] }
+    ).messages[0].content.startsWith("Create ORIGINAL"),
+  );
+  expect(authored).toHaveLength(11);
+  const ordinals = authored.map(
+    (c) =>
+      JSON.parse(
+        (c[1] as { messages: { content: string }[] }).messages[1].content,
+      ).plan[0].ordinal,
+  );
+  expect(ordinals.filter((n) => n === 3)).toHaveLength(2);
+  expect(ordinals.filter((n) => n === 0)).toHaveLength(1);
 });
