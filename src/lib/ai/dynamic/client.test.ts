@@ -41,19 +41,17 @@ afterEach(() => vi.unstubAllGlobals());
 function respond(questions = partial, nextBatch = 0) {
   vi.stubGlobal(
     "fetch",
-    vi
-      .fn()
-      .mockResolvedValue(
-        Response.json({
-          sessionId,
-          accessToken: session.accessToken,
-          expiresAt: session.expiresAt,
-          settings,
-          questions,
-          nextBatch,
-          complete: false,
-        }),
-      ),
+    vi.fn().mockResolvedValue(
+      Response.json({
+        sessionId,
+        accessToken: session.accessToken,
+        expiresAt: session.expiresAt,
+        settings,
+        questions,
+        nextBatch,
+        complete: false,
+      }),
+    ),
   );
 }
 it("accepts a stable partial snapshot and requests only its current unfinished batch", async () => {
@@ -105,4 +103,21 @@ it("adds a newly public opening to older saved drafts without allowing existing 
     })),
   };
   await expect(loadBatch(current)).rejects.toThrow();
+});
+
+it("adds source underline metadata to older drafts without replacing their questions", async () => {
+  const old = {
+    ...session,
+    questions: session.questions.map((q) => {
+      const { underlinedText: _underline, ...rest } = q;
+      return rest;
+    }),
+  };
+  respond(
+    partial.map((q) => ({
+      ...q,
+      underlinedText: q.ordinal === 0 ? q.questionText.split(" ")[0] : null,
+    })),
+  );
+  expect((await loadBatch(old)).questions[0].underlinedText).toBeTruthy();
 });

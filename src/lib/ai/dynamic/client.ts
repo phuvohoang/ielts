@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   generationResponseSchema,
+  publicQuestionSchema,
   revealSchema,
   type PracticeSession,
   type Settings,
@@ -104,8 +105,15 @@ export async function loadBatch(session: PracticeSession) {
       ids.has(q.id) ||
       ordinals.has(q.ordinal) ||
       (existing &&
-        (JSON.stringify({ ...existing, requiredOpening: q.requiredOpening }) !==
-          JSON.stringify(q) ||
+        (JSON.stringify(
+          publicQuestionSchema.parse({
+            ...existing,
+            underlinedText: q.underlinedText,
+            requiredOpening: q.requiredOpening,
+          }),
+        ) !== JSON.stringify(q) ||
+          (existing.underlinedText !== undefined &&
+            existing.underlinedText !== q.underlinedText) ||
           (existing.requiredOpening !== undefined &&
             existing.requiredOpening !== q.requiredOpening))) ||
       session.questions.some(

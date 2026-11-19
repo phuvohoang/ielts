@@ -422,3 +422,62 @@ test("shows a required opening before submission while keeping the complete sent
     card(page).getByText(first.referenceAnswers[0], { exact: true }),
   ).toHaveCount(0);
 });
+
+test("renders the exact underlined source phrase and preserves it after reload", async ({
+  page,
+}) => {
+  const mock = await mockAPI(page);
+  await page.route("**/api/grammar/generate", async (route, request) => {
+    const body = request.postDataJSON();
+    if (body.sessionId) {
+      for (const q of mock.sessions.get(body.sessionId)!.questions) {
+        q.questionText = "The plan offers benefits to the economy.";
+        q.instruction =
+          "Rewrite the sentence, replacing the underlined part with an adjective phrase.";
+        q.underlinedText = "benefits to the economy";
+        q.rootWord = "economy";
+      }
+    }
+    await route.fallback();
+  });
+  await start(page);
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
+  await expect(card(page).locator("u")).toHaveText("benefits to the economy");
+  await expect(card(page).getByRole("note")).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Reference answer", exact: true }),
+  ).toHaveCount(0);
+  await page.reload();
+  await expect(card(page).locator("u")).toHaveText("benefits to the economy");
+});
+
+test("identifies old questions with missing underlines and allows skipping without grading", async ({
+  page,
+}) => {
+  const mock = await mockAPI(page);
+  await page.route("**/api/grammar/generate", async (route, request) => {
+    const body = request.postDataJSON();
+    if (body.sessionId) {
+      for (const q of mock.sessions.get(body.sessionId)!.questions) {
+        q.instruction = "Replace the underlined part.";
+        delete q.underlinedText;
+      }
+    }
+    await route.fallback();
+  });
+  await start(page);
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
+  await expect(card(page).getByRole("note")).toContainText(
+    "không cung cấp vị trí",
+  );
+  const id = await card(page).getAttribute("data-exercise-id");
+  await page
+    .getByRole("button", { name: "Next Question", exact: true })
+    .click();
+  await expect(card(page)).not.toHaveAttribute("data-exercise-id", id!);
+  expect(mock.gradeCalls).toBe(0);
+});
