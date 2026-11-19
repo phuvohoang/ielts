@@ -11,7 +11,9 @@
     "AI_SCHEMA_STYLE": "openai",
     "AI_DISABLE_THINKING": "true",
     "AI_CRITERIA_GRADING": "true",
-    "AI_SOURCE_COVERAGE": "true"
+    "AI_SOURCE_COVERAGE": "true",
+    "AI_GENERATION_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+    "AI_GENERATION_SCHEMA_STYLE": "workers"
   },
   "ratelimits": [
     {
@@ -53,7 +55,9 @@
       "AI_SCHEMA_STYLE": "openai",
       "AI_DISABLE_THINKING": "true",
       "AI_CRITERIA_GRADING": "true",
-      "AI_SOURCE_COVERAGE": "true"
+      "AI_SOURCE_COVERAGE": "true",
+      "AI_GENERATION_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "AI_GENERATION_SCHEMA_STYLE": "workers"
     },
     "ratelimits": [
       {

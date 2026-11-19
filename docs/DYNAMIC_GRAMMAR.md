@@ -1,6 +1,6 @@
 # Dynamic grammar practice
 
-Implementation branch: `feature/dynamic-grammar-sessions`. Not deployed. The original 25 authored questions remain unchanged and accessible at `/lessons/01.2/archive` with their previous attempts. `/lessons/01.2` now opens the dynamic builder. English Steps has not been touched.
+Initial release: PR #19, deployed with approval on 19 November 2026. A live acceptance check found that ten-item authoring exceeded the original request timeout; the latency update uses two parallel five-item requests with a dedicated fast authoring profile. The original 25 authored questions remain unchanged and accessible at `/lessons/01.2/archive` with their previous attempts. `/lessons/01.2` now opens the dynamic builder. English Steps has not been touched.
 
 ## Architecture and migration
 
@@ -42,7 +42,7 @@ Subsequent calls to the same endpoint use:
 
 Each batch contains exactly 10 questions. Session-wide planning balances selected enabled topics and supported formats, including across batch boundaries. IDs and ordinals are server assigned. The AI receives CEFR-specific vocabulary/complexity guidance, registry rules/rubrics, a random nonce, recent question text, already-generated questions and weak skills. It must author new content. Runtime validation checks shape, task type, answer class, reference/opening consistency, word-family rotation, duplicates and MCQ constraints. An independent prompt then solves/audits **every** question for grammar, ambiguity, root family, level, accepted alternatives, instruction/answer/explanation consistency, MCQ uniqueness and semantic repetition. All facts must pass at confidence >= 0.9. A failed batch is discarded and regenerated; no failed question is exposed. No fallback static questions are inserted.
 
-There are at most two batch attempts under a shared 90-second budget (each generation call <=40s, audit <=25s, reduced by remaining budget). Generation is sequential per session. A Durable Object serializes batch writes; repeated/concurrent requests return the saved batch, including after restarts. A batch is stored before the cursor update, so a recovered request can complete that update without changing already issued questions. Grading can proceed during generation of later batches. Separate client generation limits (12/min) and the existing global limit apply. Input is bounded to 32KB, with a separate 640KB bound for committing all 50 exam answers. Prompts explicitly treat history, answers and generated content as untrusted data.
+There are at most two batch attempts under a shared 90-second budget. Each batch uses two parallel five-item authoring calls (concurrency at most 2; each <=40s), then one independent audit (<=25s), reduced by the remaining budget. Calls settle before retrying. Batches remain sequential per session. `AI_GENERATION_MODEL` uses the fast Llama authoring profile; `AI_MODEL` continues to use GLM for independent auditing and grading. Each model has its own schema style configuration. A Durable Object serializes batch writes; repeated/concurrent requests return the saved batch, including after restarts. A batch is stored before the cursor update, so a recovered request can complete that update without changing already issued questions. Grading can proceed during generation of later batches. Separate client generation limits (12/min) and the existing global limit apply. Input is bounded to 32KB, with a separate 640KB bound for committing all 50 exam answers. Prompts explicitly treat history, answers and generated content as untrusted data.
 
 Responses contain **public questions only**. Keys, variants, Vietnamese explanations, correct option IDs and distractor explanations remain in server storage until the question has been graded. Tokens are capabilities: another device needs the private backup to resume server grading, and there is no account recovery.
 
@@ -62,7 +62,7 @@ Generated question IDs and `generationVersion: 1` are stable. The browser persis
 
 ## Deployment — only after explicit approval
 
-No production settings, migrations or deployments have been applied for this feature. Do not push/merge casually: this repository has automatic GitHub Pages and Cloudflare branch-preview deployments.
+PR #19 applied the initial approved release, including the session storage migration. Further releases must retain the existing migration tag. Do not push/merge casually: this repository has automatic GitHub Pages and Cloudflare branch-preview deployments.
 
 1. Review this branch and run the checks below.
 2. The canonical `worker/wrangler.jsonc` adds a `SESSIONS` Durable Object binding, exports `GrammarSessions`, and declares SQLite migration `dynamic-sessions-v1`. It also adds an independent generation rate limiter. Preview bindings are explicit. The root configuration is generated; run `npm run worker:sync-config` after edits.
@@ -99,7 +99,7 @@ Independent model review is a quality gate, not proof of correctness. Word-famil
 
 ## Verification performed before approval
 
-- **109 unit tests passed**; one live integration test skipped intentionally. Tests include 10/20/50 generation plans, future multi-topic balancing, all five CEFR prompts, stable/replayed/concurrent batches, independent audit rejection, malformed JSON, timeouts, partial failure/retry, private keys, token/origin/rate/expiry checks, deterministic MCQs and the statistics regression, semantic grading fallback, exam gating/replay, maximum-length exam storage chunks, backups and preserved history.
+- **110 unit tests passed**; one live integration test skipped intentionally. Tests include 10/20/50 generation plans, future multi-topic balancing, all five CEFR prompts, stable/replayed/concurrent batches, independent audit rejection, malformed JSON, timeouts, partial failure/retry, private keys, token/origin/rate/expiry checks, deterministic MCQs and the statistics regression, semantic grading fallback, exam gating/replay, maximum-length exam storage chunks, backups and preserved history.
 - **40 Playwright desktop/mobile tests passed**, including the original 25-question archive, complete new instant/exam flows, progressive 50-question loading, partial batch retry, saved drafts/index/results after refresh, new sessions retaining attempts, grading outages and the existing learning/recall/import flows.
 - **6 GitHub Pages checks passed** using the hash-router build under `/ielts/`.
 - TypeScript/Vite builds and the canonical/default-config Worker dry run passed.

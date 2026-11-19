@@ -15,6 +15,8 @@ export interface Env {
     ): Promise<unknown>;
   };
   AI_MODEL: string;
+  AI_GENERATION_MODEL?: string;
+  AI_GENERATION_SCHEMA_STYLE?: string;
   AI_SCHEMA_STYLE?: string;
   AI_CRITERIA_GRADING?: string;
   AI_SOURCE_COVERAGE?: string;
