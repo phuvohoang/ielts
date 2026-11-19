@@ -133,6 +133,68 @@ async function batch(
     env,
   );
 }
+
+it("serves accepted questions immediately, grades partial batches and repairs only missing slots after a restart", async () => {
+  const { env, AI, objects, stores } = environment();
+  const standard = AI.run.getMockImplementation()!;
+  let reject = true;
+  AI.run.mockImplementation(async (model, input) => {
+    const messages = (input as { messages: { content: string }[] }).messages;
+    const result = await standard(model, input);
+    if (reject && messages[0].content.startsWith("Independently audit")) {
+      const report = result.response as ReturnType<typeof auditFixture>;
+      const verdict = report.verdicts.find(v => v.ordinal === 3);
+      if (verdict) verdict.checks[1] = false; // ambiguous: never publish it
+    }
+    return result;
+  });
+  const session = await create(env, { questionCount: 20 });
+  const load = () => worker.fetch(req("generate", { sessionId: session.sessionId, accessToken: session.accessToken, batchIndex: 0, allowPartial: true }), env);
+  const partial = generationResponseSchema.parse(await (await load()).json());
+  expect(partial.questions).toHaveLength(9);
+  expect(partial.nextBatch).toBe(0);
+  expect(partial.complete).toBe(false);
+  expect(partial.questions.some(q => q.ordinal === 3)).toBe(false);
+  expect(JSON.stringify(partial)).not.toContain("referenceAnswers");
+  const privateRows = (await stores.get(session.sessionId)!.get<PrivateQuestion[]>("batch:0"))!;
+  const graded = await worker.fetch(req("grade", { sessionId: session.sessionId, accessToken: session.accessToken, submissions: [{ exerciseId: privateRows[0].id, version: 1, userAnswer: privateRows[0].referenceAnswers[0] }] }), env);
+  expect((await graded.json()).results[0].result.status).toBe("correct");
+  objects.set(session.sessionId, new GrammarSessions({ storage: stores.get(session.sessionId)! }, env));
+  AI.run.mockClear();
+  const unchanged = generationResponseSchema.parse(await (await load()).json());
+  expect(unchanged.questions).toEqual(partial.questions);
+  expect(AI.run).toHaveBeenCalledTimes(2);
+  reject = false;
+  AI.run.mockClear();
+  const repaired = generationResponseSchema.parse(await (await load()).json());
+  expect(repaired.questions).toHaveLength(10);
+  expect(repaired.nextBatch).toBe(1);
+  expect(repaired.questions.filter(q => q.ordinal !== 3)).toEqual(partial.questions);
+  expect(AI.run).toHaveBeenCalledTimes(2); // one author + one audit, not all ten
+  const second = generationResponseSchema.parse(await (await batch(env, session, 1)).json());
+  expect(second.complete).toBe(true);
+  expect(new Set([...repaired.questions, ...second.questions].map(q => q.id)).size).toBe(20);
+});
+
+it("keeps the legacy full-batch contract while preserving accepted rows for retry", async () => {
+  const { env, AI, stores } = environment();
+  const standard = AI.run.getMockImplementation()!;
+  AI.run.mockImplementation(async (model, input) => {
+    const messages = (input as { messages: { content: string }[] }).messages;
+    const data = JSON.parse(messages[1].content);
+    if (messages[0].content.startsWith("Create ORIGINAL") && data.plan[0].ordinal === 3) throw Error("temporary failure");
+    return standard(model, input);
+  });
+  const s = await create(env);
+  expect((await batch(env, s, 0)).status).toBe(503);
+  const before = (await stores.get(s.sessionId)!.get<PrivateQuestion[]>("batch:0"))!;
+  expect(before).toHaveLength(9);
+  AI.run.mockImplementation(standard);
+  AI.run.mockClear();
+  const repaired = generationResponseSchema.parse(await (await batch(env, s, 0)).json());
+  expect(repaired.questions.filter(q => q.ordinal !== 3)).toEqual(before.map(publicQuestion));
+  expect(AI.run).toHaveBeenCalledTimes(2);
+});
 afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllEnvs();

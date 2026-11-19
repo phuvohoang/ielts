@@ -43,13 +43,14 @@ export function GrammarExercise() {
     [generating, setGenerating] = useState(false),
     [grading, setGrading] = useState(false);
   const [generationError, setGenerationError] = useState(""),
-    [error, setError] = useState(""),
-    [phase, setPhase] = useState("");
+    [error, setError] = useState("");
   const live = useRef<PracticeSession | undefined>(undefined),
     generationLock = useRef(false),
     gradeLock = useRef(false),
     createLock = useRef(false),
-    examLock = useRef(false);
+    examLock = useRef(false),
+    generationRequests = useRef({ key: "", count: 0 }),
+    practiceRef = useRef<HTMLElement>(null);
   function show(value: PracticeSession | undefined) {
     live.current = value;
     setSession(value);
@@ -97,38 +98,37 @@ export function GrammarExercise() {
     const current = live.current;
     if (!current || current.generationComplete || generationLock.current)
       return;
+    const key = `${current.sessionId}:${current.nextBatch}`;
+    if (generationRequests.current.key !== key) generationRequests.current = { key, count: 0 };
+    generationRequests.current.count++;
     generationLock.current = true;
     setGenerating(true);
     setGenerationError("");
-    setPhase(
-      `Creating questions · batch ${current.nextBatch + 1}/${current.settings.questionCount / 10}. AI is also checking question quality.`,
-    );
     try {
       const batch = await loadBatch(current);
-      setPhase(
-        "Validating questions · checking the session, schema and ordering.",
-      );
       const latest = live.current;
       if (latest?.sessionId !== current.sessionId) return;
       const next = {
         ...latest,
-        questions: [...latest.questions, ...batch.questions],
+        questions: [...new Map([...latest.questions, ...batch.questions].map(q => [q.id, q])).values()].sort((a, b) => a.ordinal - b.ordinal),
         nextBatch: batch.nextBatch,
         generationComplete: batch.complete,
         updatedAt: Date.now(),
       };
-      setPhase("Preparing session · saving validated questions.");
+      const activeId = latest.questions[latest.currentIndex]?.id;
+      if (activeId) next.currentIndex = Math.max(0, next.questions.findIndex(q => q.id === activeId));
+      if (batch.nextBatch === current.nextBatch &&
+          generationRequests.current.count >= 3)
+        setGenerationError("Bạn có thể làm các câu đã sẵn sàng. Phần còn lại chưa đạt kiểm định; hãy tạo bù sau.");
       await saveSession(next);
       show(next);
       await refreshHistory();
     } catch (e) {
-      setGenerationError(
-        e instanceof Error ? e.message : "Không tạo được câu hỏi. Hãy thử lại.",
-      );
+      if (generationRequests.current.count >= 2)
+        setGenerationError(e instanceof Error ? e.message : "Chưa tạo được câu tiếp theo. Bài làm của bạn vẫn được giữ.");
     } finally {
       generationLock.current = false;
       setGenerating(false);
-      setPhase("");
     }
   }
   useEffect(() => {
@@ -290,6 +290,11 @@ export function GrammarExercise() {
     result = q && session?.results[q.id],
     reveal = q && session?.reveals[q.id],
     answer = q ? (session?.answers[q.id] ?? "") : "";
+  useEffect(() => {
+    if (!q) return;
+    practiceRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+    practiceRef.current?.querySelector<HTMLInputElement | HTMLTextAreaElement>("input:not([disabled]),textarea:not([disabled])")?.focus({ preventScroll: true });
+  }, [q?.id]);
   const totals = summary(Object.values(session?.results ?? {})),
     answered =
       session?.questions.filter((q) => session.answers[q.id]?.trim()).length ??
@@ -318,7 +323,7 @@ export function GrammarExercise() {
           independently.
         </p>
       </div>
-      <SessionBuilder
+      {!session && <SessionBuilder
         settings={settings}
         setSettings={setSettings}
         learned={learned}
@@ -334,28 +339,24 @@ export function GrammarExercise() {
           setGenerationError("");
           setError("");
         }}
-      />
+      />}
       {!loaded && <p role="status">Loading saved progress…</p>}
-      {(creating || generating) && (
-        <section className="panel generation-progress" role="status">
-          <h2>{creating ? "Preparing session" : phase}</h2>
-          <p>
-            {session?.questions.length ?? 0}/
-            {session?.settings.questionCount ?? settings.questionCount}{" "}
-            validated questions ready. Batches contain 10 questions. You can
-            practise ready questions while the next batch is prepared.
-          </p>
+      {(creating || (generating && !session?.questions.length)) && (
+        <section className="panel practice-loading" role="status">
+          <div className="eyebrow">ĐANG CHUẨN BỊ BÀI TẬP</div>
+          <h2>Đang tạo câu hỏi đầu tiên…</h2>
+          <p>Bài tập sẽ hiện ngay tại đây khi kiểm định xong. Bạn không cần bấm Resume.</p>
+          <div className="practice-loading-line" />
         </section>
       )}
-      {generationError && (
+      {generationError && !session?.questions.length && (
         <section className="panel" role="alert">
+          <h2>Chưa có câu hỏi sẵn sàng</h2>
           <p>{generationError}</p>
-          <Button
-            disabled={generating || expired}
-            onClick={() => void generateNext()}
-          >
-            Retry Generation
-          </Button>
+          <Button disabled={generating || expired} onClick={() => {
+            generationRequests.current.count = 0;
+            void generateNext();
+          }}>Retry Generation</Button>
         </section>
       )}
       {error && (
@@ -365,74 +366,18 @@ export function GrammarExercise() {
       )}
       {session && (
         <>
-          <section className="panel" aria-label="Session progress">
-            <div className="builder-heading">
-              <h2>
-                {session.settings.feedbackMode === "exam"
-                  ? "Exam Mode"
-                  : "Instant Feedback"}{" "}
-                · {session.settings.difficulty}
-              </h2>
-              <span className="session-tag">
-                {session.settings.questionCount} questions
-              </span>
+          <div className="practice-toolbar" aria-label="Session progress">
+            <div>
+              <strong>{exam ? "Exam Mode" : "Instant Feedback"} · {session.settings.difficulty}</strong>
+              <span>{answered}/{session.settings.questionCount} answered · {session.questions.length} ready</span>
             </div>
-            <p>
-              {answered}/{session.settings.questionCount} answered ·{" "}
-              {session.questions.length} ready · Score {totals.score}/
-              {totals.maxScore} graded
-            </p>
-            <p>
-              Correct {totals.correct} · Partially correct {totals.partial} ·
-              Incorrect {totals.incorrect} · Pending review {totals.pending}
-            </p>
-            <p>
-              Previous attempts: {historyCount}. All attempts are kept; unscored
-              answers are excluded from the score.
-            </p>
-            {expired && (
-              <p role="alert">
-                Server answer keys have expired. Your saved questions and
-                feedback remain available. Start a new session for new grading.
-              </p>
-            )}
-            <Button
-              variant="outline"
-              disabled={grading}
-              onClick={() => {
-                const index = session.questions.findIndex(
-                  (q) => !session.answers[q.id]?.trim(),
-                );
-                update({ currentIndex: index < 0 ? 0 : index });
-              }}
-            >
-              Resume Session
-            </Button>
-            {exam && (
-              <Button
-                disabled={
-                  grading ||
-                  expired ||
-                  !session.generationComplete ||
-                  answered !== session.settings.questionCount
-                }
-                onClick={() => void finishExam()}
-              >
-                {grading
-                  ? "Grading exam…"
-                  : session.examSubmitted
-                    ? "Retry exam grading"
-                    : "Submit session"}
-              </Button>
-            )}
-            {!exam &&
-              session.generationComplete &&
-              session.questions.every((q) => session.results[q.id]) && (
-                <h3>Session complete</h3>
-              )}
-          </section>
+            <Button variant="outline" disabled={grading || generating || creating} onClick={() => {
+              show(undefined); setGenerationError(""); setError("");
+            }}>Tạo bài luyện mới</Button>
+          </div>
+          {expired && <p role="alert">Thời hạn chấm bài đã hết. Bài làm và phản hồi đã lưu vẫn được giữ; hãy tạo bài luyện mới để tiếp tục chấm.</p>}
           {q && (
-            <section className="panel ai-card" data-exercise-id={q.id}>
+            <section ref={practiceRef} className="panel ai-card practice-workspace" data-exercise-id={q.id} aria-label="Bài tập hiện tại">
               <p className="eyebrow">
                 {formatLabels[q.exerciseType]} · Question{" "}
                 {session.currentIndex + 1}/{session.settings.questionCount}
@@ -634,31 +579,39 @@ export function GrammarExercise() {
               </div>
             </section>
           )}
-          <section className="panel">
-            <h2>Session Summary</h2>
-            <p>
-              {totals.correct} correct · {totals.partial} partially correct ·{" "}
-              {totals.incorrect} incorrect · {totals.pending} pending review
-            </p>
-            <p>
-              Score {totals.score}/{totals.maxScore} graded.{" "}
-              {session.settings.questionCount - answered} unanswered.
-            </p>
-            <p>
-              {session.generationComplete
-                ? "All questions generated."
-                : "More questions will appear as validated batches are saved."}{" "}
-              {session.status === "completed" ? "All answers evaluated." : ""}
-            </p>
-          </section>
+          {session.questions.length > 0 && !session.generationComplete && (
+            <div className="practice-more" role="status">
+              {generating ? "Đang chuẩn bị thêm câu hỏi. Bạn cứ tiếp tục làm bài." : generationError || "Đang chuẩn bị câu tiếp theo…"}
+              {generationError && <Button variant="outline" disabled={generating || expired} onClick={() => {
+                generationRequests.current.count = 0; void generateNext();
+              }}>Retry Generation</Button>}
+            </div>
+          )}
+          {exam && <div className="practice-exam-submit">
+            <Button disabled={grading || expired || !session.generationComplete || answered !== session.settings.questionCount}
+              onClick={() => void finishExam()}>
+              {grading ? "Grading exam…" : session.examSubmitted ? "Retry exam grading" : "Submit session"}
+            </Button>
+            {!session.generationComplete && <p>Chờ đủ câu hỏi trước khi nộp bài kiểm tra. Các câu trả lời đã được lưu.</p>}
+          </div>}
+          {session.status === "completed" && <section className="panel">
+            <h2>Kết quả bài luyện</h2>
+            <h3>Session complete</h3>
+            <p>{totals.correct} correct · {totals.partial} partially correct · {totals.incorrect} incorrect · {totals.pending} pending review</p>
+            <p>Score {totals.score}/{totals.maxScore} graded.</p>
+          </section>}
+          {session.questions.length > 0 && <details className="practice-record">
+            <summary>Tiến độ và kết quả</summary>
+            <p>Previous attempts: {historyCount}. All attempts are kept; unscored answers are excluded from the score.</p>
+            <p>Correct {totals.correct} · Partially correct {totals.partial} · Incorrect {totals.incorrect} · Pending review {totals.pending}</p>
+          </details>}
         </>
       )}
-      <section className="panel">
-        <h2>Saved sessions</h2>
+      <details className="panel practice-history">
+        <summary>Bài luyện đã lưu ({saved.length})</summary>
+        <h2>Lịch sử bài luyện</h2>
         <p>
-          Refresh resumes the same questions. New sessions keep all earlier
-          attempts. Server keys remain available for 7 days; saved feedback
-          stays on this device.
+          Bài làm tự động lưu trên trình duyệt này. Chọn một bài để tiếp tục; lịch sử cũ luôn được giữ.
         </p>
         {saved.length === 0 ? (
           <p>No generated sessions yet.</p>
@@ -683,7 +636,7 @@ export function GrammarExercise() {
             Open the original 25-question lesson and its history
           </Link>
         </p>
-      </section>
+      </details>
     </>
   );
 }
