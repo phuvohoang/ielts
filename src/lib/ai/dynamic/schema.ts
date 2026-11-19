@@ -45,6 +45,8 @@ export const optionSchema = z
 export const contentSchema = z
   .object({
     questionText: text,
+    // Optional so earlier saved questions and backups remain readable.
+    underlinedText: z.string().trim().min(1).max(1200).nullable().optional(),
     instruction: text,
     rootWord: z.string().trim().max(80).nullable(),
     referenceAnswers: z.array(text).min(1).max(6),
@@ -126,7 +128,14 @@ export function publicQuestion(q: PrivateQuestion): PublicQuestion {
   // Older cached questions predate the source guards. Never expose an entire key.
   return publicQuestionSchema
     .strip()
-    .parse({ ...q, requiredOpening: visibleOpening(q) });
+    .parse({
+      ...q,
+      requiredOpening: visibleOpening(q),
+      underlinedText:
+        q.underlinedText && q.questionText.includes(q.underlinedText)
+          ? q.underlinedText
+          : null,
+    });
 }
 export const historySchema = z
   .object({

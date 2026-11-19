@@ -181,6 +181,7 @@ export async function generateBatch(
             "paraphrasing",
           ].includes(item.exerciseType);
           const itemContent = contentSchema.extend({
+            underlinedText: contentSchema.shape.underlinedText.unwrap(),
             rootWord:
               item.topicId === "word-formation"
                 ? z
@@ -226,7 +227,7 @@ export async function generateBatch(
                   "This is a full-sentence task. questionText MUST be the complete original source sentence, with NO blanks or underscores. Never include a partial target sentence or rewrite template in questionText.",
                 )
               : basePrompt) +
-            "\nCURRENT TASK ONLY: " +
+            '\nSOURCE ANNOTATION: If the instruction refers to an underlined part, return underlinedText as the exact, unique substring of questionText to underline. Otherwise underlinedText=null. Use plain text, never HTML or Markdown. The source must not already contain the requested target form; require a real change rather than copying an adjective already present. Example: source "The economy is facing difficulties.", root economy, target adjective: rewrite using an economic adjective phrase; do not supply economic in the source. Do not refer to an underlined part without supplying its exact source substring.\nCURRENT TASK ONLY: ' +
             item.exerciseType +
             ". " +
             (item.topicId === "word-formation"
@@ -239,11 +240,18 @@ export async function generateBatch(
                 rootGuidance +
                 " Match the requested CEFR level. Use the context cue and avoid root words already used. For the word-formation topic rootWord MUST be a bare alphabetic English root word, including sentence transformations, error corrections and paraphrases; never null, labelled text or a grammatical annotation."
               : " Match the requested grammar topic, context and CEFR level, not word formation.");
+          const annotatedPrompt =
+            taskPrompt +
+            (["sentence_transformation", "paraphrasing"].includes(
+              item.exerciseType,
+            )
+              ? "\nFor this rewrite, identify the source phrase being replaced: underlinedText MUST contain its exact unique text, and instruction should refer to this underlined phrase. Do not supply the transformed answer as the source phrase."
+              : "");
           const raw = await withTimeout(
             (signal) =>
               callStructured(
                 env,
-                taskPrompt,
+                annotatedPrompt,
                 {
                   sessionNonce: crypto.randomUUID(),
                   settings: { ...settings, questionCount: 1 },

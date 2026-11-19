@@ -4,6 +4,7 @@ import { CorrectionDiff } from "./CorrectionDiff";
 import { db } from "../../lib/db";
 import { summary } from "../../lib/ai/schema";
 import { formatLabels } from "../../lib/ai/dynamic/topics";
+import { questionDisplay } from "../../lib/ai/dynamic/question-display";
 import { SessionBuilder } from "./SessionBuilder";
 import {
   localSessionSchema,
@@ -338,6 +339,7 @@ export function GrammarExercise() {
       >("input:not([disabled]),textarea:not([disabled])")
       ?.focus({ preventScroll: true });
   }, [q?.id]);
+  const display = q ? questionDisplay(q) : undefined;
   const totals = summary(Object.values(session?.results ?? {})),
     answered =
       session?.questions.filter((q) => session.answers[q.id]?.trim()).length ??
@@ -462,7 +464,30 @@ export function GrammarExercise() {
                 max={session.settings.questionCount}
               />
               <h2>{q.instruction}</h2>
-              <p className="ai-question">{q.questionText}</p>
+              <p className="ai-question">
+                {display?.parts.map((part, index) =>
+                  part.underline ? (
+                    <u
+                      key={index}
+                      style={{
+                        textUnderlineOffset: "0.2em",
+                        textDecorationThickness: "2px",
+                      }}
+                    >
+                      {part.text}
+                    </u>
+                  ) : (
+                    <span key={index}>{part.text}</span>
+                  ),
+                )}
+              </p>
+              {display?.missingUnderline && (
+                <p role="note" className="practice-error">
+                  Đề này nhắc đến phần gạch chân nhưng không cung cấp vị trí.
+                  Bạn có thể bỏ qua bằng Next Question; câu chưa trả lời không
+                  được tính điểm.
+                </p>
+              )}
               {q.requiredOpening && (
                 <p>
                   Begin with: <strong>{q.requiredOpening}</strong>
