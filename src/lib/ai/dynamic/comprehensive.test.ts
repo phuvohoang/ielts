@@ -268,3 +268,19 @@ it("keeps meaning-comparison semantics distinct from a cloze task for the AI gra
   expect(asExercise(q).type).toBe("meaning_comparison");
   expect(asExercise(q).rubric).toContain("selected interpretation");
 });
+
+it("does not publish conditional error-correction keys that assume if plus will is inherently wrong", () => {
+  const q = questionFixture(crypto.randomUUID(), {
+    topicId: "conditionals",
+    exerciseType: "error_correction",
+    ordinal: 0,
+  });
+  q.questionText = "If students will study hard every day, they pass the exam.";
+  q.referenceAnswers = [
+    "If students study hard every day, they pass the exam.",
+  ];
+  expect(draftIssues(q).join(" ")).toContain("willingness");
+  q.questionText = "If students study hard, they will to pass the exam.";
+  q.referenceAnswers = ["If students study hard, they will pass the exam."];
+  expect(draftIssues(q)).toEqual([]);
+});

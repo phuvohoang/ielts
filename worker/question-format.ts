@@ -2,6 +2,17 @@ import type { PrivateQuestion } from "../src/lib/ai/dynamic/schema";
 import { normalizeAnswer } from "../src/lib/ai/schema";
 import { isChoiceFormat } from "../src/lib/ai/dynamic/topics";
 export function draftIssues(q: PrivateQuestion): string[] {
+  if (q.exerciseType === "error_correction" && q.topicId === "conditionals") {
+    const modalIf = /\bif\b[^,.;!?]*\b(?:will|would)\b/i;
+    if (
+      modalIf.test(q.questionText) &&
+      q.referenceAnswers.some((answer) => !modalIf.test(answer))
+    )
+      return [
+        "Do not treat a modal in an if-clause as automatically ungrammatical: it may express willingness. Create a different conditional sentence with an unmistakably malformed auxiliary/verb construction, not merely removing will/would.",
+      ];
+  }
+
   if (
     q.topicId === "word-formation" &&
     ["fill_blank", "word_formation"].includes(q.exerciseType) &&
