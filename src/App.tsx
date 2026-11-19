@@ -1,3 +1,4 @@
+import { LegacyGrammarExercise } from "./components/ai/LegacyGrammarExercise";
 import { GrammarExercise } from "./components/ai/GrammarExercise";
 import { LearningPath } from "./components/learning/LearningPath";
 import { LessonFlow } from "./components/learning/LessonFlow";
@@ -189,6 +190,7 @@ function App() {
                 <Route path="/path" element={<LearningPath />} />
                 <Route path="/learn/:lessonId" element={<LessonFlow />} />
                 <Route path="/lessons/01.2" element={<GrammarExercise />} />
+                <Route path="/lessons/01.2/archive" element={<LegacyGrammarExercise />} />
                 <Route path="/lessons" element={<LearningPath />} />
                 <Route path="/lessons/legacy" element={<Lessons />} />
                 <Route path="/families" element={<Families />} />

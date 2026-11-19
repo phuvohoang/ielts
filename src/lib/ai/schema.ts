@@ -14,7 +14,7 @@ export const exerciseSchema = z.object({
   version: z.literal(1),
   lessonId: z.string(),
   type: z.enum(exerciseTypes),
-  difficulty: z.enum(["B1", "B2"]),
+  difficulty: z.enum(["A1", "A2", "B1", "B2", "C1"]),
   part: z.enum(["A", "B", "C"]),
   instruction: z.string().min(1),
   question: z.string().min(1),
