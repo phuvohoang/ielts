@@ -741,3 +741,24 @@ test("results aggregate category scores and retry only incorrect or unanswered q
   ).toBeVisible();
   expect(mock.gradeCalls).toBe(1);
 });
+
+test("CEFR selection restricts advanced categories and subtopics before generation", async ({
+  page,
+}) => {
+  await page.goto("/grammar");
+  await page.getByLabel("Difficulty", { exact: true }).selectOption("A2");
+  await expect(
+    page.getByRole("checkbox", { name: "Inversion & Emphasis", exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole("checkbox", { name: "Conditionals", exact: true })
+    .check();
+  const subtopics = page.getByLabel("Conditionals subtopic", { exact: true });
+  await expect(subtopics.locator("option")).toHaveCount(2);
+  await expect(subtopics.locator("option").last()).toHaveText("Zero and first");
+  await page.getByLabel("Difficulty", { exact: true }).selectOption("C1");
+  await expect(
+    page.getByRole("checkbox", { name: "Inversion & Emphasis", exact: true }),
+  ).toBeEnabled();
+  await expect(subtopics.locator("option")).toHaveCount(5);
+});

@@ -11,6 +11,9 @@ and grading guidance and optional subtopic selections. Existing topic IDs remain
 valid. IELTS context is separate from grammar selection: 14 IELTS contexts rotate
 under All Topics, or the selected context is applied to every planned question.
 A2–C1 guides specify structural complexity, contextual clues and distractor quality.
+All filters out categories above the selected level; subtopic options are also
+level-specific. For example A2 conditionals stay zero/first, while C1 defaults to
+mixed time relations and nuanced aspect rather than merely longer vocabulary.
 A1 remains readable for saved sessions, but is not offered for new practice.
 
 A server-authored plan balances grammar categories and suitable formats over the

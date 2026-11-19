@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { resultSchema, normalizeAnswer } from "../schema";
-import { formats, levels, topics, ieltsTopics, type Topic } from "./topics";
+import {
+  formats,
+  levels,
+  topics,
+  ieltsTopics,
+  subtopicsForLevel,
+  type Topic,
+} from "./topics";
 const text = z.string().trim().min(1).max(1200);
 export const settingsSchema = z
   .object({
@@ -39,6 +46,7 @@ export function validateSettings(
         .filter(
           (t) =>
             t.enabled &&
+            t.supportedLevels.includes(value.difficulty) &&
             (value.exerciseType === "mixed" ||
               t.supportedExerciseTypes.includes(value.exerciseType)),
         )
@@ -50,7 +58,10 @@ export function validateSettings(
     if (
       !selected.includes(id) ||
       (subtopic &&
-        !registry.find((t) => t.topicId === id)?.subtopics?.includes(subtopic))
+        !subtopicsForLevel(
+          registry.find((t) => t.topicId === id)!,
+          value.difficulty,
+        ).includes(subtopic))
     )
       throw new UnsupportedSettingsError("Unsupported grammar subtopic");
   }
@@ -286,6 +297,7 @@ export function makePlan(
         .filter(
           (t) =>
             t.enabled &&
+            t.supportedLevels.includes(settings.difficulty) &&
             (settings.exerciseType === "mixed" ||
               t.supportedExerciseTypes.includes(settings.exerciseType)),
         )
@@ -306,7 +318,9 @@ export function makePlan(
           : ieltsTopics[ordinal % ieltsTopics.length].id,
       grammarSubtopic:
         settings.subtopics?.[topic.topicId] ||
-        topic.subtopics?.[count % topic.subtopics.length],
+        subtopicsForLevel(topic, settings.difficulty)[
+          count % (subtopicsForLevel(topic, settings.difficulty).length || 1)
+        ],
       exerciseType:
         settings.exerciseType === "mixed"
           ? topic.supportedExerciseTypes[

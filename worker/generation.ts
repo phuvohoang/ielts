@@ -11,6 +11,7 @@ import {
   difficultyGuidelines,
   ieltsTopics,
   isChoiceFormat,
+  levelTaskGuidance,
 } from "../src/lib/ai/dynamic/topics";
 import {
   shuffleOptions,
@@ -257,12 +258,22 @@ export async function generateBatch(
           const itemOutput = z
             .object({ questions: z.array(itemContent).length(1) })
             .strict();
+          const targetForm =
+            item.grammarSubtopic === "Noun forms"
+              ? "noun"
+              : item.grammarSubtopic === "Verb forms"
+                ? "verb"
+                : item.grammarSubtopic === "Adjectives and adverbs"
+                  ? item.ordinal % 2
+                    ? "adverb"
+                    : "adjective"
+                  : forms[item.ordinal % forms.length];
           const rootGuidance =
-            forms[item.ordinal % forms.length] === "verb"
+            targetForm === "verb"
               ? "For a Verb answer, supply a related NOUN as root (implementation -> implement, decision -> decide, permission -> permit). Never supply the same base Verb as root."
-              : forms[item.ordinal % forms.length] === "adverb"
+              : targetForm === "adverb"
                 ? "For an Adverb answer, supply its related Adjective root."
-                : forms[item.ordinal % forms.length] === "noun"
+                : targetForm === "noun"
                   ? "For a Noun answer, prefer a related Verb or Adjective as root."
                   : "For an Adjective answer, prefer a related Noun or Verb as root, or require an actual prefix/comparative change.";
           const basePrompt =
@@ -284,7 +295,7 @@ export async function generateBatch(
               : "Follow this grammar task format exactly; use full source and reference sentences for sentence tasks. Root word must be null.") +
             (item.topicId === "word-formation"
               ? "\nAim for a changed " +
-                forms[item.ordinal % forms.length] +
+                targetForm +
                 " form. " +
                 rootGuidance +
                 " Match the requested CEFR level. Use the context cue and avoid root words already used. For the word-formation topic rootWord MUST be a bare alphabetic English root word, including sentence transformations, error corrections and paraphrases; never null, labelled text or a grammatical annotation."
@@ -322,6 +333,11 @@ export async function generateBatch(
                   ieltsTopic: item.ieltsTopic,
                   avoidRootWords: [...usedRoots],
                   difficultyGuide: difficultyGuidelines[settings.difficulty],
+                  levelSpecificTask: levelTaskGuidance(
+                    item.topicId,
+                    settings.difficulty,
+                    item.grammarSubtopic,
+                  ),
                   topics: [item.topicId].map((id) => {
                     const topic = topics.find((t) => t.topicId === id)!;
                     return {

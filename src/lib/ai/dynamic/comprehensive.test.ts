@@ -206,3 +206,54 @@ it("preserves retake state and prior-round results through backup restoration", 
   expect(restored?.retryIds).toEqual(s.retryIds);
   expect(restored?.answers[s.questions[0].id]).toBe("saved draft");
 });
+
+it("keeps elementary subtopics out of advanced grammar and prevents advanced structures in A2 plans", () => {
+  const beginner = makePlan({
+    ...defaults,
+    difficulty: "A2",
+    questionCount: 50,
+  });
+  expect(
+    beginner.some((q) =>
+      ["inversion", "participle-clauses", "nominalisation"].includes(q.topicId),
+    ),
+  ).toBe(false);
+  const conditionals = makePlan({
+    ...defaults,
+    difficulty: "A2",
+    topics: ["conditionals"],
+    questionCount: 20,
+  });
+  expect(new Set(conditionals.map((q) => q.grammarSubtopic))).toEqual(
+    new Set(["Zero and first"]),
+  );
+  expect(() =>
+    validateSettings({
+      ...defaults,
+      difficulty: "A2",
+      topics: ["conditionals"],
+      subtopics: { conditionals: "Mixed conditionals" },
+    }),
+  ).toThrow();
+  const advanced = makePlan({
+    ...defaults,
+    difficulty: "C1",
+    topics: ["verb-tenses", "conditionals"],
+  });
+  expect(advanced[0].grammarSubtopic).toBe("Perfect continuous");
+  expect(advanced[1].grammarSubtopic).toBe("Mixed conditionals");
+});
+
+it("rejects an answer supplied as the word-family root and incomplete underline instructions during authoring", () => {
+  const q = questionFixture(crypto.randomUUID(), {
+    topicId: "word-formation",
+    exerciseType: "word_formation",
+    ordinal: 0,
+  });
+  q.rootWord = q.referenceAnswers[0];
+  expect(draftIssues(q).join(" ")).toContain("root already gives");
+  q.rootWord = "care";
+  q.instruction = "Use the underlined part.";
+  q.underlinedText = null;
+  expect(draftIssues(q).join(" ")).toContain("exact unique source substring");
+});

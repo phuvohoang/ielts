@@ -5,6 +5,7 @@ import {
   formats,
   formatLabels,
   ieltsTopics,
+  subtopicsForLevel,
 } from "../../lib/ai/dynamic/topics";
 import type { Settings } from "../../lib/ai/dynamic/schema";
 interface Props {
@@ -54,6 +55,10 @@ export function SessionBuilder({
       </div>
       <fieldset disabled={creating}>
         <legend>Grammar Types</legend>
+        <p className="configuration-summary">
+          All includes grammar appropriate for {settings.difficulty}. Advanced
+          categories become available at B1/B2.
+        </p>
         <label className="topic-all">
           <input
             type="checkbox"
@@ -73,9 +78,17 @@ export function SessionBuilder({
         </label>
         <div className="grammar-type-grid">
           {topics.map((topic) => (
-            <label key={topic.topicId} title={topic.description}>
+            <label
+              key={topic.topicId}
+              title={
+                topic.supportedLevels.includes(settings.difficulty)
+                  ? topic.description
+                  : `Available from ${topic.supportedLevels[0]}`
+              }
+            >
               <input
                 type="checkbox"
+                disabled={!topic.supportedLevels.includes(settings.difficulty)}
                 checked={!all && settings.topics.includes(topic.topicId)}
                 onChange={(e) =>
                   selectTopics(
@@ -131,7 +144,7 @@ export function SessionBuilder({
                   }
                 >
                   <option value="">All subtopics</option>
-                  {t.subtopics!.map((sub) => (
+                  {subtopicsForLevel(t, settings.difficulty).map((sub) => (
                     <option key={sub}>{sub}</option>
                   ))}
                 </select>
@@ -167,6 +180,24 @@ export function SessionBuilder({
             onChange={(e) =>
               setSettings({
                 ...settings,
+                subtopics: {},
+                topics: all
+                  ? ["all"]
+                  : settings.topics.filter((id) =>
+                        topics
+                          .find((t) => t.topicId === id)
+                          ?.supportedLevels.includes(
+                            e.target.value as Settings["difficulty"],
+                          ),
+                      ).length
+                    ? settings.topics.filter((id) =>
+                        topics
+                          .find((t) => t.topicId === id)
+                          ?.supportedLevels.includes(
+                            e.target.value as Settings["difficulty"],
+                          ),
+                      )
+                    : ["all"],
                 difficulty: e.target.value as Settings["difficulty"],
               })
             }

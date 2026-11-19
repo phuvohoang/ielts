@@ -183,7 +183,17 @@ export const topics: Topic[] = definitions.map(
     subtopics: subtopics.split("|"),
     description: guidance.split(".")[0] + ".",
     enabled: true,
-    supportedLevels: levels,
+    supportedLevels: [
+      "nominalisation",
+      "inversion",
+      "participle-clauses",
+    ].includes(topicId)
+      ? ["B2", "C1"]
+      : ["passive-voice", "relative-clauses", "reported-speech"].includes(
+            topicId,
+          )
+        ? ["B1", "B2", "C1"]
+        : levels,
     supportedExerciseTypes:
       topicId === "word-formation"
         ? formats.slice(0, 6)
@@ -201,3 +211,85 @@ export const difficultyGuidelines = {
   B2: "Varied IELTS General clauses, aspect and time relationships, context-sensitive distractors and productive transformations. Abstract vocabulary should remain natural and relevant.",
   C1: "Nuanced aspect, reporting time, reduced clauses, precise emphasis and information structure; plausible distractors distinguish real changes of meaning. Complexity comes from grammar and context, not length or obscure vocabulary.",
 };
+
+/** The same category can offer different subtopics at different CEFR levels. */
+export function subtopicsForLevel(
+  topic: Topic,
+  level: (typeof levels)[number],
+): string[] {
+  const all = topic.subtopics ?? [];
+  if (level === "A1" || level === "A2") {
+    const limits: Record<string, number> = {
+      "word-formation": 3,
+      "nouns-articles": 3,
+      "nouns-pronouns": 3,
+      "verb-tenses": 3,
+      conditionals: 1,
+      "verb-patterns": 2,
+      "modal-verbs": 3,
+      comparatives: 3,
+      "adjectives-adverbs": 3,
+      prepositions: 2,
+      "linking-words": 2,
+      "sentence-structure": 2,
+      "sentence-transformation": 1,
+    };
+    return all.slice(0, limits[topic.topicId] ?? 2);
+  }
+  if (level === "B1" && topic.topicId === "conditionals")
+    return all.slice(0, 2);
+  if (level === "C1") {
+    if (topic.topicId === "inversion") return all;
+    if (topic.topicId === "participle-clauses")
+      return [all[2], ...all.filter((_, i) => i !== 2)].filter(Boolean);
+    return [...all].reverse();
+  }
+  return all;
+}
+export function levelTaskGuidance(
+  topicId: string,
+  level: string,
+  subtopic?: string,
+): string {
+  if (level === "A1" || level === "A2")
+    return "Test an elementary structure in a short everyday context. Do NOT use third/mixed conditionals, conditional inversion, past perfect continuous, participle reductions or advanced reporting. For Conditionals use zero/first only. Give familiar base verbs and concrete situations; do not expand vocabulary/clauses to disguise an advanced rule.";
+  if (level === "C1") {
+    if (topicId === "conditionals" && subtopic === "Zero and first")
+      return "Keep zero/first conditionals but test a C1 pragmatic distinction such as willingness versus prediction with will, or nuanced unless/provided that scope. Do not switch to mixed or third conditionals when a specific subtopic is selected.";
+    if (
+      topicId === "verb-tenses" &&
+      subtopic === "Present simple and continuous"
+    )
+      return "Keep present simple/continuous. Test a stative verb's dynamic sense or temporary versus habitual interpretation with detailed context; avoid a trivial at the moment + is/are gap.";
+    const guides: Record<string, string> = {
+      "verb-tenses":
+        "Test perfect/continuous aspect across two explicit reference times, temporary versus habitual interpretations, or a stative verb's dynamic sense. A simple present-to-is+ing substitution is too elementary. Do not rely only on at the moment as a clue.",
+      conditionals:
+        "Test mixed time references, modal nuance, conditional inversion or counterfactual scope with enough explicit context. A routine zero/first conditional gap is too elementary.",
+      "nouns-articles":
+        "Test a discourse-dependent article/determiner contrast, generic versus specific reference across clauses, or an institution/reference distinction; a basic a/an spelling question alone is too elementary.",
+      "nouns-pronouns":
+        "Test reference/scope, complex possession, relative pronoun case after a preposition, or nuanced countability with natural context. Avoid simply asking a common regular plural.",
+      "word-formation":
+        "Require a context-sensitive derivative, negative prefix or register/collocation distinction, not merely a common adjective-to-noun suffix. The correct form must be natural and unambiguous, not obscure trivia.",
+      "passive-voice":
+        "Test reporting/impersonal passive, perfect passive infinitives or agency/tense across complex clauses. A simple active/passive recognition item alone is too elementary.",
+      "reported-speech":
+        "Make reporting time and continuing truth explicit; test optional backshift or perfect/modal reporting with changed reference time. Do not mark a still-true report wrong just for no backshift.",
+      "relative-clauses":
+        "Test reduced/non-defining clauses, preposition placement or antecedent ambiguity with scope, preserving meaning and punctuation.",
+      "modal-verbs":
+        "Test past deduction/counterfactual modal meaning and certainty, not simple can for ability.",
+      inversion:
+        "Test negative-adverbial, restrictive only or conditional inversion with correct auxiliary scope and preserved emphasis.",
+      "participle-clauses":
+        "Test perfect/active/passive participle relations while retaining the understood subject and chronology; avoid dangling subjects.",
+    };
+    return (
+      "Keep the selected grammarSubtopic; the following examples guide depth, not permission to change subtopics. C1 must require an advanced structural or semantic distinction, not merely a longer sentence with formal vocabulary. " +
+      (guides[topicId] ??
+        "Use nuanced scope, emphasis, clause relations or register-sensitive grammar, with plausible competing interpretations and explicit context.")
+    );
+  }
+  return "Match the requested CEFR grammar complexity, not just sentence length. Use the selected subtopic with sufficient context and realistic competing forms.";
+}

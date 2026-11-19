@@ -2,6 +2,28 @@ import type { PrivateQuestion } from "../src/lib/ai/dynamic/schema";
 import { normalizeAnswer } from "../src/lib/ai/schema";
 import { isChoiceFormat } from "../src/lib/ai/dynamic/topics";
 export function draftIssues(q: PrivateQuestion): string[] {
+  if (
+    q.topicId === "word-formation" &&
+    ["fill_blank", "word_formation"].includes(q.exerciseType) &&
+    q.rootWord &&
+    [...q.referenceAnswers, ...q.acceptedVariants].some(
+      (a) => normalizeAnswer(a) === normalizeAnswer(q.rootWord!),
+    )
+  )
+    return [
+      "The supplied root already gives the cloze answer. Choose a task requiring a genuinely changed word-family form.",
+    ];
+  if (
+    /underlin(?:ed|e)|gạch chân/i.test(q.instruction) &&
+    (!q.underlinedText ||
+      !q.questionText.includes(q.underlinedText) ||
+      q.questionText.indexOf(q.underlinedText) !==
+        q.questionText.lastIndexOf(q.underlinedText))
+  )
+    return [
+      "Instruction refers to an underline: provide its exact unique source substring in underlinedText, or remove that reference from the instruction.",
+    ];
+
   if (isChoiceFormat(q.exerciseType)) {
     if (
       q.options.length !== 4 ||
