@@ -448,235 +448,277 @@ export function GrammarExercise() {
             </p>
           )}
           {q && (
-            <section
-              ref={practiceRef}
-              className="panel ai-card practice-workspace"
-              data-exercise-id={q.id}
-              aria-label="Bài tập hiện tại"
-            >
-              <p className="eyebrow">
-                {formatLabels[q.exerciseType]} · Question{" "}
-                {session.currentIndex + 1}/{session.settings.questionCount}
-              </p>
-              <progress
-                aria-label="Question progress"
-                value={session.currentIndex + 1}
-                max={session.settings.questionCount}
-              />
-              <h2>{q.instruction}</h2>
-              <p className="ai-question">
-                {display?.parts.map((part, index) =>
-                  part.underline ? (
-                    <u
-                      key={index}
-                      style={{
-                        textUnderlineOffset: "0.2em",
-                        textDecorationThickness: "2px",
-                      }}
-                    >
-                      {part.text}
-                    </u>
-                  ) : (
-                    <span key={index}>{part.text}</span>
-                  ),
-                )}
-              </p>
-              {display?.missingUnderline && (
-                <p role="note" className="practice-error">
-                  Đề này nhắc đến phần gạch chân nhưng không cung cấp vị trí.
-                  Bạn có thể bỏ qua bằng Next Question; câu chưa trả lời không
-                  được tính điểm.
-                </p>
-              )}
-              {q.requiredOpening && (
-                <p>
-                  Begin with: <strong>{q.requiredOpening}</strong>
-                </p>
-              )}
-              {q.rootWord && (
-                <p>
-                  Root word: <strong>{q.rootWord}</strong>
-                </p>
-              )}
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!exam) void grade([q.id]);
-                }}
+            <div className="grammar-practice-layout">
+              <section
+                ref={practiceRef}
+                className="panel ai-card practice-workspace"
+                data-exercise-id={q.id}
+                aria-label="Bài tập hiện tại"
               >
-                {q.exerciseType === "multiple_choice" ? (
-                  <fieldset disabled={grading || moving || locked}>
-                    <legend>Your answer</legend>
-                    <div className="mcq-options">
-                      {q.options.map((option) => (
-                        <label key={option.id}>
-                          <input
-                            type="radio"
-                            name={`choice-${q.id}`}
-                            value={option.id}
-                            checked={answer === option.id}
-                            onChange={() =>
-                              update({
-                                answers: {
-                                  ...session.answers,
-                                  [q.id]: option.id,
-                                },
-                              })
-                            }
-                          />
-                          {option.text}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                ) : (
-                  <>
-                    <label htmlFor="dynamic-answer">Your answer</label>
-                    {["word_formation", "fill_blank"].includes(
-                      q.exerciseType,
-                    ) ? (
-                      <input
-                        id="dynamic-answer"
-                        autoComplete="off"
-                        value={answer}
-                        maxLength={3000}
-                        disabled={grading || moving || locked}
-                        onChange={(e) =>
-                          update({
-                            answers: {
-                              ...session.answers,
-                              [q.id]: e.target.value,
-                            },
-                          })
-                        }
-                      />
+                <p className="eyebrow">
+                  {formatLabels[q.exerciseType]} · Question{" "}
+                  {session.currentIndex + 1}/{session.settings.questionCount}
+                </p>
+                <progress
+                  aria-label="Question progress"
+                  value={session.currentIndex + 1}
+                  max={session.settings.questionCount}
+                />
+                <h2>{q.instruction}</h2>
+                <p className="ai-question">
+                  {display?.parts.map((part, index) =>
+                    part.underline ? (
+                      <u
+                        key={index}
+                        style={{
+                          textUnderlineOffset: "0.2em",
+                          textDecorationThickness: "2px",
+                        }}
+                      >
+                        {part.text}
+                      </u>
                     ) : (
-                      <textarea
-                        id="dynamic-answer"
-                        rows={3}
-                        value={answer}
-                        maxLength={3000}
-                        disabled={grading || moving || locked}
-                        onChange={(e) =>
-                          update({
-                            answers: {
-                              ...session.answers,
-                              [q.id]: e.target.value,
-                            },
-                          })
-                        }
-                      />
-                    )}
-                  </>
-                )}
-                {!exam && !result && (
-                  <Button
-                    type="submit"
-                    disabled={grading || moving || expired || !answer.trim()}
-                  >
-                    {grading
-                      ? "Grading…"
-                      : error
-                        ? "Retry grading"
-                        : "Check Answer"}
-                  </Button>
-                )}
-              </form>
-              {exam && !session.examSubmitted && (
-                <p>
-                  Answer saved. Feedback and answer keys appear only after you
-                  submit the complete session.
+                      <span key={index}>{part.text}</span>
+                    ),
+                  )}
                 </p>
-              )}
-              {grading && (
-                <p role="status">
-                  AI đang kiểm tra bài. Câu trả lời đã được lưu.
-                </p>
-              )}
-              {result && (
-                <div className="ai-feedback" role="status">
-                  <h3>
-                    {labels[result.status]} ·{" "}
-                    {result.score === null ? "Unscored" : `${result.score}/1`}
-                  </h3>
-                  <p>
-                    <strong>Your original answer:</strong>{" "}
-                    {q.exerciseType === "multiple_choice"
-                      ? q.options.find((o) => o.id === result.userAnswer)?.text
-                      : result.userAnswer}
+                {display?.missingUnderline && (
+                  <p role="note" className="practice-error">
+                    Đề này nhắc đến phần gạch chân nhưng không cung cấp vị trí.
+                    Bạn có thể bỏ qua bằng Next Question; câu chưa trả lời không
+                    được tính điểm.
                   </p>
-                  <p>{result.feedbackVi}</p>
-                  {result.status !== "correct" &&
-                    result.correctedAnswer &&
-                    q.exerciseType !== "multiple_choice" && (
-                      <CorrectionDiff
-                        answer={result.userAnswer}
-                        correction={result.correctedAnswer}
-                      />
-                    )}
-                  <h3>Grammar explanation</h3>
-                  <p>{result.grammarRule}</p>
-                  <p>{result.explanationVi}</p>
-                  {reveal && (
+                )}
+                {q.requiredOpening && (
+                  <p>
+                    Begin with: <strong>{q.requiredOpening}</strong>
+                  </p>
+                )}
+                {q.rootWord && (
+                  <p>
+                    Root word: <strong>{q.rootWord}</strong>
+                  </p>
+                )}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!exam) void grade([q.id]);
+                  }}
+                >
+                  {q.exerciseType === "multiple_choice" ? (
+                    <fieldset disabled={grading || moving || locked}>
+                      <legend>Your answer</legend>
+                      <div className="mcq-options">
+                        {q.options.map((option) => (
+                          <label key={option.id}>
+                            <input
+                              type="radio"
+                              name={`choice-${q.id}`}
+                              value={option.id}
+                              checked={answer === option.id}
+                              onChange={() =>
+                                update({
+                                  answers: {
+                                    ...session.answers,
+                                    [q.id]: option.id,
+                                  },
+                                })
+                              }
+                            />
+                            {option.text}
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                  ) : (
                     <>
-                      <h3>Reference answer</h3>
-                      <p>{reveal.referenceAnswers.join(" / ")}</p>
-                      {reveal.acceptedVariants.length > 0 && (
-                        <p>
-                          Also accepted: {reveal.acceptedVariants.join(" / ")}
-                        </p>
+                      <label htmlFor="dynamic-answer">Your answer</label>
+                      {["word_formation", "fill_blank"].includes(
+                        q.exerciseType,
+                      ) ? (
+                        <input
+                          id="dynamic-answer"
+                          autoComplete="off"
+                          value={answer}
+                          maxLength={3000}
+                          disabled={grading || moving || locked}
+                          onChange={(e) =>
+                            update({
+                              answers: {
+                                ...session.answers,
+                                [q.id]: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      ) : (
+                        <textarea
+                          id="dynamic-answer"
+                          rows={3}
+                          value={answer}
+                          maxLength={3000}
+                          disabled={grading || moving || locked}
+                          onChange={(e) =>
+                            update({
+                              answers: {
+                                ...session.answers,
+                                [q.id]: e.target.value,
+                              },
+                            })
+                          }
+                        />
                       )}
-                      {reveal.distractorExplanations.map((d) => (
-                        <p key={d.optionId}>
-                          <strong>
-                            {q.options.find((o) => o.id === d.optionId)?.text}:
-                          </strong>{" "}
-                          {d.explanationVi}
-                        </p>
-                      ))}
                     </>
                   )}
-                  {result.needsReview && (
-                    <p>AI chưa chắc chắn. Bài này chưa được tính điểm.</p>
-                  )}
-                  {!exam && (
+                  {!exam && !result && (
                     <Button
-                      variant="outline"
-                      disabled={grading}
-                      onClick={() => {
-                        const results = { ...session.results };
-                        delete results[q.id];
-                        const reveals = { ...session.reveals };
-                        delete reveals[q.id];
-                        update({ results, reveals, status: "practicing" });
-                        setError("");
-                      }}
+                      type="submit"
+                      disabled={grading || moving || expired || !answer.trim()}
                     >
-                      Retry exercise
+                      {grading
+                        ? "Grading…"
+                        : error
+                          ? "Retry grading"
+                          : "Check Answer"}
+                    </Button>
+                  )}
+                </form>
+                {exam && !session.examSubmitted && (
+                  <p>
+                    Answer saved. Feedback and answer keys appear only after you
+                    submit the complete session.
+                  </p>
+                )}
+                {grading && (
+                  <p role="status">
+                    AI đang kiểm tra bài. Câu trả lời đã được lưu.
+                  </p>
+                )}
+                {result && (
+                  <div className="ai-feedback" role="status">
+                    <h3>
+                      {labels[result.status]} ·{" "}
+                      {result.score === null ? "Unscored" : `${result.score}/1`}
+                    </h3>
+                    <p>
+                      <strong>Your original answer:</strong>{" "}
+                      {q.exerciseType === "multiple_choice"
+                        ? q.options.find((o) => o.id === result.userAnswer)
+                            ?.text
+                        : result.userAnswer}
+                    </p>
+                    <p>{result.feedbackVi}</p>
+                    {result.status !== "correct" &&
+                      result.correctedAnswer &&
+                      q.exerciseType !== "multiple_choice" && (
+                        <CorrectionDiff
+                          answer={result.userAnswer}
+                          correction={result.correctedAnswer}
+                        />
+                      )}
+                    <h3>Grammar explanation</h3>
+                    <p>{result.grammarRule}</p>
+                    <p>{result.explanationVi}</p>
+                    {reveal && (
+                      <>
+                        <h3>Reference answer</h3>
+                        <p>{reveal.referenceAnswers.join(" / ")}</p>
+                        {reveal.acceptedVariants.length > 0 && (
+                          <p>
+                            Also accepted: {reveal.acceptedVariants.join(" / ")}
+                          </p>
+                        )}
+                        {reveal.distractorExplanations.map((d) => (
+                          <p key={d.optionId}>
+                            <strong>
+                              {q.options.find((o) => o.id === d.optionId)?.text}
+                              :
+                            </strong>{" "}
+                            {d.explanationVi}
+                          </p>
+                        ))}
+                      </>
+                    )}
+                    {result.needsReview && (
+                      <p>AI chưa chắc chắn. Bài này chưa được tính điểm.</p>
+                    )}
+                    {!exam && (
+                      <Button
+                        variant="outline"
+                        disabled={grading}
+                        onClick={() => {
+                          const results = { ...session.results };
+                          delete results[q.id];
+                          const reveals = { ...session.reveals };
+                          delete reveals[q.id];
+                          update({ results, reveals, status: "practicing" });
+                          setError("");
+                        }}
+                      >
+                        Retry exercise
+                      </Button>
+                    )}
+                  </div>
+                )}
+                <div className="practice-navigation">
+                  <Button
+                    variant="outline"
+                    disabled={grading || moving || session.currentIndex === 0}
+                    onClick={() => void move(session.currentIndex - 1)}
+                  >
+                    Previous Question
+                  </Button>
+                  {session.currentIndex + 1 < session.questions.length && (
+                    <Button
+                      disabled={grading || moving}
+                      onClick={() => void move(session.currentIndex + 1)}
+                    >
+                      Next Question
                     </Button>
                   )}
                 </div>
-              )}
-              <div className="practice-navigation">
-                <Button
-                  variant="outline"
-                  disabled={grading || moving || session.currentIndex === 0}
-                  onClick={() => void move(session.currentIndex - 1)}
-                >
-                  Previous Question
-                </Button>
-                <Button
-                  disabled={
-                    grading ||
-                    moving ||
-                    session.currentIndex + 1 >= session.questions.length
-                  }
-                  onClick={() => void move(session.currentIndex + 1)}
-                >
-                  Next Question
-                </Button>
-              </div>
-            </section>
+              </section>
+              <aside
+                className="panel question-navigator"
+                aria-label="Điều hướng câu hỏi"
+              >
+                <h2>Câu hỏi</h2>
+                <p>
+                  {answered}/{session.questions.length} đã trả lời
+                </p>
+                <div className="question-legend">
+                  <span>
+                    <span aria-hidden="true">✓</span> Đã trả lời
+                  </span>
+                  <span>
+                    <span aria-hidden="true">○</span> Chưa trả lời
+                  </span>
+                </div>
+                <p className="question-current-hint">Viền đậm: câu đang mở</p>
+                <nav className="question-grid" aria-label="Chọn câu hỏi">
+                  {session.questions.map((question, index) => {
+                    const done = !!session.answers[question.id]?.trim();
+                    const current = index === session.currentIndex;
+                    return (
+                      <button
+                        key={question.id}
+                        type="button"
+                        className={`question-jump ${done ? "is-answered" : "is-unanswered"}`}
+                        aria-label={`Câu ${index + 1} — ${done ? "Đã trả lời" : "Chưa trả lời"}`}
+                        aria-current={current ? "step" : undefined}
+                        disabled={grading || moving}
+                        onClick={() => void move(index)}
+                      >
+                        <span>{index + 1}</span>
+                        <span aria-hidden="true" className="question-status">
+                          {done ? "✓" : "○"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </nav>
+              </aside>
+            </div>
           )}
           {exam && (
             <div className="practice-exam-submit">
