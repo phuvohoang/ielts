@@ -187,5 +187,16 @@ export function shuffleOptions(
     const j = Math.floor(random() * (i + 1));
     [options[i], options[j]] = [options[j], options[i]];
   }
-  return { ...q, options };
+  // Public IDs describe shuffled positions, not the model's original answer-key IDs.
+  const ids = ["a", "b", "c", "d"] as const;
+  const remap = new Map(options.map((option, i) => [option.id, ids[i]]));
+  return {
+    ...q,
+    options: options.map((option, i) => ({ ...option, id: ids[i] })),
+    correctOptionId: remap.get(q.correctOptionId!)!,
+    distractorExplanations: q.distractorExplanations.map((d) => ({
+      ...d,
+      optionId: remap.get(d.optionId)!,
+    })),
+  };
 }
