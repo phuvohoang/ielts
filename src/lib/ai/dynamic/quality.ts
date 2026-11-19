@@ -79,6 +79,16 @@ export function qualityIssues(
   if (
     ["sentence_transformation", "paraphrasing", "error_correction"].includes(
       q.exerciseType,
+    )
+  ) {
+    if (answers.some((a) => !a.trim().includes(" ")))
+      issues.push("Sentence task requires a complete reference sentence");
+    if (q.questionText.includes("___"))
+      issues.push("Sentence task requires a complete source sentence");
+  }
+  if (
+    ["sentence_transformation", "paraphrasing", "error_correction"].includes(
+      q.exerciseType,
     ) &&
     q.answerForm !== "sentence"
   )

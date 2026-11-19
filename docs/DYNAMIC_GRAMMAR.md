@@ -99,7 +99,7 @@ Independent model review is a quality gate, not proof of correctness. Word-famil
 
 ## Verification performed before approval
 
-- **114 unit tests passed**; one live integration test skipped intentionally. Tests include 10/20/50 generation plans, future multi-topic balancing, all five CEFR prompts, stable/replayed/concurrent batches, independent audit rejection, malformed JSON, timeouts, partial failure/retry, private keys, token/origin/rate/expiry checks, deterministic MCQs and the statistics regression, semantic grading fallback, exam gating/replay, maximum-length exam storage chunks, backups and preserved history.
+- **115 unit tests passed**; one live integration test skipped intentionally. Tests include 10/20/50 generation plans, future multi-topic balancing, all five CEFR prompts, stable/replayed/concurrent batches, independent audit rejection, malformed JSON, timeouts, partial failure/retry, private keys, token/origin/rate/expiry checks, deterministic MCQs and the statistics regression, semantic grading fallback, exam gating/replay, maximum-length exam storage chunks, backups and preserved history.
 - **40 Playwright desktop/mobile tests passed**, including the original 25-question archive, complete new instant/exam flows, progressive 50-question loading, partial batch retry, saved drafts/index/results after refresh, new sessions retaining attempts, grading outages and the existing learning/recall/import flows.
 - **6 GitHub Pages checks passed** using the hash-router build under `/ielts/`.
 - TypeScript/Vite builds and the canonical/default-config Worker dry run passed.
@@ -116,3 +116,5 @@ Authoring model availability and structured-output parameters were checked again
 Authoring uses the provider JSON-object mode with an explicit output schema in the request; every returned item still passes the same strict Zod schema and independent audit before storage or publication. Safe provider classification distinguishes quota, rate, model, format and access errors without exposing provider messages. Quota exhaustion produces a clear recoverable message and preserves saved progress.
 
 The smaller 8B profile is not used in the final deployment: its official model card lists planned retirement on 20 November 2026. The final authoring profile uses [Llama 3.3 70B FP8 Fast](https://developers.cloudflare.com/workers-ai/models/llama-3.3-70b-instruct-fp8-fast/) with compact single-item JSON-object requests; independent validation and grading remain GLM.
+
+Each item now has a type-specific system contract and runtime answer-form constraint. Context cues rotate through ten everyday IELTS domains, and already-used roots are passed as avoidance data as authoring proceeds. Unsupported exercise formats are omitted from the per-item context. Sentence tasks must have complete source/reference sentences; semantic and grammatical auditing remains mandatory.

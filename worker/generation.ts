@@ -14,9 +14,6 @@ import {
 } from "../src/lib/ai/dynamic/quality";
 import { decodeModelBody, withTimeout, boundedMap, type Env } from "./grading";
 export const GENERATION_VERSION = 1;
-const batchOutput = z
-  .object({ questions: z.array(contentSchema).length(1) })
-  .strict();
 export const auditChecks = [
   "grammatical",
   "unambiguous",
@@ -28,6 +25,33 @@ export const auditChecks = [
   "exactlyOneMcqAnswer",
   "distinctFromHistory",
 ] as const;
+const contexts = [
+  "public transport",
+  "workplace communication",
+  "community activities",
+  "health services",
+  "shopping and customer service",
+  "education and training",
+  "the environment",
+  "home and housing",
+  "travel arrangements",
+  "local services",
+];
+const forms = ["noun", "adjective", "adverb", "verb"];
+const formatContracts = {
+  fill_blank:
+    "Write one natural English sentence containing exactly one ___ and require ONE word. Give a root DIFFERENT from the correct answer. Do not copy the root as the answer.",
+  word_formation:
+    "Write one natural English sentence containing exactly one ___ and require ONE changed word-family form. Give a root DIFFERENT from the answer, e.g. implementation -> implement, never implement -> implement.",
+  multiple_choice:
+    "Write a sentence with exactly one ___. Provide four distinct single-word choices, one correct word in referenceAnswers and three explained distractors. Do not ask a general grammar quiz question.",
+  error_correction:
+    "Write a FULL English source sentence containing ONE wrong word form. referenceAnswers MUST contain the entire corrected sentence, not the corrected word alone. answerForm and constraint MUST both be sentence. Keep the original meaning and all other words.",
+  sentence_transformation:
+    "Write a correct FULL source sentence. Explicitly require a word-family transformation while retaining meaning, tense, context and degree. referenceAnswers MUST be FULL transformed sentences, never single words. answerForm=sentence and constraint=sentence.",
+  paraphrasing:
+    "Write a correct FULL source sentence. Ask for a natural equivalent using a changed word-family form. referenceAnswers MUST contain FULL equivalent sentences, never single words. answerForm=sentence and constraint=sentence.",
+} as const;
 class QualityFailure extends Error {}
 const validationOutput = z
   .object({
@@ -164,25 +188,62 @@ export async function generateBatch(
   }
   for (let round = 0; round < 2 && Date.now() < deadline; round++) {
     const todo = plan.filter((item) => !accepted.has(item.ordinal));
+    const usedRoots = new Set(
+      [...accepted.values()].flatMap((q) =>
+        q.rootWord ? [q.rootWord.toLowerCase()] : [],
+      ),
+    );
     const rows = await boundedMap(
       todo,
       async (item) => {
         try {
           if (Date.now() >= deadline) throw Error("timeout");
+          const sentenceTask = [
+            "error_correction",
+            "sentence_transformation",
+            "paraphrasing",
+          ].includes(item.exerciseType);
+          const itemContent = contentSchema.extend({
+            answerForm: sentenceTask
+              ? z.literal("sentence")
+              : z.enum(["noun", "verb", "adjective", "adverb"]),
+            constraint: sentenceTask
+              ? z.literal("sentence")
+              : contentSchema.shape.constraint,
+          });
+          const itemOutput = z
+            .object({ questions: z.array(itemContent).length(1) })
+            .strict();
+          const taskPrompt =
+            generationPrompt +
+            "\nCURRENT TASK ONLY: " +
+            item.exerciseType +
+            ". " +
+            formatContracts[item.exerciseType] +
+            "\nAim for a changed " +
+            forms[item.ordinal % forms.length] +
+            " form at the requested CEFR level. Use the context cue and avoid root words already used.";
           const raw = await withTimeout(
             (signal) =>
               callStructured(
                 env,
-                generationPrompt,
+                taskPrompt,
                 {
                   sessionNonce: crypto.randomUUID(),
                   settings: { ...settings, questionCount: 1 },
                   requestedSessionQuestionCount: settings.questionCount,
                   plan: [item],
+                  contextCue: contexts[item.ordinal % contexts.length],
+                  avoidRootWords: [...usedRoots],
                   difficultyGuide: difficultyGuidelines[settings.difficulty],
-                  topics: settings.topics.map((id) =>
-                    topics.find((t) => t.topicId === id),
-                  ),
+                  topics: settings.topics.map((id) => {
+                    const topic = topics.find((t) => t.topicId === id)!;
+                    return {
+                      topicId: id,
+                      generationGuidelines: topic.generationGuidelines,
+                      gradingRubric: topic.gradingRubric,
+                    };
+                  }),
                   recentQuestions: [
                     ...recentQuestions,
                     ...[...accepted.values()].map((q) => q.questionText),
@@ -190,14 +251,15 @@ export async function generateBatch(
                   previouslyFailedSkills: failedSkills,
                   previousRejection: hints.get(item.ordinal) || "",
                 },
-                batchOutput,
+                itemOutput,
                 "grammar_generation",
                 signal,
                 1400,
               ),
             Math.min(15000, Math.max(1, deadline - Date.now())),
           );
-          const content = batchOutput.parse(raw).questions[0];
+          const content = itemOutput.parse(raw).questions[0];
+          if (content.rootWord) usedRoots.add(content.rootWord.toLowerCase());
           return {
             question: privateQuestionSchema.parse({
               ...normalizeQuestionAnswers(content),

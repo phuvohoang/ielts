@@ -767,3 +767,54 @@ it("classifies provider failures without exposing provider text or private quest
     providerProblem(Error("private answer and unknown provider failure")),
   ).toBe("provider_error");
 });
+
+it("enforces sentence formats and varies authoring contexts without exposing unsupported formats", async () => {
+  const { env, AI } = environment();
+  await generateBatch(
+    env,
+    settings,
+    crypto.randomUUID(),
+    makePlan(settings),
+    [],
+    [],
+  );
+  const calls = AI.run.mock.calls
+    .map(
+      (c) =>
+        c[1] as {
+          messages: { content: string }[];
+          response_format: {
+            json_schema: {
+              properties: {
+                questions: {
+                  items: { properties: { answerForm: { const?: string } } };
+                };
+              };
+            };
+          };
+        },
+    )
+    .filter((c) => c.messages[0].content.startsWith("Create ORIGINAL"));
+  const data = calls.map((c) => JSON.parse(c.messages[1].content));
+  expect(new Set(data.map((d) => d.contextCue)).size).toBe(10);
+  const correction = calls.find(
+    (c) =>
+      JSON.parse(c.messages[1].content).plan[0].exerciseType ===
+      "error_correction",
+  )!;
+  expect(correction.messages[0].content).toContain("entire corrected sentence");
+  expect(
+    correction.response_format.json_schema.properties.questions.items.properties
+      .answerForm.const,
+  ).toBe("sentence");
+  expect(data[2].avoidRootWords.length).toBeGreaterThan(0);
+  expect(data[0].topics[0]).not.toHaveProperty("supportedExerciseTypes");
+  const q = questionFixture(crypto.randomUUID(), {
+    topicId: "word-formation",
+    exerciseType: "error_correction",
+    ordinal: 0,
+  });
+  expect(qualityIssues({ ...q, referenceAnswers: ["carefully"] })).toContain(
+    "Sentence task requires a complete reference sentence",
+  );
+});
