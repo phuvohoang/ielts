@@ -6,7 +6,7 @@ import {
   gradeGenerated,
   type SessionEnv,
 } from "../../../worker/sessions";
-import { contentIssues } from "../../../worker/practice";
+import { contentIssues, normalizeContent } from "../../../worker/practice";
 import { publicExerciseSchema, practiceRecordSchema } from "./schema";
 import { contentFixture, writingFixture, wavFixture } from "./test-support";
 import { db, exportBackup, importBackup } from "../db";
@@ -172,19 +172,17 @@ describe("AI skill practice server and data", () => {
     expect(JSON.stringify(s)).not.toContain("opens at nine in the morning");
     const bytes = wavFixture();
     const encoded = btoa(String.fromCharCode(...bytes));
-    const fetcher = vi
-      .fn()
-      .mockResolvedValue(
-        Response.json({
-          status: "completed",
-          steps: [
-            {
-              type: "model_output",
-              content: [{ type: "audio", data: encoded }],
-            },
-          ],
-        }),
-      );
+    const fetcher = vi.fn().mockResolvedValue(
+      Response.json({
+        status: "completed",
+        steps: [
+          {
+            type: "model_output",
+            content: [{ type: "audio", data: encoded }],
+          },
+        ],
+      }),
+    );
     vi.stubGlobal("fetch", fetcher);
     const r = await post("audio", { id: s.id, token: s.token });
     expect(r.headers.get("Content-Type")).toBe("audio/wav");
@@ -278,4 +276,57 @@ describe("AI skill practice server and data", () => {
     );
     expect(AI.run).toHaveBeenCalledTimes(1);
   });
+});
+
+it("accepts NOT GIVEN with no fabricated quote and normalizes only equivalent answer encodings", () => {
+  const content = contentFixture();
+  content.questions[0] = {
+    ...content.questions[0],
+    type: "true_false_not_given",
+    answers: ["not given"],
+    evidence: "",
+  };
+  content.questions[1] = {
+    ...content.questions[1],
+    type: "multiple_choice",
+    answers: ["Nine"],
+    options: [
+      { id: "a", text: "Nine" },
+      { id: "b", text: "Ten" },
+      { id: "c", text: "Eleven" },
+      { id: "d", text: "Twelve" },
+    ],
+  };
+  content.questions[2].evidence = "opens   at\nnine";
+  const normalized = normalizeContent(content, settings() as never);
+  expect(normalized.questions[0].answers).toEqual(["NOT GIVEN"]);
+  expect(normalized.questions[0].evidence).toBe("");
+  expect(normalized.questions[1].answers).toEqual(["a"]);
+  expect(normalized.questions[2].evidence).toBe("opens at nine");
+  expect(contentIssues(normalized, settings() as never)).toEqual([]);
+  normalized.questions[0].evidence = "opens at nine";
+  expect(contentIssues(normalized, settings() as never)).toContain(
+    "NOT GIVEN must have empty evidence; independently verify absence from the source",
+  );
+});
+it("never publishes private audit reasons in quality failure diagnostics", async () => {
+  const { AI, post } = setup(),
+    standard = AI.run.getMockImplementation()!;
+  AI.run.mockImplementation(async (m, i) => {
+    const v = i as { response_format: { json_schema: { name: string } } };
+    if (v.response_format.json_schema.name === "skill_audit")
+      return {
+        response: {
+          valid: false,
+          reasons: ["Ambiguous question; the private answer is nine."],
+        },
+      } as never;
+    return standard(m, i);
+  });
+  const response = await post("generate", settings());
+  expect(response.status).toBe(503);
+  const body = await response.json();
+  expect(body.code).toBe("QUALITY_REJECTED");
+  expect(body.reasons).toEqual(["ambiguity"]);
+  expect(JSON.stringify(body)).not.toContain("nine");
 });
