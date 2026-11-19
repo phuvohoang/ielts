@@ -62,7 +62,6 @@ it("accepts a stable partial snapshot and requests only its current unfinished b
   const init = vi.mocked(fetch).mock.calls[0][1]!;
   expect(JSON.parse(init.body as string)).toMatchObject({
     batchIndex: 0,
-    allowPartial: true,
   });
   respond(full, 1);
   expect((await loadBatch(session)).questions).toHaveLength(10);

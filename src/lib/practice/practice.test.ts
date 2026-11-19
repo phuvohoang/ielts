@@ -113,7 +113,7 @@ beforeEach(async () => {
   await db.practiceAudio.clear();
 });
 describe("AI skill practice server and data", () => {
-  it("audits an original reading exercise, hides private keys, grades through AI and caches immutable submissions", async () => {
+  it("generates an original reading exercise, hides private keys, grades through AI and caches immutable submissions", async () => {
     const { AI, post } = setup();
     const created = await post("generate", settings());
     expect(created.status).toBe(200);
@@ -131,11 +131,11 @@ describe("AI skill practice server and data", () => {
     const result = await response.json();
     expect(result.score).toBe(5);
     expect(result.reveals[0].explanationVi).toContain("chín");
-    expect(AI.run).toHaveBeenCalledTimes(3);
+    expect(AI.run).toHaveBeenCalledTimes(2);
     expect(
       (await post("grade", { id: s.id, token: s.token, answers })).status,
     ).toBe(200);
-    expect(AI.run).toHaveBeenCalledTimes(3);
+    expect(AI.run).toHaveBeenCalledTimes(2);
     expect(
       (
         await post("grade", {
@@ -153,19 +153,11 @@ describe("AI skill practice server and data", () => {
       (await post("generate", settings(), "https://evil.test")).status,
     ).toBe(403);
   });
-  it("does not activate a question rejected by independent audit", async () => {
-    const { AI, post } = setup(),
-      standard = AI.run.getMockImplementation()!;
-    AI.run.mockImplementation(async (m, i) => {
-      const v = i as { response_format: { json_schema: { name: string } } };
-      return v.response_format.json_schema.name === "skill_audit"
-        ? ({
-            response: { valid: false, reasons: ["Question is ambiguous"] },
-          } as never)
-        : standard(m, i);
-    });
-    expect((await post("generate", settings())).status).toBe(503);
-    expect(AI.run).toHaveBeenCalledTimes(4);
+  it("publishes structured content without a second AI approval call", async () => {
+    const { AI, post } = setup();
+    expect((await post("generate", settings())).status).toBe(200);
+    expect(AI.run).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(AI.run.mock.calls)).not.toContain("skill_audit");
   });
   it("serves real WAV audio without exposing the script and reuses cached audio across requests", async () => {
     const { post } = setup();
@@ -313,28 +305,6 @@ it("accepts NOT GIVEN with no fabricated quote and normalizes only equivalent an
     "NOT GIVEN must have empty evidence; independently verify absence from the source",
   );
 });
-it("never publishes private audit reasons in quality failure diagnostics", async () => {
-  const { AI, post } = setup(),
-    standard = AI.run.getMockImplementation()!;
-  AI.run.mockImplementation(async (m, i) => {
-    const v = i as { response_format: { json_schema: { name: string } } };
-    if (v.response_format.json_schema.name === "skill_audit")
-      return {
-        response: {
-          valid: false,
-          reasons: ["Ambiguous question; the private answer is nine."],
-        },
-      } as never;
-    return standard(m, i);
-  });
-  const response = await post("generate", settings());
-  expect(response.status).toBe(503);
-  const body = await response.json();
-  expect(body.code).toBe("QUALITY_REJECTED");
-  expect(body.reasons).toEqual(["ambiguity"]);
-  expect(JSON.stringify(body)).not.toContain("nine");
-});
-
 it("removes over-limit variants only when a valid short key remains", () => {
   const c = contentFixture();
   c.questions[0].wordLimit = 1;
@@ -346,44 +316,16 @@ it("removes over-limit variants only when a valid short key remains", () => {
     ["nine in the morning"],
   );
 });
-it("repairs an unsatisfiable short answer without replacing the source or accepted peers", async () => {
-  const { AI, post } = setup(),
-    standard = AI.run.getMockImplementation()!;
-  let attempts = 0;
-  AI.run.mockImplementation(async (model, input) => {
-    const v = input as {
-      response_format: { json_schema: { name: string } };
-      messages: { content: string }[];
-    };
-    if (v.response_format.json_schema.name === "skill_authoring") {
-      attempts++;
-      const c = contentFixture();
-      if (attempts === 1) {
-        c.questions[0].wordLimit = 1;
-        c.questions[0].answers = ["nine in the morning"];
-        return { response: c } as never;
-      }
-      const data = JSON.parse(v.messages[1].content);
-      expect(data.repairQuestionNumbers).toEqual([1]);
-      expect(data.repairContent.passage).toBe(c.passage);
-      // A model may rewrite other fields; the server retains the original source/peers.
-      c.passage = "untrusted replacement source";
-      c.questions[1].prompt = "changed peer";
-      return { response: c } as never;
-    }
-    if (v.response_format.json_schema.name === "skill_audit") {
-      const data = JSON.parse(v.messages[1].content);
-      expect(data.content.passage).toBe(contentFixture().passage);
-      expect(data.content.questions[1].prompt).toBe(
-        contentFixture().questions[1].prompt,
-      );
-    }
-    return standard(model, input);
-  });
+it("does not run semantic repair or auditing before showing structurally complete exercises", async () => {
+  const { AI, post } = setup();
+  const c = contentFixture();
+  c.questions[0].wordLimit = 1;
+  c.questions[0].answers = ["nine in the morning"];
+  AI.run.mockResolvedValue({ response: c } as never);
   const response = await post("generate", settings());
   expect(response.status).toBe(200);
-  expect(attempts).toBe(2);
-  expect(AI.run).toHaveBeenCalledTimes(3);
+  expect(AI.run).toHaveBeenCalledTimes(1);
+  expect((await response.json()).questions[0]).not.toHaveProperty("answers");
 });
 
 it("constrains native authoring to one MCQ/category key and short answers of at most three words", () => {

@@ -282,7 +282,7 @@ test("collects a 10-question MCQ exam without early grading and shows explanatio
     page.getByText("Score 10/10 graded.", { exact: true }),
   ).toBeVisible();
 });
-test("loads 50 questions progressively, retries a failed batch, and keeps earlier questions stable", async ({
+test("loads all 50 questions before opening practice, retries a failed batch, and keeps earlier questions stable", async ({
   page,
 }) => {
   const mock = await mockAPI(page, { failBatch: 1, delayedBatch: 2 });
@@ -334,27 +334,30 @@ test("a grading outage keeps the answer and score intact and supports retry", as
   expect(mock.gradeCalls).toBe(2);
 });
 
-test("20-question practice opens the exercise first and keeps nine accepted questions usable while repairing one", async ({
+test("20-question practice waits for the complete set, opens the answer field and grades only after submission", async ({
   page,
 }) => {
-  const mock = await mockAPI(page, { partialBatch: 0 });
+  const mock = await mockAPI(page, { delayedBatch: 1 });
   await start(page);
   await page.getByLabel("Question count", { exact: true }).selectOption("20");
   await page
     .getByRole("button", { name: "Generate Practice", exact: true })
     .click();
+  await expect(
+    page.getByText("Đã tạo 10/20 câu.", { exact: false }),
+  ).toBeVisible();
+  await expect(card(page)).toHaveCount(0);
+  expect(mock.gradeCalls).toBe(0);
   await expect(card(page)).toBeVisible();
   await expect(
-    page.getByRole("heading", {
-      name: "Build your practice session",
-      exact: true,
-    }),
-  ).toHaveCount(0);
+    page.getByText("0/20 answered · 20 ready", { exact: true }),
+  ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Kết quả bài luyện", exact: true }),
+    page.getByText("chưa đạt kiểm định", { exact: false }),
   ).toHaveCount(0);
-  await expect(page.locator(".practice-history")).not.toHaveAttribute("open");
   await expect(page.getByLabel("Your answer", { exact: true })).toBeFocused();
+  expect(mock.generationCalls).toBe(2);
+  expect(mock.gradeCalls).toBe(0);
   const initialId = await card(page).getAttribute("data-exercise-id");
   const first = [...mock.sessions.values()][0].questions[0];
   await page
@@ -364,37 +367,15 @@ test("20-question practice opens the exercise first and keeps nine accepted ques
   await expect(
     page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByText("1/20 answered · 9 ready", { exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Retry Generation", exact: true }),
-  ).toBeVisible();
-  expect(mock.generationCalls).toBe(3); // bounded background repair, no infinite paid requests
+  expect(mock.gradeCalls).toBe(1);
   await page.reload();
   await expect(card(page)).toHaveAttribute("data-exercise-id", initialId!);
   await expect(
     page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Retry Generation", exact: true }),
-  ).toBeVisible();
-  mock.finishRepair();
-  await page
-    .getByRole("button", { name: "Retry Generation", exact: true })
-    .click();
-  await expect(
-    page.getByText("1/20 answered · 20 ready", { exact: true }),
-  ).toBeVisible();
-  await expect(card(page)).toHaveAttribute("data-exercise-id", initialId!);
-  await expect(
-    page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Kết quả bài luyện", exact: true }),
-  ).toHaveCount(0);
+  expect(mock.generationCalls).toBe(2);
   await page.screenshot({
-    path: `test-results/practice-first-${test.info().project.name}.png`,
+    path: `test-results/full-set-${test.info().project.name}.png`,
     fullPage: true,
   });
 });

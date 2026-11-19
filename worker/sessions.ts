@@ -305,8 +305,8 @@ export class GrammarSessions {
           return send(
             {
               error: failure.reason?.includes("quota_exhausted")
-                ? "Dịch vụ AI đã chạm hạn mức. Tiến độ và các câu đã kiểm định vẫn được giữ. Hãy thử lại sau."
-                : "Chưa tạo được câu tiếp theo. Các câu đã kiểm định và bài làm vẫn được giữ; bạn có thể tiếp tục làm bài và tạo bù sau.",
+                ? "Dịch vụ AI đã chạm hạn mức. Tiến độ vẫn được giữ. Hãy thử lại sau."
+                : "AI chưa trả đủ bộ câu hỏi. Hãy thử lại; tiến độ đã lưu vẫn được giữ.",
               code: failure.code ?? "GENERATION_UNAVAILABLE",
               reason: failure.reason ?? "unknown",
             },
