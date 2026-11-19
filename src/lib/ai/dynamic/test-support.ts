@@ -108,18 +108,9 @@ export function questionFixture(
 export function auditFixture(questions: PrivateQuestion[]) {
   return {
     verdicts: questions.map((q) => ({
-      id: q.id,
-      grammatical: true,
-      unambiguous: true,
-      wordFamilyValid: true,
-      answersFitSlot: true,
-      explanationConsistent: true,
-      levelAppropriate: true,
-      instructionsSatisfiable: true,
-      exactlyOneMcqAnswer: true,
-      distinctFromHistory: true,
+      ordinal: q.ordinal,
+      checks: Array.from({ length: 9 }, () => true),
       confidence: 0.98,
-      reason: "Test fixture accepted",
     })),
   };
 }
