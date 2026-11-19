@@ -115,6 +115,7 @@ export const continuationSchema = z
     sessionId: z.string().uuid(),
     accessToken: z.string().regex(/^[a-f0-9]{64}$/),
     batchIndex: z.number().int().min(0).max(4),
+    allowPartial: z.literal(true).optional(),
   })
   .strict();
 export const dynamicGradeSchema = z

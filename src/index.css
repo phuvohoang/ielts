@@ -1282,3 +1282,24 @@ textarea:focus-visible {
     flex-wrap: wrap;
   }
 }
+
+/* Keep the exercise, rather than session management, as the primary surface. */
+.practice-workspace { scroll-margin-top: 24px; }
+.practice-workspace progress { appearance: none; display: block; height: 5px; border: 0; border-radius: 8px; overflow: hidden; background: #e8eee6; margin: 8px 0 20px; }
+.practice-workspace progress::-webkit-progress-bar { background: #e8eee6; }
+.practice-workspace progress::-webkit-progress-value { background: #315d49; border-radius: 8px; }
+.practice-workspace progress::-moz-progress-bar { background: #315d49; }
+.practice-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 24px 0 16px; }
+.practice-toolbar strong, .practice-toolbar span { display: block; }
+.practice-toolbar span { color: var(--muted, #53645b); font-size: .9rem; margin-top: 4px; }
+.practice-more { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 0; font-size: .9rem; color: #435d51; }
+.practice-record { padding: 16px 0; }
+.practice-history { margin-top: 24px; }
+.practice-record summary, .practice-history summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+.practice-history[open] summary { margin-bottom: 12px; }
+.practice-loading { min-height: 220px; display: grid; align-content: center; gap: 12px; }
+.practice-loading-line { height: 6px; max-width: 320px; border-radius: 8px; background: linear-gradient(90deg, #315d49 35%, #e5ede3 35%); }
+.practice-exam-submit { margin: 16px 0; }
+@media (max-width: 600px) {
+  .practice-toolbar, .practice-more { align-items: flex-start; flex-wrap: wrap; }
+}

@@ -234,7 +234,7 @@ export class GrammarSessions {
       let batch = await this.storage.get<PrivateQuestion[]>(
         `batch:${input.batchIndex}`,
       );
-      if (!batch) {
+      if (!batch || batch.length < 10) {
         try {
           const previous: PrivateQuestion[] = [];
           for (let i = 0; i < meta.nextBatch; i++)
@@ -256,16 +256,33 @@ export class GrammarSessions {
               ...previous.map((q) => q.questionText),
             ].slice(-110),
             meta.failedSkills,
+            45000,
+            {
+              accepted: batch ?? [],
+              checkpoint: questions => this.storage.put(`batch:${input.batchIndex}`, questions),
+              publishPartial: input.allowPartial,
+            },
           );
           // Persist batch first; a recovered request can finish the metadata update without regenerating it.
           await this.storage.put(`batch:${input.batchIndex}`, batch);
         } catch (error) {
+          batch = await this.storage.get<PrivateQuestion[]>(`batch:${input.batchIndex}`);
+          // Only independently accepted items have been checkpointed. New clients
+          // can practise them immediately; older clients keep the full-batch contract.
+          if (input.allowPartial && batch?.length) {
+            return send({
+              sessionId: meta.sessionId, accessToken: meta.accessToken,
+              settings: meta.settings, expiresAt: meta.expiresAt,
+              questions: batch.map(publicQuestion), nextBatch: meta.nextBatch,
+              complete: false,
+            });
+          }
           const failure = error as { code?: string; reason?: string };
           return send(
             {
               error: failure.reason?.includes("quota_exhausted")
-                ? "Cloudflare AI đã hết hạn mức hiện tại. Các câu hỏi và tiến độ đã lưu vẫn được giữ; hãy thử lại khi hạn mức được khôi phục."
-                : "Không thể tạo bộ câu hỏi đã kiểm định. Hãy thử Retry Generation; các câu đã có vẫn được giữ.",
+                ? "Dịch vụ AI đã chạm hạn mức. Tiến độ và các câu đã kiểm định vẫn được giữ. Hãy thử lại sau."
+                : "Chưa tạo được câu tiếp theo. Các câu đã kiểm định và bài làm vẫn được giữ; bạn có thể tiếp tục làm bài và tạo bù sau.",
               code: failure.code ?? "GENERATION_UNAVAILABLE",
               reason: failure.reason ?? "unknown",
             },
@@ -273,7 +290,8 @@ export class GrammarSessions {
           );
         }
       }
-      meta.nextBatch = Math.max(meta.nextBatch, input.batchIndex + 1);
+      if (batch.length === 10)
+        meta.nextBatch = Math.max(meta.nextBatch, input.batchIndex + 1);
       await this.storage.put("meta", meta);
       return send({
         sessionId: meta.sessionId,
@@ -329,7 +347,7 @@ export class GrammarSessions {
     }
     if (path === "/grade" && "submissions" in input) {
       const questions: PrivateQuestion[] = [];
-      for (let i = 0; i < meta.nextBatch; i++)
+      for (let i = 0; i <= meta.nextBatch; i++)
         questions.push(
           ...((await this.storage.get<PrivateQuestion[]>(`batch:${i}`)) ?? []),
         );

@@ -20,13 +20,15 @@ async function mockAPI(
     failBatch?: number;
     failGradeOnce?: boolean;
     delayedBatch?: number;
+    partialBatch?: number;
   } = {},
 ) {
   const sessions = new Map<string, MockSession>();
   let generationCalls = 0,
     gradeCalls = 0,
     failedBatch = false,
-    failedGrade = false;
+    failedGrade = false,
+    repairEnabled = false;
   await page.route("**/api/grammar/generate", async (route) => {
     const input = route.request().postDataJSON();
     if (!input.sessionId) {
@@ -70,7 +72,8 @@ async function mockAPI(
     }
     if (input.batchIndex === options.delayedBatch)
       await new Promise((resolve) => setTimeout(resolve, 800));
-    session.nextBatch = Math.max(session.nextBatch, input.batchIndex + 1);
+    const partial = options.partialBatch === input.batchIndex && !repairEnabled;
+    if (!partial) session.nextBatch = Math.max(session.nextBatch, input.batchIndex + 1);
     await route.fulfill({
       json: {
         sessionId: session.sessionId,
@@ -79,6 +82,7 @@ async function mockAPI(
         settings: session.settings,
         questions: session.questions
           .slice(input.batchIndex * 10, (input.batchIndex + 1) * 10)
+          .filter(q => !partial || q.ordinal !== input.batchIndex * 10 + 3)
           .map(publicQuestion),
         nextBatch: session.nextBatch,
         complete: session.nextBatch * 10 === session.settings.questionCount,
@@ -141,6 +145,7 @@ async function mockAPI(
   });
   return {
     sessions,
+    finishRepair() { repairEnabled = true; },
     get generationCalls() {
       return generationCalls;
     },
@@ -212,7 +217,7 @@ test("creates fresh questions, persists typed drafts and grading, and preserves 
   await expect(
     page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
   ).toBeVisible();
-  await expect(page.getByText(/Previous attempts: 1\./)).toBeVisible();
+  await expect(page.getByText(/Previous attempts: 1\./)).toHaveCount(1);
   await next(page).click();
   await expect(card(page)).toHaveAttribute(
     "data-exercise-id",
@@ -229,7 +234,7 @@ test("creates fresh questions, persists typed drafts and grading, and preserves 
   await expect(
     page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "New Session", exact: true }).click();
+  await page.getByRole("button", { name: "Tạo bài luyện mới", exact: true }).click();
   await page
     .getByLabel("Tôi đã ôn quy tắc cần luyện và muốn thực hành nâng cao.", {
       exact: true,
@@ -240,7 +245,7 @@ test("creates fresh questions, persists typed drafts and grading, and preserves 
     .click();
   await expect(card(page)).not.toHaveAttribute("data-exercise-id", firstId!);
   expect(mock.sessions.size).toBe(2);
-  await expect(page.getByText(/Previous attempts: 1\./)).toBeVisible();
+  await expect(page.getByText(/Previous attempts: 1\./)).toHaveCount(1);
 });
 test("collects a 10-question MCQ exam without early grading and shows explanations only after submission", async ({
   page,
@@ -270,7 +275,7 @@ test("collects a 10-question MCQ exam without early grading and shows explanatio
     .getByRole("button", { name: "Submit session", exact: true })
     .click();
   await expect(
-    page.getByText("Score 10/10 graded. 0 unanswered.", { exact: true }),
+    page.getByText("Score 10/10 graded.", { exact: true }),
   ).toBeVisible();
   expect(mock.gradeCalls).toBe(2);
   await expect(
@@ -279,7 +284,7 @@ test("collects a 10-question MCQ exam without early grading and shows explanatio
   await expect(card(page).getByRole("radio").first()).toBeDisabled();
   await page.reload();
   await expect(
-    page.getByText("Score 10/10 graded. 0 unanswered.", { exact: true }),
+    page.getByText("Score 10/10 graded.", { exact: true }),
   ).toBeVisible();
 });
 test("loads 50 questions progressively, retries a failed batch, and keeps earlier questions stable", async ({
@@ -294,13 +299,7 @@ test("loads 50 questions progressively, retries a failed batch, and keeps earlie
   await expect(card(page)).toBeVisible();
   const id = await card(page).getAttribute("data-exercise-id");
   await expect(
-    page.getByRole("button", { name: "Retry Generation", exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Retry Generation", exact: true })
-    .click();
-  await expect(
-    page.getByText("0/50 answered · 50 ready · Score 0/0 graded", {
+    page.getByText("0/50 answered · 50 ready", {
       exact: true,
     }),
   ).toBeVisible();
@@ -338,4 +337,35 @@ test("a grading outage keeps the answer and score intact and supports retry", as
     page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
   ).toBeVisible();
   expect(mock.gradeCalls).toBe(2);
+});
+
+test("20-question practice opens the exercise first and keeps nine accepted questions usable while repairing one", async ({ page }) => {
+  const mock = await mockAPI(page, { partialBatch: 0 });
+  await start(page);
+  await page.getByLabel("Question count", { exact: true }).selectOption("20");
+  await page.getByRole("button", { name: "Generate Practice", exact: true }).click();
+  await expect(card(page)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Build your practice session", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Kết quả bài luyện", exact: true })).toHaveCount(0);
+  await expect(page.locator(".practice-history")).not.toHaveAttribute("open");
+  await expect(page.getByLabel("Your answer", { exact: true })).toBeFocused();
+  const initialId = await card(page).getAttribute("data-exercise-id");
+  const first = [...mock.sessions.values()][0].questions[0];
+  await page.getByLabel("Your answer", { exact: true }).fill(first.referenceAnswers[0]);
+  await page.getByRole("button", { name: "Check Answer", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Correct · 1/1", exact: true })).toBeVisible();
+  await expect(page.getByText("1/20 answered · 9 ready", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry Generation", exact: true })).toBeVisible();
+  expect(mock.generationCalls).toBe(3); // bounded background repair, no infinite paid requests
+  await page.reload();
+  await expect(card(page)).toHaveAttribute("data-exercise-id", initialId!);
+  await expect(page.getByRole("heading", { name: "Correct · 1/1", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry Generation", exact: true })).toBeVisible();
+  mock.finishRepair();
+  await page.getByRole("button", { name: "Retry Generation", exact: true }).click();
+  await expect(page.getByText("1/20 answered · 20 ready", { exact: true })).toBeVisible();
+  await expect(card(page)).toHaveAttribute("data-exercise-id", initialId!);
+  await expect(page.getByRole("heading", { name: "Correct · 1/1", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Kết quả bài luyện", exact: true })).toHaveCount(0);
+  await page.screenshot({ path: `test-results/practice-first-${test.info().project.name}.png`, fullPage: true });
 });

@@ -74,30 +74,39 @@ export async function loadBatch(session: PracticeSession) {
       sessionId: session.sessionId,
       accessToken: session.accessToken,
       batchIndex: session.nextBatch,
+      allowPartial: true,
     }),
   );
   if (
     response.sessionId !== session.sessionId ||
     response.accessToken !== session.accessToken ||
     JSON.stringify(response.settings) !== JSON.stringify(session.settings) ||
-    response.nextBatch !== session.nextBatch + 1 ||
-    response.questions.length !== 10 ||
+    ![session.nextBatch, session.nextBatch + 1].includes(response.nextBatch) ||
+    response.questions.length < 1 || response.questions.length > 10 ||
+    (response.nextBatch === session.nextBatch + 1 && response.questions.length !== 10) ||
+    (response.nextBatch === session.nextBatch && response.questions.length === 10) ||
     response.complete !==
       (response.nextBatch * 10 === session.settings.questionCount)
   )
     throw Error("Bộ câu hỏi không khớp với phiên học. Hãy thử lại.");
-  const ids = new Set(session.questions.map((q) => q.id));
-  response.questions.forEach((q, i) => {
+  const ids = new Set<string>(), ordinals = new Set<number>();
+  response.questions.forEach((q) => {
+    const existing = session.questions.find(old => old.ordinal === q.ordinal);
     if (
       q.sessionId !== session.sessionId ||
-      q.ordinal !== session.questions.length + i ||
+      q.ordinal < session.nextBatch * 10 || q.ordinal >= (session.nextBatch + 1) * 10 ||
       q.difficulty !== session.settings.difficulty ||
       !session.settings.topics.includes(q.topicId) ||
-      ids.has(q.id)
+      ids.has(q.id) || ordinals.has(q.ordinal) ||
+      (existing && JSON.stringify(existing) !== JSON.stringify(q)) ||
+      session.questions.some(old => old.id === q.id && old.ordinal !== q.ordinal)
     )
       throw Error("Thứ tự câu hỏi không hợp lệ.");
     ids.add(q.id);
+    ordinals.add(q.ordinal);
   });
+  if (session.questions.some(q => q.ordinal >= session.nextBatch * 10 && !ids.has(q.id)))
+    throw Error("Các câu đã lưu không được thay đổi khi tạo bù.");
   return response;
 }
 const gradeResponse = z.object({
