@@ -1,3 +1,4 @@
+import { rewriteProblem } from "../src/lib/ai/dynamic/rewrite-guard";
 import { generateBatch } from "./generation";
 import { handlePractice } from "./practice";
 import { cachedGrade, boundedMap, type Env } from "./grading";
@@ -63,7 +64,13 @@ export function asExercise(q: PrivateQuestion): Exercise {
     explanation: q.explanationVi,
     rubric:
       "Preserve grammar, naturalness, meaning, tense, degree and explicit instructions. " +
-      q.instruction,
+      q.instruction +
+      (["sentence_transformation", "paraphrasing"].includes(q.exerciseType)
+        ? " An unchanged copy of the source does not satisfy this rewrite task."
+        : "") +
+      (q.targetWord
+        ? " The requested changed word-family form is " + q.targetWord + "."
+        : ""),
     objective: q.answerForm !== "sentence",
   };
 }
@@ -100,6 +107,23 @@ export async function gradeGenerated(
   q: PrivateQuestion,
   answer: string,
 ) {
+  if (rewriteProblem(q)) {
+    return {
+      ...deterministicResult(q, answer, false),
+      status: "needs_review" as const,
+      score: null,
+      needsReview: true,
+      confidence: 1,
+      correctedAnswer: "",
+      alternativeAnswers: [],
+      errorSpans: [],
+      feedbackVi:
+        "Đề bị lỗi: câu gốc đã chứa đáp án hoặc chưa yêu cầu thay đổi dạng từ thực sự. Câu này không tính điểm; bạn không bị trừ điểm.",
+      grammarRule: "Bài viết lại phải yêu cầu một thay đổi thực sự.",
+      explanationVi:
+        "Đây là lỗi của đề, không phải lỗi của người học. Hãy chuyển sang câu khác; bài làm đã lưu vẫn được giữ.",
+    };
+  }
   if (env.AI_PRACTICE_ONLY === "true") {
     const text =
       q.exerciseType === "multiple_choice"
