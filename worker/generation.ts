@@ -186,7 +186,7 @@ export async function generateBatch(
     };
     return detail || "Provider or timeout failure";
   }
-  for (let round = 0; round < 2 && Date.now() < deadline; round++) {
+  for (let round = 0; round < 3 && Date.now() < deadline; round++) {
     const todo = plan.filter((item) => !accepted.has(item.ordinal));
     const usedRoots = new Set(
       [...accepted.values()].flatMap((q) =>
@@ -216,6 +216,11 @@ export async function generateBatch(
             answerForm: sentenceTask
               ? z.literal("sentence")
               : z.enum(["noun", "verb", "adjective", "adverb"]),
+            questionText: sentenceTask
+              ? contentSchema.shape.questionText.regex(
+                  /^(?![\s\S]*___)[\s\S]+$/,
+                )
+              : contentSchema.shape.questionText,
             constraint: sentenceTask
               ? z.literal("sentence")
               : contentSchema.shape.constraint,
@@ -223,15 +228,30 @@ export async function generateBatch(
           const itemOutput = z
             .object({ questions: z.array(itemContent).length(1) })
             .strict();
+          const rootGuidance =
+            forms[item.ordinal % forms.length] === "verb"
+              ? "For a Verb answer, supply a related NOUN as root (implementation -> implement, decision -> decide, permission -> permit). Never supply the same base Verb as root."
+              : forms[item.ordinal % forms.length] === "adverb"
+                ? "For an Adverb answer, supply its related Adjective root."
+                : forms[item.ordinal % forms.length] === "noun"
+                  ? "For a Noun answer, prefer a related Verb or Adjective as root."
+                  : "For an Adjective answer, prefer a related Noun or Verb as root, or require an actual prefix/comparative change.";
           const taskPrompt =
-            generationPrompt +
+            (sentenceTask
+              ? generationPrompt.replace(
+                  "Use ___ for one cloze blank, not an answer in parentheses.",
+                  "This is a full-sentence task. questionText MUST be the complete original source sentence, with NO blanks or underscores. Never include a partial target sentence or rewrite template in questionText.",
+                )
+              : generationPrompt) +
             "\nCURRENT TASK ONLY: " +
             item.exerciseType +
             ". " +
             formatContracts[item.exerciseType] +
             "\nAim for a changed " +
             forms[item.ordinal % forms.length] +
-            " form at the requested CEFR level. Use the context cue and avoid root words already used. For the word-formation topic rootWord MUST be a bare alphabetic English root word, including sentence transformations, error corrections and paraphrases; never null, labelled text or a grammatical annotation.";
+            " form. " +
+            rootGuidance +
+            " Match the requested CEFR level. Use the context cue and avoid root words already used. For the word-formation topic rootWord MUST be a bare alphabetic English root word, including sentence transformations, error corrections and paraphrases; never null, labelled text or a grammatical annotation.";
           const raw = await withTimeout(
             (signal) =>
               callStructured(
