@@ -1,3 +1,4 @@
+import { isChoiceFormat } from "../src/lib/ai/dynamic/topics";
 import { generateBatch } from "./generation";
 import { handlePractice } from "./practice";
 import { cachedGrade, boundedMap, type Env } from "./grading";
@@ -63,7 +64,12 @@ export function asExercise(q: PrivateQuestion): Exercise {
     explanation: q.explanationVi,
     rubric:
       "Preserve grammar, naturalness, meaning, tense, degree and explicit instructions. " +
-      q.instruction,
+      q.instruction +
+      " " +
+      (q.gradingCriteria?.join("; ") ?? "") +
+      (q.exerciseType === "meaning_comparison"
+        ? " The answer is a selected interpretation of the provided sentences, not a rewrite. Assess whether that interpretation correctly describes their grammatical meaning or focus. Do not require it to restate their literal events."
+        : ""),
     objective: q.answerForm !== "sentence",
   };
 }
@@ -78,10 +84,9 @@ function deterministicResult(
     score: correct ? 1 : 0,
     maxScore: 1,
     userAnswer: answer,
-    correctedAnswer:
-      q.exerciseType === "multiple_choice"
-        ? q.options.find((o) => o.id === q.correctOptionId)!.text
-        : q.referenceAnswers[0],
+    correctedAnswer: isChoiceFormat(q.exerciseType)
+      ? q.options.find((o) => o.id === q.correctOptionId)!.text
+      : q.referenceAnswers[0],
     alternativeAnswers: q.acceptedVariants,
     feedbackVi: correct
       ? "Đúng. Dạng từ phù hợp với cấu trúc câu."
@@ -101,15 +106,14 @@ export async function gradeGenerated(
   answer: string,
 ) {
   if (env.AI_PRACTICE_ONLY === "true") {
-    const text =
-      q.exerciseType === "multiple_choice"
-        ? q.options.find((o) => o.id === answer)?.text
-        : answer;
+    const text = isChoiceFormat(q.exerciseType)
+      ? q.options.find((o) => o.id === answer)?.text
+      : answer;
     if (!text) throw Error("Invalid answer");
     const result = await cachedGrade(env, asExercise(q), text, true);
     return { ...result, userAnswer: answer };
   }
-  if (q.exerciseType === "multiple_choice")
+  if (isChoiceFormat(q.exerciseType))
     return deterministicResult(q, answer, answer === q.correctOptionId);
   const exercise = asExercise(q),
     known = knownResult(exercise, answer);
@@ -343,7 +347,7 @@ export class GrammarSessions {
         questions.some(
           (q) =>
             !input.answers[q.id] ||
-            (q.exerciseType === "multiple_choice" &&
+            (isChoiceFormat(q.exerciseType) &&
               !q.options.some((o) => o.id === input.answers[q.id])),
         )
       )
@@ -385,18 +389,28 @@ export class GrammarSessions {
         input.submissions.some((s) => {
           const q = questions.find((q) => q.id === s.exerciseId)!;
           return (
-            q.exerciseType === "multiple_choice" &&
+            isChoiceFormat(q.exerciseType) &&
             !q.options.some((o) => o.id === s.userAnswer)
           );
         })
       )
         return send({ error: "Unknown option ID" }, 400);
+      if (
+        input.retry &&
+        meta.settings.feedbackMode === "exam" &&
+        !meta.examSubmitted
+      )
+        return send(
+          { error: "Submit the complete exam before retrying questions" },
+          409,
+        );
       const frozen =
         meta.settings.feedbackMode === "exam" && meta.examSubmitted
           ? await this.examAnswers(meta.nextBatch)
           : {};
       if (
         meta.settings.feedbackMode === "exam" &&
+        !input.retry &&
         (!meta.examSubmitted ||
           input.submissions.some((s) => frozen[s.exerciseId] !== s.userAnswer))
       )

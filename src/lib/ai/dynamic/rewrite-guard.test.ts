@@ -55,3 +55,15 @@ it("keeps the target answer private and supports old questions without target me
   delete (q as { targetWord?: string }).targetWord;
   expect(rewriteProblem(q)).toBeTruthy();
 });
+
+it("allows a verb root to be the target when the source actually uses a different family form", () => {
+  const q = question();
+  q.rootWord = "afford";
+  q.targetWord = "afford";
+  q.questionText =
+    "Securing affordable housing in the metropolitan area remains a significant challenge for young professionals.";
+  q.referenceAnswers = [
+    "Finding housing that young professionals can afford in the metropolitan area remains a significant challenge.",
+  ];
+  expect(rewriteProblem(q)).toBeUndefined();
+});

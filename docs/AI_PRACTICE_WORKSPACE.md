@@ -74,7 +74,7 @@ partial-batch repair without changing existing question IDs or results.
 Word-formation rewrites include a private targetWord field (never sent to the
 browser). A narrow deterministic guard rejects unchanged source/reference pairs,
 copied accepted variants, a requested target word already present in the source,
-an unchanged root and target metadata missing from the reference. Comparison
+target metadata missing from the reference. Comparison
 ignores case, punctuation and underline presentation while preserving actual words
 and numbers. Only the failed ordinal is retried within the existing bounded
 authoring budget; other question IDs and keys remain checkpointed. This does not

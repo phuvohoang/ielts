@@ -624,3 +624,48 @@ it("leaves an unavailable source-comparison check unscored", async () => {
     ),
   ).toMatchObject({ status: "needs_review", score: null });
 });
+
+it("gives a specific Vietnamese explanation for a dynamic stative-verb error", async () => {
+  const e = env();
+  const q = {
+    ...b2Exercises[0],
+    lessonId: "dynamic:stative-test",
+    id: "stative-context-test",
+    type: "fill_blank" as const,
+    question: "I ___ the answer; it is a fact, not an activity.",
+    instruction: "Complete with the correct form of know.",
+    referenceAnswers: ["know"],
+    acceptedVariants: [],
+    grammarRules: ["Know normally expresses a state in this sense"],
+    explanation: "Know diễn tả trạng thái trong ngữ cảnh này.",
+  };
+  e.AI.run.mockResolvedValue({
+    response: {
+      criteria: {
+        grammarCorrect: "no",
+        coreMeaningPreserved: "yes",
+        tensePreserved: "yes",
+        contextPreserved: "yes",
+        degreePreserved: "yes",
+        instructionFollowed: "yes",
+        wordFormationCorrect: "yes",
+      },
+      correctedAnswer: "know",
+      alternativeAnswers: [],
+      errorSpans: [],
+      confidence: 0.98,
+      feedbackVi:
+        "Ở đây know là động từ trạng thái; am knowing không phù hợp với nghĩa biết một sự thật.",
+      explanationVi:
+        "Dùng Present Simple cho trạng thái biết trong ngữ cảnh này, không áp dụng máy móc dấu hiệu thời gian.",
+    },
+  });
+  const result = await infer(
+    { ...e, AI_CRITERIA_GRADING: "true" },
+    q,
+    "am knowing",
+  );
+  expect(result.status).toBe("incorrect");
+  expect(result.feedbackVi).toContain("trạng thái");
+  expect(result.explanationVi).toContain("ngữ cảnh");
+});

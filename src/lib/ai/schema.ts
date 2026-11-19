@@ -7,6 +7,9 @@ export const exerciseTypes = [
   "paraphrasing",
   "sentence_building",
   "guided_writing",
+  "sentence_reordering",
+  "grammar_in_context",
+  "meaning_comparison",
   "mixed",
 ] as const;
 export const exerciseSchema = z.object({

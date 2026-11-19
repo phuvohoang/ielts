@@ -1,3 +1,4 @@
+import { isChoiceFormat } from "./topics";
 import { normalizeAnswer } from "../schema";
 import type { PrivateQuestion } from "./schema";
 export function normalizeQuestionAnswers<
@@ -222,7 +223,7 @@ export function shuffleOptions(
   random: () => number = () =>
     crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296,
 ): PrivateQuestion {
-  if (q.exerciseType !== "multiple_choice") return q;
+  if (!isChoiceFormat(q.exerciseType)) return q;
   const options = [...q.options];
   for (let i = options.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));

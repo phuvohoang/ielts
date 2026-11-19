@@ -1366,3 +1366,26 @@ textarea:focus-visible {
   .question-grid { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
   .question-legend { display: flex; gap: 16px; flex-wrap: wrap; }
 }
+.grammar-type-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px 18px; margin: 16px 0; }
+.grammar-type-grid label, .topic-all { display: flex; align-items: center; gap: 9px; font-size: .9rem; }
+.grammar-type-grid input, .topic-all input { flex-shrink: 0; accent-color: #315d49; }
+.grammar-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.grammar-chips > * { border: 1px solid #b0c8b8; background: #edf4ed; color: #234b36; padding: 5px 10px; border-radius: 20px; font-size: .8rem; }
+.count-segments { display: inline-flex; border: 1px solid #9dad9e; border-radius: 9px; overflow: hidden; margin: 8px 0; }
+.count-segments label { position: relative; }
+.count-segments input { position: absolute; opacity: 0; }
+.count-segments span { display: block; padding: 10px 28px; cursor: pointer; }
+.count-segments input:checked + span { background: #315d49; color: white; }
+.count-segments input:focus-visible + span { outline: 3px solid #be751c; outline-offset: -3px; }
+.configuration-summary { color: #53645b; font-size: .85rem; margin: 16px 0; }
+.order-tokens { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.order-tokens button { padding: 8px 12px; border: 1px solid #8a9b90; border-radius: 8px; background: #f4f8f2; }
+@media(max-width:900px){.grammar-type-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:500px){.grammar-type-grid{grid-template-columns:minmax(0,1fr);} .count-segments span{padding:10px 24px;}}
+.results-score { font-size: 1.5rem; font-weight: 800; margin: 16px 0; }
+.results-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0; }
+.results-table-scroll { overflow-x: auto; margin: 16px 0 24px; }
+.practice-results table { width: 100%; border-collapse: collapse; text-align: left; font-size: .9rem; }
+.practice-results th, .practice-results td { padding: 12px; border-bottom: 1px solid #dfe6dc; }
+.result-question { border-top: 1px solid #dfe6dc; padding: 14px 0; }
+.result-question summary { font-weight: 700; cursor: pointer; }

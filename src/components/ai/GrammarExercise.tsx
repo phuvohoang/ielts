@@ -3,8 +3,15 @@ import { Button } from "../ui/button";
 import { CorrectionDiff } from "./CorrectionDiff";
 import { db } from "../../lib/db";
 import { summary } from "../../lib/ai/schema";
-import { formatLabels } from "../../lib/ai/dynamic/topics";
+import {
+  formatLabels,
+  topics,
+  ieltsTopics,
+  isChoiceFormat,
+} from "../../lib/ai/dynamic/topics";
 import { questionDisplay } from "../../lib/ai/dynamic/question-display";
+import { PracticeResults } from "./PracticeResults";
+import { retryQuestionIds } from "../../lib/ai/dynamic/results";
 import { SessionBuilder } from "./SessionBuilder";
 import {
   localSessionSchema,
@@ -20,8 +27,10 @@ import {
 } from "../../lib/ai/dynamic/client";
 import { saveSession, saveGraded } from "../../lib/ai/dynamic/persistence";
 const initial: Settings = {
-  topics: ["word-formation"],
-  questionCount: 10,
+  topics: ["all"],
+  ieltsTopic: "all",
+  subtopics: {},
+  questionCount: 20,
   difficulty: "B2",
   exerciseType: "mixed",
   feedbackMode: "instant",
@@ -33,6 +42,8 @@ const labels = {
   needs_review: "Needs review",
 };
 export function GrammarExercise() {
+  const [resultScreen, setResultScreen] = useState(false);
+  const [reviewIds, setReviewIds] = useState<string[] | undefined>();
   const [settings, setSettings] = useState<Settings>(initial),
     [loaded, setLoaded] = useState(false);
   const [session, setSession] = useState<PracticeSession>(),
@@ -272,9 +283,14 @@ export function GrammarExercise() {
       const latest = live.current!;
       if (
         latest.generationComplete &&
-        latest.questions.every((q) => latest.results[q.id])
-      )
+        latest.questions
+          .filter((q) => !latest.retryIds || latest.retryIds.includes(q.id))
+          .every((q) => latest.results[q.id])
+      ) {
         update({ status: "completed" });
+        setReviewIds(undefined);
+        setResultScreen(true);
+      }
       await refreshHistory();
       if (missing.length)
         setError(
@@ -339,18 +355,72 @@ export function GrammarExercise() {
       >("input:not([disabled]),textarea:not([disabled])")
       ?.focus({ preventScroll: true });
   }, [q?.id]);
+  const visibleQuestions =
+    session?.questions.filter(
+      (question) =>
+        (reviewIds ?? session.retryIds)?.includes(question.id) ?? true,
+    ) ?? [];
+  const position = q
+    ? visibleQuestions.findIndex((question) => question.id === q.id)
+    : 0;
+  const goToPosition = (index: number) => {
+    const target = visibleQuestions[index];
+    if (target && session)
+      void move(
+        session.questions.findIndex((question) => question.id === target.id),
+      );
+  };
+  async function retryIncorrect() {
+    if (!session) return;
+    const ids = retryQuestionIds(session);
+    if (!ids.length) return;
+    const keep = <T,>(record: Record<string, T>) =>
+      Object.fromEntries(
+        Object.entries(record).filter(([id]) => !ids.includes(id)),
+      );
+    const next: PracticeSession = {
+      ...session,
+      retryIds: ids,
+      previousRounds: [
+        ...(session.previousRounds ?? []),
+        {
+          date: Date.now(),
+          answers: session.answers,
+          results: session.results,
+          reveals: session.reveals,
+        },
+      ],
+      answers: keep(session.answers),
+      results: keep(session.results),
+      reveals: keep(session.reveals),
+      currentIndex: session.questions.findIndex((q) => q.id === ids[0]),
+      status: "practicing",
+      updatedAt: Date.now(),
+    };
+    await saveSession(next);
+    show(next);
+    setReviewIds(undefined);
+    setResultScreen(false);
+    await refreshHistory();
+  }
   const display = q ? questionDisplay(q) : undefined;
-  const totals = summary(Object.values(session?.results ?? {})),
+  const totals = summary(
+      visibleQuestions.flatMap((q) =>
+        session?.results[q.id] ? [session.results[q.id]] : [],
+      ),
+    ),
     answered =
-      session?.questions.filter((q) => session.answers[q.id]?.trim()).length ??
+      visibleQuestions.filter((q) => session?.answers[q.id]?.trim()).length ??
       0;
-  const exam = session?.settings.feedbackMode === "exam",
-    locked = !!result || !!session?.examSubmitted;
+  const exam = session?.settings.feedbackMode === "exam" && !session?.retryIds,
+    locked = !!result || (!!session?.examSubmitted && !session?.retryIds);
   const expired = !!session && session.expiresAt <= Date.now();
   const resume = async (id: string) => {
     const row = await db.practiceSessions.get(id);
     if (row) {
       show(localSessionSchema.parse(row));
+      setResultScreen(false);
+      setReviewIds(undefined);
       setSettings(row.settings);
       setError("");
       setGenerationError("");
@@ -360,7 +430,7 @@ export function GrammarExercise() {
     <>
       <div className="heading">
         <div className="eyebrow">IELTS GENERAL TRAINING · AI PRACTICE</div>
-        <h1>Luyện ngữ pháp</h1>
+        <h1>IELTS Grammar Practice</h1>
         <p>
           Fresh questions. Focused practice. English you can produce
           independently.
@@ -416,7 +486,39 @@ export function GrammarExercise() {
           {error}
         </p>
       )}
-      {session?.generationComplete && (
+      {session?.generationComplete && resultScreen && (
+        <PracticeResults
+          session={session}
+          onReturn={() => setResultScreen(false)}
+          onReview={() => {
+            const ids = session.questions
+              .filter((q) =>
+                ["incorrect", "partially_correct"].includes(
+                  session.results[q.id]?.status,
+                ),
+              )
+              .map((q) => q.id);
+            setReviewIds(ids);
+            setResultScreen(false);
+            if (ids[0])
+              void move(session.questions.findIndex((q) => q.id === ids[0]));
+          }}
+          onRetry={() => void retryIncorrect()}
+          onConfigure={() => {
+            show(undefined);
+            setResultScreen(false);
+            setReviewIds(undefined);
+            setError("");
+          }}
+          onGenerate={() => {
+            show(undefined);
+            setResultScreen(false);
+            setReviewIds(undefined);
+            void start();
+          }}
+        />
+      )}
+      {session?.generationComplete && !resultScreen && (
         <>
           <div className="practice-toolbar" aria-label="Session progress">
             <div>
@@ -425,15 +527,46 @@ export function GrammarExercise() {
                 {session.settings.difficulty}
               </strong>
               <span>
-                {answered}/{session.settings.questionCount} answered ·{" "}
-                {session.questions.length} ready
+                {answered}/{visibleQuestions.length} answered ·{" "}
+                {visibleQuestions.length} ready
               </span>
             </div>
+            <Button
+              variant="outline"
+              disabled={grading || moving}
+              onClick={() => {
+                setReviewIds(undefined);
+                setResultScreen(true);
+              }}
+            >
+              View Results
+            </Button>
+            {(reviewIds || session.retryIds) && (
+              <Button
+                variant="ghost"
+                disabled={grading || moving}
+                onClick={() => {
+                  setReviewIds(undefined);
+                  update({
+                    retryIds: undefined,
+                    status: session.questions.every(
+                      (q) => session.results[q.id],
+                    )
+                      ? "completed"
+                      : "practicing",
+                  });
+                }}
+              >
+                Tất cả câu hỏi
+              </Button>
+            )}
             <Button
               variant="outline"
               disabled={grading || moving || generating || creating}
               onClick={() => {
                 show(undefined);
+                setReviewIds(undefined);
+                setResultScreen(false);
                 setGenerationError("");
                 setError("");
               }}
@@ -456,14 +589,20 @@ export function GrammarExercise() {
                 aria-label="Bài tập hiện tại"
               >
                 <p className="eyebrow">
-                  {formatLabels[q.exerciseType]} · Question{" "}
-                  {session.currentIndex + 1}/{session.settings.questionCount}
+                  {topics.find((t) => t.topicId === q.topicId)?.displayName} ·{" "}
+                  {formatLabels[q.exerciseType]} · Question {position + 1}/
+                  {visibleQuestions.length}
                 </p>
                 <progress
                   aria-label="Question progress"
-                  value={session.currentIndex + 1}
-                  max={session.settings.questionCount}
+                  value={position + 1}
+                  max={visibleQuestions.length}
                 />
+                <p className="eyebrow">
+                  {q.grammarSubtopic}
+                  {q.ieltsTopic &&
+                    ` · ${ieltsTopics.find((t) => t.id === q.ieltsTopic)?.label ?? q.ieltsTopic}`}
+                </p>
                 <h2>{q.instruction}</h2>
                 <p className="ai-question">
                   {display?.parts.map((part, index) =>
@@ -504,7 +643,37 @@ export function GrammarExercise() {
                     if (!exam) void grade([q.id]);
                   }}
                 >
-                  {q.exerciseType === "multiple_choice" ? (
+                  {q.exerciseType === "sentence_reordering" && (
+                    <div className="order-tokens" aria-label="Words to arrange">
+                      {q.reorderTokens?.map((token, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          disabled={
+                            grading ||
+                            moving ||
+                            locked ||
+                            answer.split(/\s+/).filter((word) => word === token)
+                              .length >=
+                              (q.reorderTokens
+                                ?.slice(0, index + 1)
+                                .filter((word) => word === token).length ?? 1)
+                          }
+                          onClick={() =>
+                            update({
+                              answers: {
+                                ...session.answers,
+                                [q.id]: `${answer} ${token}`.trim(),
+                              },
+                            })
+                          }
+                        >
+                          {token}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {isChoiceFormat(q.exerciseType) ? (
                     <fieldset disabled={grading || moving || locked}>
                       <legend>Your answer</legend>
                       <div className="mcq-options">
@@ -601,7 +770,7 @@ export function GrammarExercise() {
                     </h3>
                     <p>
                       <strong>Your original answer:</strong>{" "}
-                      {q.exerciseType === "multiple_choice"
+                      {isChoiceFormat(q.exerciseType)
                         ? q.options.find((o) => o.id === result.userAnswer)
                             ?.text
                         : result.userAnswer}
@@ -662,15 +831,15 @@ export function GrammarExercise() {
                 <div className="practice-navigation">
                   <Button
                     variant="outline"
-                    disabled={grading || moving || session.currentIndex === 0}
-                    onClick={() => void move(session.currentIndex - 1)}
+                    disabled={grading || moving || position === 0}
+                    onClick={() => goToPosition(position - 1)}
                   >
                     Previous Question
                   </Button>
-                  {session.currentIndex + 1 < session.questions.length && (
+                  {position + 1 < visibleQuestions.length && (
                     <Button
                       disabled={grading || moving}
-                      onClick={() => void move(session.currentIndex + 1)}
+                      onClick={() => goToPosition(position + 1)}
                     >
                       Next Question
                     </Button>
@@ -683,7 +852,7 @@ export function GrammarExercise() {
               >
                 <h2>Câu hỏi</h2>
                 <p>
-                  {answered}/{session.questions.length} đã trả lời
+                  {answered}/{visibleQuestions.length} đã trả lời
                 </p>
                 <div className="question-legend">
                   <span>
@@ -695,7 +864,10 @@ export function GrammarExercise() {
                 </div>
                 <p className="question-current-hint">Viền đậm: câu đang mở</p>
                 <nav className="question-grid" aria-label="Chọn câu hỏi">
-                  {session.questions.map((question, index) => {
+                  {visibleQuestions.map((question) => {
+                    const index = session.questions.findIndex(
+                      (q) => q.id === question.id,
+                    );
                     const done = !!session.answers[question.id]?.trim();
                     const current = index === session.currentIndex;
                     return (
