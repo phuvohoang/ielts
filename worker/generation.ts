@@ -6,13 +6,19 @@ import {
   type PlanItem,
   type PrivateQuestion,
 } from "../src/lib/ai/dynamic/schema";
-import { topics, difficultyGuidelines } from "../src/lib/ai/dynamic/topics";
+import {
+  topics,
+  difficultyGuidelines,
+  ieltsTopics,
+  isChoiceFormat,
+} from "../src/lib/ai/dynamic/topics";
 import {
   shuffleOptions,
   normalizeQuestionAnswers,
 } from "../src/lib/ai/dynamic/quality";
 import { decodeModelBody, withTimeout, boundedMap, type Env } from "./grading";
 import { runModel } from "./provider";
+import { draftIssues, prepareOrdering } from "./question-format";
 import { rewriteProblem } from "../src/lib/ai/dynamic/rewrite-guard";
 class RewriteFailure extends Error {}
 export const GENERATION_VERSION = 1;
@@ -40,6 +46,12 @@ const formatContracts = {
     "Write a FULL English source sentence containing ONE wrong word form. referenceAnswers MUST contain the entire corrected sentence, not the corrected word alone. answerForm and constraint MUST both be sentence. Keep the original meaning and all other words.",
   sentence_transformation:
     "Write a correct FULL source sentence. Explicitly require a word-family transformation while retaining meaning, tense, context and degree. referenceAnswers MUST be FULL transformed sentences, never single words. answerForm=sentence and constraint=sentence.",
+  sentence_reordering:
+    "Provide a full grammatical reference sentence using 5–20 words. The server will shuffle its tokens; never put the solved order in an instruction.",
+  grammar_in_context:
+    "Provide a short natural context and exactly one ___ gap. Require a word or verb phrase supported by context, not a full paragraph answer.",
+  meaning_comparison:
+    "Show two labelled grammatical sentences with contrasting meanings; supply four distinct interpretation choices and one best option. Explain the contrast, not a superficial spelling difference. Do not use a blank or ask the learner to correct either sentence.",
   paraphrasing:
     "Write a correct FULL source sentence. Ask for a natural equivalent using a changed word-family form. referenceAnswers MUST contain FULL equivalent sentences, never single words. answerForm=sentence and constraint=sentence.",
 } as const;
@@ -183,8 +195,19 @@ export async function generateBatch(
             "error_correction",
             "sentence_transformation",
             "paraphrasing",
+            "sentence_reordering",
           ].includes(item.exerciseType);
           const itemContent = contentSchema.extend({
+            options: isChoiceFormat(item.exerciseType)
+              ? contentSchema.shape.options.length(4)
+              : contentSchema.shape.options.length(0),
+            correctOptionId: isChoiceFormat(item.exerciseType)
+              ? z.enum(["a", "b", "c", "d"])
+              : z.null(),
+            distractorExplanations: isChoiceFormat(item.exerciseType)
+              ? contentSchema.shape.distractorExplanations.length(3)
+              : contentSchema.shape.distractorExplanations.length(0),
+            gradingCriteria: contentSchema.shape.gradingCriteria.unwrap(),
             targetWord:
               item.topicId === "word-formation" &&
               ["sentence_transformation", "paraphrasing"].includes(
@@ -253,7 +276,10 @@ export async function generateBatch(
               : " Match the requested grammar topic, context and CEFR level, not word formation.");
           const annotatedPrompt =
             taskPrompt +
-            "\nReturn targetWord as the exact changed word-family form used in the full reference answer for word-formation rewrites; otherwise null. The source must not already contain targetWord. Never use a copied source as a reference or variant. A reference must actually introduce the required form while preserving meaning. BAD: root clarity, requested adjective, source already says clear instructions. GOOD: source says the instructions were easy to understand, reference uses clear instructions. These constraints apply to every accepted variant too." +
+            "\nFORMAT REQUIREMENTS: " +
+            formatContracts[item.exerciseType] +
+            " For error correction explicitly state exactly ONE error. For grammar_in_context supply enough discourse to select the tense/form, not signal-word guessing. For meaning_comparison options must describe the meaning contrast, with exactly one correct interpretation and private distractor explanations. For sentence_reordering supply a complete grammatical reference; the server shuffles it. Return gradingCriteria as concise explicit requirements specific to this task, never extra hidden restrictions. Apply only the selected grammar category/subtopic. Use the selected IELTS topic for context/vocabulary; do not fall back to municipal transport in every question." +
+            "\nReturn targetWord as the exact changed word-family form used in the full reference answer for word-formation rewrites; otherwise null. The source must not already contain targetWord. For sentence rewrites, rootWord may equal targetWord when the source uses a different form: root afford, source affordable housing for young professionals, target housing that young professionals can afford. Judge the change relative to the SOURCE, not relative to the supplied root. Never use a copied source as a reference or variant. A reference must actually introduce the required form while preserving meaning. BAD: root clarity, requested adjective, source already says clear instructions. GOOD: source says the instructions were easy to understand, reference uses clear instructions. These constraints apply to every accepted variant too." +
             (["sentence_transformation", "paraphrasing"].includes(
               item.exerciseType,
             )
@@ -269,10 +295,14 @@ export async function generateBatch(
                   settings: { ...settings, questionCount: 1 },
                   requestedSessionQuestionCount: settings.questionCount,
                   plan: [item],
-                  contextCue: contexts[item.ordinal % contexts.length],
+                  contextCue: item.ieltsTopic
+                    ? ieltsTopics.find((t) => t.id === item.ieltsTopic)?.label
+                    : contexts[item.ordinal % contexts.length],
+                  grammarSubtopic: item.grammarSubtopic,
+                  ieltsTopic: item.ieltsTopic,
                   avoidRootWords: [...usedRoots],
                   difficultyGuide: difficultyGuidelines[settings.difficulty],
-                  topics: settings.topics.map((id) => {
+                  topics: [item.topicId].map((id) => {
                     const topic = topics.find((t) => t.topicId === id)!;
                     return {
                       topicId: id,
@@ -306,6 +336,8 @@ export async function generateBatch(
           });
           const problem = rewriteProblem(question);
           if (problem) throw new RewriteFailure(problem);
+          const malformed = draftIssues(question);
+          if (malformed.length) throw new RewriteFailure(malformed.join("; "));
           return { question, ordinal: item.ordinal };
         } catch (error) {
           return { error, ordinal: item.ordinal };
@@ -318,14 +350,30 @@ export async function generateBatch(
       if ("error" in row) {
         hints.set(row.ordinal, note(row.error, "authoring"));
       } else {
-        accepted.set(row.ordinal, row.question!);
+        if (
+          recentQuestions.some(
+            (text) =>
+              text.trim().toLowerCase() ===
+              row.question!.questionText.trim().toLowerCase(),
+          ) ||
+          [...accepted.values()].some(
+            (q) =>
+              q.questionText.trim().toLowerCase() ===
+              row.question!.questionText.trim().toLowerCase(),
+          )
+        ) {
+          hints.set(
+            row.ordinal,
+            "Duplicate question in this set; create a new sentence and context.",
+          );
+        } else accepted.set(row.ordinal, row.question!);
       }
     }
     // Shuffle once, before persisting or publishing. A retry must never change
     // existing question IDs, option order or private option keys.
     for (const [ordinal, question] of accepted)
       if (!shuffled.has(question.id)) {
-        accepted.set(ordinal, shuffleOptions(question));
+        accepted.set(ordinal, prepareOrdering(shuffleOptions(question)));
         shuffled.add(question.id);
       }
     const ready = [...accepted.values()].sort((a, b) => a.ordinal - b.ordinal);

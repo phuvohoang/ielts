@@ -48,11 +48,20 @@ export function contentFixture(item: PlanItem, salt = 0): QuestionContent {
     `A supervisor reminded several ${role} to behave ${adverb} throughout their shift ${context}.`,
     `Experienced ${role} learned to respond ${adverb} whenever new responsibilities arose ${context}.`,
   ][Math.floor(i / 10) % 5];
-  const cloze = ["word_formation", "fill_blank", "multiple_choice"].includes(
+  const cloze = [
+    "word_formation",
+    "fill_blank",
+    "multiple_choice",
+    "grammar_in_context",
+    "meaning_comparison",
+  ].includes(item.exerciseType);
+  const mcq = ["multiple_choice", "meaning_comparison"].includes(
     item.exerciseType,
   );
-  const mcq = item.exerciseType === "multiple_choice";
   return {
+    gradingCriteria: [
+      "Use a grammatical form and preserve the intended meaning.",
+    ],
     targetWord: adverb,
     underlinedText: null,
     questionText: cloze
@@ -98,8 +107,18 @@ export function questionFixture(
   item: PlanItem,
   salt = 0,
 ): PrivateQuestion {
+  const content = contentFixture(item, salt);
+  const tokens = content.referenceAnswers[0].split(" ");
+  tokens.push(tokens.shift()!);
   return {
-    ...contentFixture(item, salt),
+    ...content,
+    ...(item.exerciseType === "sentence_reordering"
+      ? {
+          questionText: tokens.join(" / "),
+          reorderTokens: tokens,
+          instruction: "Arrange all the words into a grammatical sentence.",
+        }
+      : {}),
     ...item,
     id: crypto.randomUUID(),
     sessionId,

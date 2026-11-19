@@ -1,3 +1,4 @@
+import { topics } from "./topics";
 import { z } from "zod";
 import {
   generationResponseSchema,
@@ -101,7 +102,12 @@ export async function loadBatch(session: PracticeSession) {
       q.ordinal < session.nextBatch * 10 ||
       q.ordinal >= (session.nextBatch + 1) * 10 ||
       q.difficulty !== session.settings.difficulty ||
-      !session.settings.topics.includes(q.topicId) ||
+      (!session.settings.topics.includes("all") &&
+        !session.settings.topics.includes(q.topicId)) ||
+      !topics.some((t) => t.topicId === q.topicId) ||
+      (!!session.settings.ieltsTopic &&
+        session.settings.ieltsTopic !== "all" &&
+        q.ieltsTopic !== session.settings.ieltsTopic) ||
       ids.has(q.id) ||
       ordinals.has(q.ordinal) ||
       (existing &&
@@ -155,6 +161,7 @@ export async function gradeAnswers(session: PracticeSession, ids: string[]) {
         sessionId: session.sessionId,
         accessToken: session.accessToken,
         submissions,
+        ...(session.retryIds ? { retry: true } : {}),
       },
       225000,
     ),

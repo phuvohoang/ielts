@@ -16,7 +16,7 @@ test("Pages serves the four-skill workspace and redirects old theory deep links"
   ).toBeEnabled();
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Luyện ngữ pháp", exact: true }),
+    page.getByRole("heading", { name: "IELTS Grammar Practice", exact: true }),
   ).toBeVisible();
   for (const skill of ["listening", "reading", "writing"]) {
     await page.goto(`/ielts/#/${skill}`);

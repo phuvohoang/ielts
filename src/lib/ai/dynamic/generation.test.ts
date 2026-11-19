@@ -11,7 +11,7 @@ import {
   gradeGenerated,
   type SessionEnv,
 } from "../../../../worker/sessions";
-import { topics, formats, difficultyGuidelines } from "./topics";
+import { topics, difficultyGuidelines } from "./topics";
 import {
   validateSettings,
   makePlan,
@@ -222,7 +222,7 @@ describe("topic registry and balanced planning", () => {
     expect(() =>
       validateSettings({ ...settings, exerciseType: "invented" }),
     ).toThrow();
-    expect(topics.filter((t) => t.enabled)).toHaveLength(10);
+    expect(topics.filter((t) => t.enabled)).toHaveLength(20);
     expect(topics.every((t) => t.generationGuidelines && t.gradingRubric)).toBe(
       true,
     );
@@ -245,7 +245,7 @@ describe("topic registry and balanced planning", () => {
       plan.filter((p) => p.topicId === "future-enabled-test"),
     ).toHaveLength(25);
     for (const topic of registry) {
-      const counts = formats.map(
+      const counts = topic.supportedExerciseTypes.map(
         (f) =>
           plan.filter(
             (p) => p.topicId === topic.topicId && p.exerciseType === f,
@@ -1067,4 +1067,96 @@ it("never publishes a copied rewrite and retries only that slot while retaining 
   expect(authorOrdinals.filter((n) => n !== 5)).toHaveLength(9);
   expect(authorOrdinals.filter((n) => n === 5)).toHaveLength(4);
   expect(JSON.stringify(ready)).not.toContain("targetWord");
+});
+
+it("generates an Education set across all supported categories with diverse formats and server-assigned metadata", async () => {
+  const { env, AI } = environment();
+  const standard = AI.run.getMockImplementation()!;
+  AI.run.mockImplementation(async (model, input) => {
+    const result = await standard(model, input);
+    const data = JSON.parse(
+      (input as { messages: { content: string }[] }).messages[1].content,
+    );
+    const item = data.plan?.[0];
+    if (item && item.topicId !== "word-formation")
+      for (const q of (
+        result.response as { questions: ReturnType<typeof contentFixture>[] }
+      ).questions) {
+        q.rootWord = null;
+        q.targetWord = null;
+      }
+    return result;
+  });
+  const s = await create(env, {
+    topics: ["all"],
+    ieltsTopic: "education",
+    questionCount: 20,
+  });
+  const first = generationResponseSchema.parse(
+    await (await batch(env, s, 0)).json(),
+  );
+  const second = generationResponseSchema.parse(
+    await (await batch(env, s, 1)).json(),
+  );
+  const questions = [...first.questions, ...second.questions];
+  expect(questions).toHaveLength(20);
+  expect(second.complete).toBe(true);
+  expect(new Set(questions.map((q) => q.topicId)).size).toBe(20);
+  expect(
+    new Set(questions.map((q) => q.exerciseType)).size,
+  ).toBeGreaterThanOrEqual(4);
+  expect(
+    questions.every((q) => q.ieltsTopic === "education" && q.grammarSubtopic),
+  ).toBe(true);
+  expect(
+    questions
+      .filter((q) => q.exerciseType === "sentence_reordering")
+      .every((q) => q.reorderTokens?.length),
+  ).toBe(true);
+  expect(JSON.stringify(questions)).not.toMatch(
+    /referenceAnswers|correctOptionId|targetWord|gradingCriteria/,
+  );
+});
+
+it("permits a separate exam retake only after submission and keeps the original frozen answers", async () => {
+  const { env, stores } = environment();
+  const s = await create(env, {
+    exerciseType: "multiple_choice",
+    feedbackMode: "exam",
+  });
+  await batch(env, s, 0);
+  const questions = (await stores
+    .get(s.sessionId)!
+    .get<PrivateQuestion[]>("batch:0"))!;
+  const q = questions[0],
+    old = q.correctOptionId!,
+    changed = q.options.find((o) => o.id !== old)!.id;
+  const grade = (retry: boolean, answer: string) =>
+    worker.fetch(
+      req("grade", {
+        sessionId: s.sessionId,
+        accessToken: s.accessToken,
+        ...(retry ? { retry: true } : {}),
+        submissions: [{ exerciseId: q.id, version: 1, userAnswer: answer }],
+      }),
+      env,
+    );
+  expect((await grade(true, changed)).status).toBe(409);
+  expect(
+    (
+      await worker.fetch(
+        req("submit-exam", {
+          sessionId: s.sessionId,
+          accessToken: s.accessToken,
+          answers: Object.fromEntries(
+            questions.map((q) => [q.id, q.correctOptionId]),
+          ),
+        }),
+        env,
+      )
+    ).status,
+  ).toBe(200);
+  expect((await grade(true, changed)).status).toBe(200);
+  expect((await grade(false, changed)).status).toBe(409);
+  expect((await grade(false, old)).status).toBe(200);
 });

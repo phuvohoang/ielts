@@ -35,6 +35,8 @@ async function mockAPI(
       const sessionId = crypto.randomUUID(),
         settings: Settings = {
           topics: input.topics,
+          ieltsTopic: input.ieltsTopic,
+          subtopics: input.subtopics,
           questionCount: input.questionCount,
           difficulty: input.difficulty,
           exerciseType: input.exerciseType,
@@ -161,10 +163,17 @@ async function start(page: Page) {
   await page.goto("/lessons/01.2");
   await expect(
     page.getByRole("heading", {
-      name: "Build your practice session",
+      name: "Configure Practice",
       exact: true,
     }),
   ).toBeVisible();
+  await page
+    .getByRole("checkbox", {
+      name: "Word Formation & Word Families",
+      exact: true,
+    })
+    .check();
+  await page.getByRole("radio", { name: "10 questions", exact: true }).check();
 }
 const card = (page: Page) => page.locator("[data-exercise-id]");
 const next = (page: Page) =>
@@ -184,10 +193,13 @@ test("creates fresh questions, persists typed drafts and grading, and preserves 
     fullPage: true,
   });
   await expect(
-    page.getByRole("checkbox", { name: /Verb Tenses/ }),
+    page.getByRole("checkbox", { name: "Tenses", exact: true }),
   ).toBeEnabled();
   await expect(
-    page.getByRole("checkbox", { name: /Word Formation Build/ }),
+    page.getByRole("checkbox", {
+      name: "Word Formation & Word Families",
+      exact: true,
+    }),
   ).toBeChecked();
   await page
     .getByLabel("Exercise type", { exact: true })
@@ -273,6 +285,9 @@ test("collects a 10-question MCQ exam without early grading and shows explanatio
     page.getByText("Score 10/10 graded.", { exact: true }),
   ).toBeVisible();
   expect(mock.gradeCalls).toBe(2);
+  await page
+    .getByRole("button", { name: "Tiếp tục làm bài", exact: true })
+    .click();
   await expect(
     page.getByRole("heading", { name: "Reference answer", exact: true }),
   ).toBeVisible();
@@ -287,7 +302,7 @@ test("loads all 50 questions before opening practice, retries a failed batch, an
 }) => {
   const mock = await mockAPI(page, { failBatch: 1, delayedBatch: 2 });
   await start(page);
-  await page.getByLabel("Question count", { exact: true }).selectOption("50");
+  await page.getByRole("radio", { name: "50 questions", exact: true }).check();
   await page
     .getByRole("button", { name: "Generate Practice", exact: true })
     .click();
@@ -339,7 +354,7 @@ test("20-question practice waits for the complete set, opens the answer field an
 }) => {
   const mock = await mockAPI(page, { delayedBatch: 1 });
   await start(page);
-  await page.getByLabel("Question count", { exact: true }).selectOption("20");
+  await page.getByRole("radio", { name: "20 questions", exact: true }).check();
   await page
     .getByRole("button", { name: "Generate Practice", exact: true })
     .click();
@@ -487,7 +502,7 @@ test("last question hides Next and the side panel finds skipped questions withou
 }) => {
   const mock = await mockAPI(page);
   await start(page);
-  await page.getByLabel("Question count", { exact: true }).selectOption("20");
+  await page.getByRole("radio", { name: "20 questions", exact: true }).check();
   await page
     .getByLabel("Exercise type", { exact: true })
     .selectOption("word_formation");
@@ -568,4 +583,161 @@ test("last question hides Next and the side panel finds skipped questions withou
     path: `test-results/question-panel-${test.info().project.name}.png`,
     fullPage: true,
   });
+});
+
+test("defaults and multi-select generate only selected categories with Education context and preserve configuration", async ({
+  page,
+}) => {
+  const mock = await mockAPI(page);
+  await page.goto("/grammar");
+  await expect(
+    page.getByRole("checkbox", { name: "All Grammar Types", exact: true }),
+  ).toBeChecked();
+  await expect(
+    page.getByRole("radio", { name: "20 questions", exact: true }),
+  ).toBeChecked();
+  await expect(page.getByLabel("IELTS Topic", { exact: true })).toHaveValue(
+    "all",
+  );
+  await expect(page.getByLabel("Difficulty", { exact: true })).toHaveValue(
+    "B2",
+  );
+  await expect(page.getByLabel("Exercise type", { exact: true })).toHaveValue(
+    "mixed",
+  );
+  await page.getByRole("checkbox", { name: "Tenses", exact: true }).check();
+  await page
+    .getByRole("checkbox", { name: "Conditionals", exact: true })
+    .check();
+  await expect(
+    page.getByRole("checkbox", { name: "All Grammar Types", exact: true }),
+  ).not.toBeChecked();
+  await page
+    .getByLabel("IELTS Topic", { exact: true })
+    .selectOption("education");
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
+  await expect(card(page)).toBeVisible();
+  const s = [...mock.sessions.values()][0];
+  expect(s.settings.topics).toEqual(["verb-tenses", "conditionals"]);
+  expect(new Set(s.questions.map((q) => q.topicId))).toEqual(
+    new Set(["verb-tenses", "conditionals"]),
+  );
+  expect(s.questions.every((q) => q.ieltsTopic === "education")).toBe(true);
+  expect(
+    new Set(s.questions.map((q) => q.exerciseType)).size,
+  ).toBeGreaterThanOrEqual(4);
+  await expect(card(page).getByText(/Education/)).toBeVisible();
+  await page
+    .getByRole("button", { name: "Tạo bài luyện mới", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Remove Conditionals", exact: true })
+    .click();
+  await expect(
+    page.getByRole("checkbox", { name: "Conditionals", exact: true }),
+  ).not.toBeChecked();
+  await page
+    .getByRole("checkbox", { name: "All Grammar Types", exact: true })
+    .check();
+  await expect(
+    page.getByRole("checkbox", { name: "Tenses", exact: true }),
+  ).not.toBeChecked();
+});
+
+test("reordering tokens and typed draft survive direct navigation and refresh", async ({
+  page,
+}) => {
+  await mockAPI(page);
+  await page.goto("/grammar");
+  await page.getByRole("radio", { name: "10 questions", exact: true }).check();
+  await page
+    .getByLabel("Exercise type", { exact: true })
+    .selectOption("sentence_reordering");
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("Words to arrange", { exact: true }),
+  ).toBeVisible();
+  const token = page
+    .getByLabel("Words to arrange", { exact: true })
+    .getByRole("button")
+    .first();
+  const text = await token.innerText();
+  await token.click();
+  await expect(page.getByLabel("Your answer", { exact: true })).toHaveValue(
+    text,
+  );
+  await page
+    .getByRole("button", { name: "Next Question", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Previous Question", exact: true })
+    .click();
+  await expect(page.getByLabel("Your answer", { exact: true })).toHaveValue(
+    text,
+  );
+  await page.reload();
+  await expect(page.getByLabel("Your answer", { exact: true })).toHaveValue(
+    text,
+  );
+});
+
+test("results aggregate category scores and retry only incorrect or unanswered questions while retaining earlier rounds", async ({
+  page,
+}) => {
+  const mock = await mockAPI(page);
+  await start(page);
+  await page
+    .getByLabel("Exercise type", { exact: true })
+    .selectOption("word_formation");
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
+  await expect(card(page)).toBeVisible();
+  await page
+    .getByLabel("Your answer", { exact: true })
+    .fill("valid alternative");
+  await page.getByRole("button", { name: "Check Answer", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "View Results", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Practice Results", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Performance by grammar category",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("1/1 điểm · 100%", { exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Retry Incorrect Questions (9)", exact: true })
+    .click();
+  const navigator = page.getByRole("complementary", {
+    name: "Điều hướng câu hỏi",
+  });
+  await expect(navigator.getByRole("button")).toHaveCount(9);
+  await expect(
+    navigator.getByRole("button", { name: "Câu 1 — Đã trả lời", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    navigator.getByRole("button", {
+      name: "Câu 2 — Chưa trả lời",
+      exact: true,
+    }),
+  ).toHaveAttribute("aria-current", "step");
+  await page.reload();
+  await expect(navigator.getByRole("button")).toHaveCount(9);
+  await page.getByRole("button", { name: "View Results", exact: true }).click();
+  await expect(
+    page.getByText("Các lượt làm trước (1)", { exact: true }),
+  ).toBeVisible();
+  expect(mock.gradeCalls).toBe(1);
 });

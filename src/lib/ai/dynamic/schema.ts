@@ -1,14 +1,16 @@
 import { z } from "zod";
 import { resultSchema, normalizeAnswer } from "../schema";
-import { formats, levels, topics, type Topic } from "./topics";
+import { formats, levels, topics, ieltsTopics, type Topic } from "./topics";
 const text = z.string().trim().min(1).max(1200);
 export const settingsSchema = z
   .object({
     topics: z
       .array(z.string().max(80))
       .min(1)
-      .max(10)
+      .max(20)
       .refine((v) => new Set(v).size === v.length, "Select each topic once"),
+    ieltsTopic: z.string().max(80).optional(),
+    subtopics: z.record(z.string(), z.string().max(100)).optional(),
     questionCount: z.union([z.literal(10), z.literal(20), z.literal(50)]),
     difficulty: z.enum(levels),
     exerciseType: z.enum(["mixed", ...formats]),
@@ -22,7 +24,37 @@ export function validateSettings(
   registry: Topic[] = topics,
 ): Settings {
   const value = settingsSchema.strip().parse(input);
-  for (const id of value.topics) {
+  if (value.topics.includes("all") && value.topics.length !== 1)
+    throw new UnsupportedSettingsError(
+      "All cannot be combined with individual categories",
+    );
+  if (
+    value.ieltsTopic &&
+    value.ieltsTopic !== "all" &&
+    !ieltsTopics.some((t) => t.id === value.ieltsTopic)
+  )
+    throw new UnsupportedSettingsError("Unsupported IELTS topic");
+  const selected = value.topics.includes("all")
+    ? registry
+        .filter(
+          (t) =>
+            t.enabled &&
+            (value.exerciseType === "mixed" ||
+              t.supportedExerciseTypes.includes(value.exerciseType)),
+        )
+        .map((t) => t.topicId)
+    : value.topics;
+  if (!selected.length)
+    throw new UnsupportedSettingsError("No suitable category for this format");
+  for (const [id, subtopic] of Object.entries(value.subtopics ?? {})) {
+    if (
+      !selected.includes(id) ||
+      (subtopic &&
+        !registry.find((t) => t.topicId === id)?.subtopics?.includes(subtopic))
+    )
+      throw new UnsupportedSettingsError("Unsupported grammar subtopic");
+  }
+  for (const id of selected) {
     const topic = registry.find((t) => t.topicId === id);
     if (
       !topic?.enabled ||
@@ -47,6 +79,11 @@ export const contentSchema = z
     questionText: text,
     // Optional so earlier saved questions and backups remain readable.
     // Private target form supports a deterministic no-op check; optional for old data.
+    gradingCriteria: z
+      .array(z.string().min(1).max(300))
+      .min(1)
+      .max(8)
+      .optional(),
     targetWord: z.string().trim().min(1).max(80).nullable().optional(),
     underlinedText: z.string().trim().min(1).max(1200).nullable().optional(),
     instruction: text,
@@ -96,12 +133,16 @@ export const privateQuestionSchema = contentSchema
     exerciseType: z.enum(formats),
     difficulty: z.enum(levels),
     generationVersion: z.literal(1),
+    ieltsTopic: z.string().max(80).optional(),
+    grammarSubtopic: z.string().max(100).optional(),
+    reorderTokens: z.array(z.string().min(1).max(80)).max(40).optional(),
     ordinal: z.number().int().min(0).max(49),
   })
   .strict();
 export type PrivateQuestion = z.infer<typeof privateQuestionSchema>;
 export const publicQuestionSchema = privateQuestionSchema
   .omit({
+    gradingCriteria: true,
     targetWord: true,
     referenceAnswers: true,
     acceptedVariants: true,
@@ -155,6 +196,7 @@ export const continuationSchema = z
   .strict();
 export const dynamicGradeSchema = z
   .object({
+    retry: z.literal(true).optional(),
     sessionId: z.string().uuid(),
     accessToken: z.string().regex(/^[a-f0-9]{64}$/),
     submissions: z
@@ -211,6 +253,17 @@ export const localSessionSchema = sessionIdentitySchema.extend({
   reveals: z.record(z.string(), revealSchema),
   answers: z.record(z.string(), z.string().max(3000)),
   results: z.record(z.string(), resultSchema),
+  retryIds: z.array(z.string().uuid()).max(50).optional(),
+  previousRounds: z
+    .array(
+      z.object({
+        date: z.number(),
+        answers: z.record(z.string(), z.string()),
+        results: z.record(z.string(), resultSchema),
+        reveals: z.record(z.string(), revealSchema),
+      }),
+    )
+    .optional(),
   currentIndex: z.number().int().min(0).max(49),
   status: z.enum(["practicing", "submitted", "completed"]),
   examSubmitted: z.boolean(),
@@ -220,25 +273,45 @@ export type PlanItem = {
   topicId: string;
   exerciseType: (typeof formats)[number];
   ordinal: number;
+  ieltsTopic?: string;
+  grammarSubtopic?: string;
 };
 export function makePlan(
   settings: Settings,
   registry: Topic[] = topics,
 ): PlanItem[] {
   validateSettings(settings, registry);
+  const selected = settings.topics.includes("all")
+    ? registry
+        .filter(
+          (t) =>
+            t.enabled &&
+            (settings.exerciseType === "mixed" ||
+              t.supportedExerciseTypes.includes(settings.exerciseType)),
+        )
+        .map((t) => t.topicId)
+    : settings.topics;
   const counts = new Map<string, number>();
   return Array.from({ length: settings.questionCount }, (_, ordinal) => {
     const topic = registry.find(
-      (t) => t.topicId === settings.topics[ordinal % settings.topics.length],
+      (t) => t.topicId === selected[ordinal % selected.length],
     )!;
     const count = counts.get(topic.topicId) ?? 0;
     counts.set(topic.topicId, count + 1);
     return {
       topicId: topic.topicId,
+      ieltsTopic:
+        settings.ieltsTopic && settings.ieltsTopic !== "all"
+          ? settings.ieltsTopic
+          : ieltsTopics[ordinal % ieltsTopics.length].id,
+      grammarSubtopic:
+        settings.subtopics?.[topic.topicId] ||
+        topic.subtopics?.[count % topic.subtopics.length],
       exerciseType:
         settings.exerciseType === "mixed"
           ? topic.supportedExerciseTypes[
-              count % topic.supportedExerciseTypes.length
+              (count + (ordinal % selected.length)) %
+                topic.supportedExerciseTypes.length
             ]
           : settings.exerciseType,
       ordinal,
