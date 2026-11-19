@@ -489,6 +489,9 @@ test("last question hides Next and the side panel finds skipped questions withou
   await start(page);
   await page.getByLabel("Question count", { exact: true }).selectOption("20");
   await page
+    .getByLabel("Exercise type", { exact: true })
+    .selectOption("word_formation");
+  await page
     .getByRole("button", { name: "Generate Practice", exact: true })
     .click();
   await expect(card(page)).toBeVisible();
