@@ -39,7 +39,8 @@ export function GrammarExercise() {
     [historyCount, setHistoryCount] = useState(0);
   const [creating, setCreating] = useState(false),
     [generating, setGenerating] = useState(false),
-    [grading, setGrading] = useState(false);
+    [grading, setGrading] = useState(false),
+    [moving, setMoving] = useState(false);
   const [generationError, setGenerationError] = useState(""),
     [error, setError] = useState("");
   const live = useRef<PracticeSession | undefined>(undefined),
@@ -47,6 +48,7 @@ export function GrammarExercise() {
     gradeLock = useRef(false),
     createLock = useRef(false),
     examLock = useRef(false),
+    navigationLock = useRef(false),
     generationRequests = useRef({ key: "", count: 0 }),
     practiceRef = useRef<HTMLElement>(null);
   function show(value: PracticeSession | undefined) {
@@ -54,7 +56,7 @@ export function GrammarExercise() {
     setSession(value);
   }
   function update(patch: Partial<PracticeSession>) {
-    if (!live.current) return;
+    if (!live.current || navigationLock.current) return;
     const next = { ...live.current, ...patch, updatedAt: Date.now() };
     show(next);
     void saveSession(next).catch(() =>
@@ -62,6 +64,26 @@ export function GrammarExercise() {
         "Không lưu được tiến độ. Kiểm tra dung lượng trình duyệt trước khi tải lại.",
       ),
     );
+  }
+  async function move(index: number) {
+    const current = live.current;
+    if (!current || navigationLock.current || !current.questions[index]) return;
+    navigationLock.current = true;
+    setMoving(true);
+    const next = { ...current, currentIndex: index, updatedAt: Date.now() };
+    try {
+      // Once the next card is visible, its position must already be durable.
+      await saveSession(next);
+      if (live.current?.sessionId === current.sessionId) {
+        show(next);
+        setError("");
+      }
+    } catch {
+      setError("Chưa lưu được vị trí câu hỏi. Hãy thử chuyển câu lại.");
+    } finally {
+      navigationLock.current = false;
+      setMoving(false);
+    }
   }
   async function refreshHistory() {
     setSaved(
@@ -220,7 +242,7 @@ export function GrammarExercise() {
     }
   }
   async function grade(ids: string[]) {
-    if (gradeLock.current || !live.current) return;
+    if (gradeLock.current || navigationLock.current || !live.current) return;
     gradeLock.current = true;
     setGrading(true);
     setError("");
@@ -404,7 +426,7 @@ export function GrammarExercise() {
             </div>
             <Button
               variant="outline"
-              disabled={grading || generating || creating}
+              disabled={grading || moving || generating || creating}
               onClick={() => {
                 show(undefined);
                 setGenerationError("");
@@ -455,7 +477,7 @@ export function GrammarExercise() {
                 }}
               >
                 {q.exerciseType === "multiple_choice" ? (
-                  <fieldset disabled={grading || locked}>
+                  <fieldset disabled={grading || moving || locked}>
                     <legend>Your answer</legend>
                     <div className="mcq-options">
                       {q.options.map((option) => (
@@ -490,7 +512,7 @@ export function GrammarExercise() {
                         autoComplete="off"
                         value={answer}
                         maxLength={3000}
-                        disabled={grading || locked}
+                        disabled={grading || moving || locked}
                         onChange={(e) =>
                           update({
                             answers: {
@@ -506,7 +528,7 @@ export function GrammarExercise() {
                         rows={3}
                         value={answer}
                         maxLength={3000}
-                        disabled={grading || locked}
+                        disabled={grading || moving || locked}
                         onChange={(e) =>
                           update({
                             answers: {
@@ -522,7 +544,7 @@ export function GrammarExercise() {
                 {!exam && !result && (
                   <Button
                     type="submit"
-                    disabled={grading || expired || !answer.trim()}
+                    disabled={grading || moving || expired || !answer.trim()}
                   >
                     {grading
                       ? "Grading…"
@@ -610,23 +632,18 @@ export function GrammarExercise() {
               <div className="practice-navigation">
                 <Button
                   variant="outline"
-                  disabled={grading || session.currentIndex === 0}
-                  onClick={() => {
-                    update({ currentIndex: session.currentIndex - 1 });
-                    setError("");
-                  }}
+                  disabled={grading || moving || session.currentIndex === 0}
+                  onClick={() => void move(session.currentIndex - 1)}
                 >
                   Previous Question
                 </Button>
                 <Button
                   disabled={
                     grading ||
+                    moving ||
                     session.currentIndex + 1 >= session.questions.length
                   }
-                  onClick={() => {
-                    update({ currentIndex: session.currentIndex + 1 });
-                    setError("");
-                  }}
+                  onClick={() => void move(session.currentIndex + 1)}
                 >
                   Next Question
                 </Button>
@@ -720,7 +737,7 @@ export function GrammarExercise() {
               <Button
                 key={s.sessionId}
                 variant="outline"
-                disabled={grading || generating || creating}
+                disabled={grading || moving || generating || creating}
                 onClick={() => void resume(s.sessionId)}
               >
                 {new Date(s.createdAt).toLocaleDateString()} ·{" "}
