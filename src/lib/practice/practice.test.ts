@@ -6,7 +6,11 @@ import {
   gradeGenerated,
   type SessionEnv,
 } from "../../../worker/sessions";
-import { contentIssues, normalizeContent } from "../../../worker/practice";
+import {
+  contentIssues,
+  normalizeContent,
+  authoringContentSchema,
+} from "../../../worker/practice";
 import { publicExerciseSchema, practiceRecordSchema } from "./schema";
 import { contentFixture, writingFixture, wavFixture } from "./test-support";
 import { db, exportBackup, importBackup } from "../db";
@@ -329,4 +333,98 @@ it("never publishes private audit reasons in quality failure diagnostics", async
   expect(body.code).toBe("QUALITY_REJECTED");
   expect(body.reasons).toEqual(["ambiguity"]);
   expect(JSON.stringify(body)).not.toContain("nine");
+});
+
+it("removes over-limit variants only when a valid short key remains", () => {
+  const c = contentFixture();
+  c.questions[0].wordLimit = 1;
+  c.questions[0].answers = ["nine", "nine in the morning"];
+  const fixed = normalizeContent(c, settings() as never);
+  expect(fixed.questions[0].answers).toEqual(["nine"]);
+  c.questions[0].answers = ["nine in the morning"];
+  expect(normalizeContent(c, settings() as never).questions[0].answers).toEqual(
+    ["nine in the morning"],
+  );
+});
+it("repairs an unsatisfiable short answer without replacing the source or accepted peers", async () => {
+  const { AI, post } = setup(),
+    standard = AI.run.getMockImplementation()!;
+  let attempts = 0;
+  AI.run.mockImplementation(async (model, input) => {
+    const v = input as {
+      response_format: { json_schema: { name: string } };
+      messages: { content: string }[];
+    };
+    if (v.response_format.json_schema.name === "skill_authoring") {
+      attempts++;
+      const c = contentFixture();
+      if (attempts === 1) {
+        c.questions[0].wordLimit = 1;
+        c.questions[0].answers = ["nine in the morning"];
+        return { response: c } as never;
+      }
+      const data = JSON.parse(v.messages[1].content);
+      expect(data.repairQuestionNumbers).toEqual([1]);
+      expect(data.repairContent.passage).toBe(c.passage);
+      // A model may rewrite other fields; the server retains the original source/peers.
+      c.passage = "untrusted replacement source";
+      c.questions[1].prompt = "changed peer";
+      return { response: c } as never;
+    }
+    if (v.response_format.json_schema.name === "skill_audit") {
+      const data = JSON.parse(v.messages[1].content);
+      expect(data.content.passage).toBe(contentFixture().passage);
+      expect(data.content.questions[1].prompt).toBe(
+        contentFixture().questions[1].prompt,
+      );
+    }
+    return standard(model, input);
+  });
+  const response = await post("generate", settings());
+  expect(response.status).toBe(200);
+  expect(attempts).toBe(2);
+  expect(AI.run).toHaveBeenCalledTimes(3);
+});
+
+it("constrains native authoring to one MCQ/category key and short answers of at most three words", () => {
+  const c = contentFixture();
+  for (const q of c.questions) q.wordLimit = 3;
+  expect(authoringContentSchema.safeParse(c).success).toBe(true);
+  c.questions[0].answers = ["more than three words here"];
+  expect(authoringContentSchema.safeParse(c).success).toBe(false);
+  c.questions[0] = {
+    ...c.questions[0],
+    type: "multiple_choice",
+    options: [
+      { id: "a", text: "Nine" },
+      { id: "b", text: "Ten" },
+      { id: "c", text: "Eleven" },
+      { id: "d", text: "Twelve" },
+    ],
+    answers: ["a"],
+  };
+  expect(authoringContentSchema.safeParse(c).success).toBe(true);
+  c.questions[0].answers = ["a", "b"];
+  expect(authoringContentSchema.safeParse(c).success).toBe(false);
+});
+it("deduplicates aliases for one choice without collapsing different choices", () => {
+  const c = contentFixture();
+  c.questions[0] = {
+    ...c.questions[0],
+    type: "multiple_choice",
+    options: [
+      { id: "a", text: "Nine" },
+      { id: "b", text: "Ten" },
+      { id: "c", text: "Eleven" },
+      { id: "d", text: "Twelve" },
+    ],
+    answers: ["A", "nine", "Option A"],
+  };
+  expect(normalizeContent(c, settings() as never).questions[0].answers).toEqual(
+    ["a"],
+  );
+  c.questions[0].answers = ["a", "b"];
+  expect(normalizeContent(c, settings() as never).questions[0].answers).toEqual(
+    ["a", "b"],
+  );
 });
