@@ -485,8 +485,7 @@ export function GrammarExercise() {
                 {display?.missingUnderline && (
                   <p role="note" className="practice-error">
                     Đề này nhắc đến phần gạch chân nhưng không cung cấp vị trí.
-                    Bạn có thể bỏ qua bằng Next Question; câu chưa trả lời không
-                    được tính điểm.
+                    Chọn câu khác trong bảng số câu để tiếp tục.
                   </p>
                 )}
                 {q.requiredOpening && (
