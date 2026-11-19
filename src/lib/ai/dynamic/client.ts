@@ -74,7 +74,6 @@ export async function loadBatch(session: PracticeSession) {
       sessionId: session.sessionId,
       accessToken: session.accessToken,
       batchIndex: session.nextBatch,
-      allowPartial: true,
     }),
   );
   if (

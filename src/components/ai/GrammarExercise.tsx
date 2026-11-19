@@ -151,7 +151,7 @@ export function GrammarExercise() {
         generationRequests.current.count >= 3
       )
         setGenerationError(
-          "Bạn có thể làm các câu đã sẵn sàng. Phần còn lại chưa đạt kiểm định; hãy tạo bù sau.",
+          "AI chưa trả đủ câu hỏi. Hãy thử lại để hoàn tất bộ đề.",
         );
       await saveSession(next);
       show(next);
@@ -323,8 +323,10 @@ export function GrammarExercise() {
     );
     examLock.current = false;
   }
-  const q = session?.questions[session.currentIndex],
-    result = q && session?.results[q.id],
+  const q = session?.generationComplete
+    ? session.questions[session.currentIndex]
+    : undefined;
+  const result = q && session?.results[q.id],
     reveal = q && session?.reveals[q.id],
     answer = q ? (session?.answers[q.id] ?? "") : "";
   useEffect(() => {
@@ -380,18 +382,19 @@ export function GrammarExercise() {
         />
       )}
       {!loaded && <p role="status">Loading saved progress…</p>}
-      {(creating || (generating && !session?.questions.length)) && (
+      {(creating || (generating && !session?.generationComplete)) && (
         <section className="panel practice-loading" role="status">
           <div className="eyebrow">ĐANG CHUẨN BỊ BÀI TẬP</div>
-          <h2>Đang tạo câu hỏi đầu tiên…</h2>
+          <h2>Đang tạo bộ câu hỏi…</h2>
           <p>
-            Bài tập sẽ hiện ngay tại đây khi kiểm định xong. Bạn không cần bấm
-            Resume.
+            Đã tạo {session?.questions.length ?? 0}/
+            {session?.settings.questionCount ?? settings.questionCount} câu. Bộ
+            đề sẽ mở ngay khi tạo đủ.
           </p>
           <div className="practice-loading-line" />
         </section>
       )}
-      {generationError && !session?.questions.length && (
+      {generationError && !session?.generationComplete && (
         <section className="panel" role="alert">
           <h2>Chưa có câu hỏi sẵn sàng</h2>
           <p>{generationError}</p>
@@ -411,7 +414,7 @@ export function GrammarExercise() {
           {error}
         </p>
       )}
-      {session && (
+      {session?.generationComplete && (
         <>
           <div className="practice-toolbar" aria-label="Session progress">
             <div>
@@ -649,25 +652,6 @@ export function GrammarExercise() {
                 </Button>
               </div>
             </section>
-          )}
-          {session.questions.length > 0 && !session.generationComplete && (
-            <div className="practice-more" role="status">
-              {generating
-                ? "Đang chuẩn bị thêm câu hỏi. Bạn cứ tiếp tục làm bài."
-                : generationError || "Đang chuẩn bị câu tiếp theo…"}
-              {generationError && (
-                <Button
-                  variant="outline"
-                  disabled={generating || expired}
-                  onClick={() => {
-                    generationRequests.current.count = 0;
-                    void generateNext();
-                  }}
-                >
-                  Retry Generation
-                </Button>
-              )}
-            </div>
           )}
           {exam && (
             <div className="practice-exam-submit">

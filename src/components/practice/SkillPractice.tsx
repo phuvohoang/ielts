@@ -269,7 +269,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
             </label>
           </div>
           <Button onClick={() => void create()} disabled={!!busy}>
-            {busy ? "Đang tạo và kiểm định…" : "Tạo bài bằng AI"}
+            {busy ? "Đang tạo bài tập…" : "Tạo bài bằng AI"}
           </Button>
         </section>
       )}

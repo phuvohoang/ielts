@@ -134,79 +134,30 @@ async function batch(
   );
 }
 
-it("serves accepted questions immediately, grades partial batches and repairs only missing slots after a restart", async () => {
-  const { env, AI, objects, stores } = environment();
-  const standard = AI.run.getMockImplementation()!;
-  let reject = true;
-  AI.run.mockImplementation(async (model, input) => {
-    const messages = (input as { messages: { content: string }[] }).messages;
-    const result = await standard(model, input);
-    if (reject && messages[0].content.startsWith("Independently audit")) {
-      const report = result.response as ReturnType<typeof auditFixture>;
-      const verdict = report.verdicts.find((v) => v.ordinal === 3);
-      if (verdict) verdict.checks[1] = false; // ambiguous: never publish it
-    }
-    return result;
-  });
+it("creates all 20 questions without a pre-publication AI audit and keeps keys private", async () => {
+  const { env, AI } = environment();
   const session = await create(env, { questionCount: 20 });
-  const load = () =>
-    worker.fetch(
-      req("generate", {
-        sessionId: session.sessionId,
-        accessToken: session.accessToken,
-        batchIndex: 0,
-        allowPartial: true,
-      }),
-      env,
-    );
-  const partial = generationResponseSchema.parse(await (await load()).json());
-  expect(partial.questions).toHaveLength(9);
-  expect(partial.nextBatch).toBe(0);
-  expect(partial.complete).toBe(false);
-  expect(partial.questions.some((q) => q.ordinal === 3)).toBe(false);
-  expect(JSON.stringify(partial)).not.toContain("referenceAnswers");
-  const privateRows = (await stores
-    .get(session.sessionId)!
-    .get<PrivateQuestion[]>("batch:0"))!;
-  const graded = await worker.fetch(
-    req("grade", {
-      sessionId: session.sessionId,
-      accessToken: session.accessToken,
-      submissions: [
-        {
-          exerciseId: privateRows[0].id,
-          version: 1,
-          userAnswer: privateRows[0].referenceAnswers[0],
-        },
-      ],
-    }),
-    env,
+  const first = generationResponseSchema.parse(
+    await (await batch(env, session, 0)).json(),
   );
-  expect((await graded.json()).results[0].result.status).toBe("correct");
-  objects.set(
-    session.sessionId,
-    new GrammarSessions({ storage: stores.get(session.sessionId)! }, env),
-  );
-  AI.run.mockClear();
-  const unchanged = generationResponseSchema.parse(await (await load()).json());
-  expect(unchanged.questions).toEqual(partial.questions);
-  expect(AI.run).toHaveBeenCalledTimes(2);
-  reject = false;
-  AI.run.mockClear();
-  const repaired = generationResponseSchema.parse(await (await load()).json());
-  expect(repaired.questions).toHaveLength(10);
-  expect(repaired.nextBatch).toBe(1);
-  expect(repaired.questions.filter((q) => q.ordinal !== 3)).toEqual(
-    partial.questions,
-  );
-  expect(AI.run).toHaveBeenCalledTimes(2); // one author + one audit, not all ten
   const second = generationResponseSchema.parse(
     await (await batch(env, session, 1)).json(),
   );
+  expect(first.questions).toHaveLength(10);
+  expect(second.questions).toHaveLength(10);
   expect(second.complete).toBe(true);
   expect(
-    new Set([...repaired.questions, ...second.questions].map((q) => q.id)).size,
+    new Set([...first.questions, ...second.questions].map((q) => q.id)).size,
   ).toBe(20);
+  expect(AI.run).toHaveBeenCalledTimes(20);
+  expect(
+    AI.run.mock.calls.every((call) =>
+      JSON.stringify(call).includes("Create ORIGINAL"),
+    ),
+  ).toBe(true);
+  expect(JSON.stringify([first, second])).not.toMatch(
+    /referenceAnswers|correctOptionId|explanationVi/,
+  );
 });
 
 it("keeps the legacy full-batch contract while preserving accepted rows for retry", async () => {
@@ -236,7 +187,7 @@ it("keeps the legacy full-batch contract while preserving accepted rows for retr
   expect(repaired.questions.filter((q) => q.ordinal !== 3)).toEqual(
     before.map(publicQuestion),
   );
-  expect(AI.run).toHaveBeenCalledTimes(2);
+  expect(AI.run).toHaveBeenCalledTimes(1);
 });
 afterEach(() => {
   vi.useRealTimers();
@@ -326,7 +277,7 @@ describe("topic registry and balanced planning", () => {
 });
 describe("generation and durable batches", () => {
   it.each([10, 20, 50] as const)(
-    "creates %i validated questions in stable batches with no keys in public JSON",
+    "creates %i questions in stable batches with no keys in public JSON",
     async (questionCount) => {
       const { env, AI, stores, objects } = environment(),
         s = await create(env, { questionCount });
@@ -349,7 +300,7 @@ describe("generation and durable batches", () => {
         ids.push(...body.questions.map((q) => q.id));
       }
       expect(new Set(ids).size).toBe(questionCount);
-      expect(AI.run).toHaveBeenCalledTimes((questionCount / 10) * 11);
+      expect(AI.run).toHaveBeenCalledTimes(questionCount);
       // Object restart and a repeated batch reuse persisted keys and IDs without AI calls.
       objects.set(
         s.sessionId,
@@ -359,7 +310,7 @@ describe("generation and durable batches", () => {
       expect(replay.questions.map((q: { id: string }) => q.id)).toEqual(
         ids.slice(0, 10),
       );
-      expect(AI.run).toHaveBeenCalledTimes((questionCount / 10) * 11);
+      expect(AI.run).toHaveBeenCalledTimes(questionCount);
     },
   );
   it("deduplicates simultaneous requests for the same batch", async () => {
@@ -368,7 +319,7 @@ describe("generation and durable batches", () => {
     const responses = await Promise.all([batch(env, s, 0), batch(env, s, 0)]);
     const bodies = await Promise.all(responses.map((r) => r.json()));
     expect(bodies[0].questions).toEqual(bodies[1].questions);
-    expect(AI.run).toHaveBeenCalledTimes(11);
+    expect(AI.run).toHaveBeenCalledTimes(10);
   });
   it("preserves an earlier batch when the next batch fails, and retries without changing prior questions", async () => {
     const { env, AI } = environment(),
@@ -384,7 +335,7 @@ describe("generation and durable batches", () => {
       first.questions,
     );
   });
-  it("does not publish invalid JSON or independently rejected questions and uses bounded retries", async () => {
+  it("does not publish invalid JSON and uses bounded retries", async () => {
     const { env, AI } = environment(),
       s = await create(env);
     const standard = AI.run.getMockImplementation()!;
@@ -395,26 +346,21 @@ describe("generation and durable batches", () => {
     const parsed = await (await batch(env, s, 0)).json();
     expect(parsed.questions).toHaveLength(10);
   });
-  it("rejects wrong family/contradictory explanations in the independent audit before publishing", async () => {
+  it("does not ask an independent auditor to approve authored content", async () => {
     const { env, AI } = environment();
-    const standard = AI.run.getMockImplementation()!;
-    AI.run.mockImplementation(async (model, input) => {
-      const result = await standard(model, input);
-      const response = result.response as ReturnType<typeof auditFixture>;
-      if ("verdicts" in response) response.verdicts[0].checks[2] = false;
-      return result;
-    });
-    await expect(
-      generateBatch(
-        env,
-        settings,
-        crypto.randomUUID(),
-        makePlan(settings),
-        [],
-        [],
-      ),
-    ).rejects.toThrow("GENERATION_UNAVAILABLE");
-    expect(AI.run).toHaveBeenCalledTimes(15);
+    const questions = await generateBatch(
+      env,
+      settings,
+      crypto.randomUUID(),
+      makePlan(settings),
+      [],
+      [],
+    );
+    expect(questions).toHaveLength(10);
+    expect(AI.run).toHaveBeenCalledTimes(10);
+    expect(JSON.stringify(AI.run.mock.calls)).not.toContain(
+      "Independently audit",
+    );
   });
   it("times out an unresponsive model without publishing questions", async () => {
     vi.useFakeTimers();
@@ -433,7 +379,7 @@ describe("generation and durable batches", () => {
     await vi.advanceTimersByTimeAsync(101);
     await assertion;
   });
-  it("sends recent questions and failed skills to generation and uses a separate validation prompt", async () => {
+  it("sends recent questions and failed skills to generation without a validation call", async () => {
     const { env, AI } = environment();
     await generateBatch(
       env,
@@ -448,9 +394,7 @@ describe("generation and durable batches", () => {
     );
     expect(JSON.stringify(AI.run.mock.calls[0])).toContain("Suffix selection");
     expect(JSON.stringify(AI.run.mock.calls[0])).toContain("Create ORIGINAL");
-    expect(JSON.stringify(AI.run.mock.calls[10])).toContain(
-      "Independently audit",
-    );
+    expect(AI.run).toHaveBeenCalledTimes(10);
   });
   it("enforces origin, rate limits, private session tokens, batch ordering and key expiration", async () => {
     const { env } = environment();
@@ -756,7 +700,7 @@ it("accepts a complete 50-question exam payload exceeding the smaller generation
   );
 });
 
-it("bounds single-question authoring concurrency and keeps independent validation on the grading model", async () => {
+it("bounds single-question authoring concurrency on the authoring model", async () => {
   const { env, AI } = environment();
   env.AI_GENERATION_MODEL = "fast-author";
   env.AI_GENERATION_SCHEMA_STYLE = "workers";
@@ -783,7 +727,6 @@ it("bounds single-question authoring concurrency and keeps independent validatio
   );
   expect(AI.run.mock.calls.map((c) => c[0])).toEqual([
     ...Array.from({ length: 10 }, () => "fast-author"),
-    "test",
   ]);
   expect(peak).toBe(2);
   const first = AI.run.mock.calls[0][1] as {
@@ -813,7 +756,7 @@ it("removes redundant key spellings without dropping distinct valid variants and
   );
 });
 
-it("retries only a failed item while retaining independently validated questions", async () => {
+it("retries only a failed item while retaining independently questions", async () => {
   const { env, AI } = environment(),
     standard = AI.run.getMockImplementation()!;
   let failed = false;
