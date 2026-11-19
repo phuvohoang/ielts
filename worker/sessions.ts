@@ -1,7 +1,3 @@
-import {
-  rewriteProblem,
-  enforceRewriteChange,
-} from "../src/lib/ai/dynamic/rewrite-guard";
 import { generateBatch } from "./generation";
 import { handlePractice } from "./practice";
 import { cachedGrade, boundedMap, type Env } from "./grading";
@@ -67,13 +63,7 @@ export function asExercise(q: PrivateQuestion): Exercise {
     explanation: q.explanationVi,
     rubric:
       "Preserve grammar, naturalness, meaning, tense, degree and explicit instructions. " +
-      q.instruction +
-      (["sentence_transformation", "paraphrasing"].includes(q.exerciseType)
-        ? " An unchanged copy of the source does not satisfy this rewrite task."
-        : "") +
-      (q.targetWord
-        ? " The requested changed word-family form is " + q.targetWord + "."
-        : ""),
+      q.instruction,
     objective: q.answerForm !== "sentence",
   };
 }
@@ -110,23 +100,6 @@ export async function gradeGenerated(
   q: PrivateQuestion,
   answer: string,
 ) {
-  if (rewriteProblem(q)) {
-    return {
-      ...deterministicResult(q, answer, false),
-      status: "needs_review" as const,
-      score: null,
-      needsReview: true,
-      confidence: 1,
-      correctedAnswer: "",
-      alternativeAnswers: [],
-      errorSpans: [],
-      feedbackVi:
-        "Đề bị lỗi: câu gốc đã chứa đáp án hoặc chưa yêu cầu thay đổi dạng từ thực sự. Câu này không tính điểm; bạn không bị trừ điểm.",
-      grammarRule: "Bài viết lại phải yêu cầu một thay đổi thực sự.",
-      explanationVi:
-        "Đây là lỗi của đề, không phải lỗi của người học. Hãy chuyển sang câu khác; bài làm đã lưu vẫn được giữ.",
-    };
-  }
   if (env.AI_PRACTICE_ONLY === "true") {
     const text =
       q.exerciseType === "multiple_choice"
@@ -134,7 +107,7 @@ export async function gradeGenerated(
         : answer;
     if (!text) throw Error("Invalid answer");
     const result = await cachedGrade(env, asExercise(q), text, true);
-    return enforceRewriteChange(q, answer, { ...result, userAnswer: answer });
+    return { ...result, userAnswer: answer };
   }
   if (q.exerciseType === "multiple_choice")
     return deterministicResult(q, answer, answer === q.correctOptionId);
@@ -159,11 +132,7 @@ export async function gradeGenerated(
   }
 
   // Unknown alternatives go to semantic grading; absence from a finite key is not evidence of incorrectness.
-  return enforceRewriteChange(
-    q,
-    answer,
-    await cachedGrade(env, exercise, answer),
-  );
+  return cachedGrade(env, exercise, answer);
 }
 /** One object per random session; serial queue deduplicates concurrent batch generation, including across tabs. */
 export class GrammarSessions {

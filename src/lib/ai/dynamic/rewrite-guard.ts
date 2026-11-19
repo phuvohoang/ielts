@@ -34,27 +34,3 @@ export function rewriteProblem(q: PrivateQuestion): string | undefined {
     return "targetWord must identify the actual changed word-family form in a complete reference answer.";
 }
 
-/** Keep AI feedback, but never award rewrite credit for an unchanged source. */
-export function enforceRewriteChange(
-  q: PrivateQuestion,
-  answer: string,
-  result: import("../schema").GradeResult,
-): import("../schema").GradeResult {
-  if (
-    result.needsReview ||
-    !["sentence_transformation", "paraphrasing", "error_correction"].includes(
-      q.exerciseType,
-    ) ||
-    canonical(answer) !== canonical(q.questionText)
-  )
-    return result;
-  return {
-    ...result,
-    status: "incorrect",
-    score: 0,
-    correctedAnswer: q.referenceAnswers[0],
-    alternativeAnswers: q.acceptedVariants,
-    feedbackVi:
-      "Bạn đã chép lại câu gốc, chưa thực hiện yêu cầu biến đổi. Cần viết lại câu và thay đổi cấu trúc hoặc dạng từ theo chỉ dẫn; chỉ đổi chữ hoa hoặc dấu câu không được tính điểm.",
-  };
-}

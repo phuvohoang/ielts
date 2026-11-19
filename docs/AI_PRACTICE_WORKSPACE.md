@@ -80,11 +80,5 @@ and numbers. Only the failed ordinal is retried within the existing bounded
 authoring budget; other question IDs and keys remain checkpointed. This does not
 restore the removed independent AI auditor or general quality scoring pipeline.
 
-Older cached tasks without target metadata remain readable. If a source/reference
-copy is detected when grading an old task, its result is needs_review and unscored,
-with feedback attributing the problem to the exercise. Existing results/history
-are not rewritten. Genuine alternate English answers still use semantic grading.
-
-After AI grading of a valid rewrite, a copied-source answer cannot receive full or
-partial credit. This narrowly enforced task requirement preserves AI corrections
-and genuine alternate phrasing, and does not turn an uncertain result into a zero.
+Older cached tasks remain readable and are not regenerated or regraded. This fix
+acts during authoring only; grading behaviour is unchanged.
