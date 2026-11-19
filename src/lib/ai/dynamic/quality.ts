@@ -1,5 +1,22 @@
 import { normalizeAnswer } from "../schema";
 import type { PrivateQuestion } from "./schema";
+export function normalizeQuestionAnswers<
+  T extends { referenceAnswers: string[]; acceptedVariants: string[] },
+>(q: T): T {
+  const seen = new Set<string>();
+  const unique = (values: string[]) =>
+    values.filter((value) => {
+      const key = normalizeAnswer(value);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  return {
+    ...q,
+    referenceAnswers: unique(q.referenceAnswers),
+    acceptedVariants: unique(q.acceptedVariants),
+  };
+}
 export const fingerprint = (text: string) =>
   text
     .normalize("NFKC")
@@ -49,6 +66,14 @@ export function qualityIssues(
       q.questionText.replace("___", "").includes("_"))
   )
     issues.push("Cloze must have exactly one ___ blank");
+  if (
+    ["word_formation", "fill_blank"].includes(q.exerciseType) &&
+    q.rootWord &&
+    answers.some((a) => normalizeAnswer(a) === normalizeAnswer(q.rootWord!))
+  )
+    issues.push(
+      "Root already supplies the answer; require a changed word form",
+    );
   if (cloze && q.answerForm === "sentence")
     issues.push("Cloze needs a word form");
   if (

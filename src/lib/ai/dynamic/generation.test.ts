@@ -19,7 +19,12 @@ import {
   type PracticeSession,
   type PrivateQuestion,
 } from "./schema";
-import { qualityIssues, similar, shuffleOptions } from "./quality";
+import {
+  qualityIssues,
+  similar,
+  shuffleOptions,
+  normalizeQuestionAnswers,
+} from "./quality";
 import { contentFixture, questionFixture, auditFixture } from "./test-support";
 import { db, exportBackup, importBackup } from "../../db";
 import { saveSession, saveGraded } from "./persistence";
@@ -286,7 +291,7 @@ describe("generation and durable batches", () => {
     AI.run.mockImplementation(async (model, input) => {
       const result = await standard(model, input);
       const response = result.response as ReturnType<typeof auditFixture>;
-      if ("verdicts" in response) response.verdicts[0].wordFamilyValid = false;
+      if ("verdicts" in response) response.verdicts[0].checks[2] = false;
       return result;
     });
     await expect(
@@ -662,4 +667,23 @@ it("uses two bounded fast authoring calls and keeps independent validation on th
   };
   expect(JSON.parse(first.messages[1].content).plan).toHaveLength(5);
   expect(first.response_format.json_schema).toHaveProperty("properties");
+});
+
+it("removes redundant key spellings without dropping distinct valid variants and rejects copied roots", () => {
+  const cleaned = normalizeQuestionAnswers({
+    referenceAnswers: ["carefully", "Carefully."],
+    acceptedVariants: [" CAREFULLY ", "with care"],
+  });
+  expect(cleaned).toEqual({
+    referenceAnswers: ["carefully"],
+    acceptedVariants: ["with care"],
+  });
+  const q = questionFixture(crypto.randomUUID(), {
+    topicId: "word-formation",
+    exerciseType: "word_formation",
+    ordinal: 0,
+  });
+  expect(qualityIssues({ ...q, rootWord: q.referenceAnswers[0] })).toContain(
+    "Root already supplies the answer; require a changed word form",
+  );
 });
