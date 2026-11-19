@@ -13,7 +13,7 @@
     "AI_CRITERIA_GRADING": "true",
     "AI_SOURCE_COVERAGE": "true",
     "AI_GENERATION_MODEL": "@cf/meta/llama-3.1-8b-instruct-fp8",
-    "AI_GENERATION_SCHEMA_STYLE": "workers"
+    "AI_GENERATION_SCHEMA_STYLE": "json_object"
   },
   "ratelimits": [
     {
@@ -57,7 +57,7 @@
       "AI_CRITERIA_GRADING": "true",
       "AI_SOURCE_COVERAGE": "true",
       "AI_GENERATION_MODEL": "@cf/meta/llama-3.1-8b-instruct-fp8",
-      "AI_GENERATION_SCHEMA_STYLE": "workers"
+      "AI_GENERATION_SCHEMA_STYLE": "json_object"
     },
     "ratelimits": [
       {

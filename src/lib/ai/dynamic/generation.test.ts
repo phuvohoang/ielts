@@ -1,7 +1,11 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import "fake-indexeddb/auto";
 import worker from "../../../../worker/index";
-import { generateBatch } from "../../../../worker/generation";
+import {
+  generateBatch,
+  callStructured,
+  providerProblem,
+} from "../../../../worker/generation";
 import {
   GrammarSessions,
   gradeGenerated,
@@ -725,4 +729,41 @@ it("retries only a failed item while retaining independently validated questions
   );
   expect(ordinals.filter((n) => n === 3)).toHaveLength(2);
   expect(ordinals.filter((n) => n === 0)).toHaveLength(1);
+});
+
+it("supports JSON object authoring while retaining a full runtime output schema", async () => {
+  const { env, AI } = environment();
+  env.AI_GENERATION_SCHEMA_STYLE = "json_object";
+  await callStructured(
+    env,
+    "Create ORIGINAL",
+    { plan: makePlan(settings).slice(0, 1) },
+    privateQuestionSchema,
+    "grammar_generation",
+    new AbortController().signal,
+    1400,
+  );
+  const input = AI.run.mock.calls[0][1] as {
+    response_format: { type: string };
+    messages: { content: string }[];
+  };
+  expect(input.response_format).toEqual({ type: "json_object" });
+  expect(JSON.parse(input.messages[1].content).outputSchema).toHaveProperty(
+    "properties",
+  );
+});
+it("classifies provider failures without exposing provider text or private question data", () => {
+  expect(
+    providerProblem(
+      Error("3030: Daily neuron quota exceeded with private details"),
+    ),
+  ).toBe("quota_exhausted:3030");
+  expect(
+    providerProblem(
+      Error("unsupported response_format json_schema private details"),
+    ),
+  ).toBe("schema_unsupported");
+  expect(
+    providerProblem(Error("private answer and unknown provider failure")),
+  ).toBe("provider_error");
 });
