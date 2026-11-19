@@ -437,10 +437,18 @@ describe("deterministic quality and grading", () => {
     expect((await gradeGenerated(env, q, "b")).score).toBe(0);
     expect(AI.run).not.toHaveBeenCalled();
     const shuffled = shuffleOptions(q, () => 0);
-    expect(shuffled.options.map((o) => o.id)).not.toEqual(
-      q.options.map((o) => o.id),
+    expect(shuffled.options.map((o) => o.text)).not.toEqual(
+      q.options.map((o) => o.text),
     );
-    expect(shuffled.correctOptionId).toBe("a");
+    expect(shuffled.correctOptionId).toBe("d");
+    expect((await gradeGenerated(env, shuffled, "d")).score).toBe(1);
+    expect((await gradeGenerated(env, shuffled, "a")).score).toBe(0);
+    expect(
+      shuffled.distractorExplanations.find((d) => d.optionId === "a")
+        ?.explanationVi,
+    ).toBe(
+      q.distractorExplanations.find((d) => d.optionId === "b")?.explanationVi,
+    );
     expect(q.options[0].id).toBe("a");
   });
   it("accepts validated words deterministically but sends unfamiliar free-text alternatives to the existing AI grader", async () => {
@@ -492,7 +500,11 @@ describe("exam gating and additive persistence", () => {
       .get(s.sessionId)!
       .get<PrivateQuestion[]>("batch:0");
     const submissions = [
-      { exerciseId: generated.questions[0].id, version: 1, userAnswer: "a" },
+      {
+        exerciseId: generated.questions[0].id,
+        version: 1,
+        userAnswer: keys![0].correctOptionId!,
+      },
     ];
     const payload = { sessionId: s.sessionId, accessToken: s.accessToken };
     expect(
@@ -524,8 +536,12 @@ describe("exam gating and additive persistence", () => {
         env,
       )
     ).json();
-    expect(replay.answers[submissions[0].exerciseId]).toBe("a");
-    submissions[0].userAnswer = "b";
+    expect(replay.answers[submissions[0].exerciseId]).toBe(
+      keys![0].correctOptionId,
+    );
+    submissions[0].userAnswer = keys![0].options.find(
+      (o) => o.id !== keys![0].correctOptionId,
+    )!.id;
     expect(
       (await worker.fetch(req("grade", { ...payload, submissions }), env))
         .status,
