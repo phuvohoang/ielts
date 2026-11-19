@@ -1,4 +1,7 @@
-import { rewriteProblem } from "../src/lib/ai/dynamic/rewrite-guard";
+import {
+  rewriteProblem,
+  enforceRewriteChange,
+} from "../src/lib/ai/dynamic/rewrite-guard";
 import { generateBatch } from "./generation";
 import { handlePractice } from "./practice";
 import { cachedGrade, boundedMap, type Env } from "./grading";
@@ -131,7 +134,7 @@ export async function gradeGenerated(
         : answer;
     if (!text) throw Error("Invalid answer");
     const result = await cachedGrade(env, asExercise(q), text, true);
-    return { ...result, userAnswer: answer };
+    return enforceRewriteChange(q, answer, { ...result, userAnswer: answer });
   }
   if (q.exerciseType === "multiple_choice")
     return deterministicResult(q, answer, answer === q.correctOptionId);
@@ -156,7 +159,11 @@ export async function gradeGenerated(
   }
 
   // Unknown alternatives go to semantic grading; absence from a finite key is not evidence of incorrectness.
-  return cachedGrade(env, exercise, answer);
+  return enforceRewriteChange(
+    q,
+    answer,
+    await cachedGrade(env, exercise, answer),
+  );
 }
 /** One object per random session; serial queue deduplicates concurrent batch generation, including across tabs. */
 export class GrammarSessions {

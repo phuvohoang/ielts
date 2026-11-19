@@ -1,9 +1,9 @@
 import { expect, it } from "vitest";
-import { rewriteProblem } from "./rewrite-guard";
+import { rewriteProblem, enforceRewriteChange } from "./rewrite-guard";
 import { publicQuestion, type PrivateQuestion } from "./schema";
 import { questionFixture } from "./test-support";
-import { gradeGenerated } from "../../../../worker/sessions";
-import { summary } from "../schema";
+import { gradeGenerated, asExercise } from "../../../../worker/sessions";
+import { summary, knownResult } from "../schema";
 const source =
   "The director provided clear instructions for all staff members regarding the new training program.";
 function question(): PrivateQuestion {
@@ -69,4 +69,23 @@ it("marks an existing invalid task unscored without blaming the learner or calli
   expect(result.score).toBeNull();
   expect(result.feedbackVi).toContain("Đề bị lỗi");
   expect(summary([result]).maxScore).toBe(0);
+});
+
+it("does not award partial credit for a copied source after AI grading, while preserving genuine alternatives and uncertain results", () => {
+  const q = question();
+  q.questionText = "The director's instructions were easy to understand.";
+  const ai = knownResult(asExercise(q), q.referenceAnswers[0])!;
+  const half = { ...ai, status: "partially_correct" as const, score: 0.5 };
+  const result = enforceRewriteChange(q, q.questionText, half);
+  expect(result.score).toBe(0);
+  expect(result.status).toBe("incorrect");
+  expect(result.feedbackVi).toContain("chép lại câu gốc");
+  expect(enforceRewriteChange(q, q.referenceAnswers[0], ai)).toBe(ai);
+  const uncertain = {
+    ...ai,
+    status: "needs_review" as const,
+    score: null,
+    needsReview: true,
+  };
+  expect(enforceRewriteChange(q, q.questionText, uncertain)).toBe(uncertain);
 });

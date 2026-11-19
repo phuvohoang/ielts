@@ -84,3 +84,7 @@ Older cached tasks without target metadata remain readable. If a source/referenc
 copy is detected when grading an old task, its result is needs_review and unscored,
 with feedback attributing the problem to the exercise. Existing results/history
 are not rewritten. Genuine alternate English answers still use semantic grading.
+
+After AI grading of a valid rewrite, a copied-source answer cannot receive full or
+partial credit. This narrowly enforced task requirement preserves AI corrections
+and genuine alternate phrasing, and does not turn an uncertain result into a zero.
