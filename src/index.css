@@ -1344,3 +1344,25 @@ textarea:focus-visible {
 .transcript summary { font-weight: 800; cursor: pointer; }
 @media(max-width: 1000px) { .skill-workspace { grid-template-columns: 1fr; } .skill-source { position: static; } }
 @media(max-width: 600px) { .practice-home-grid { grid-template-columns: 1fr; gap: 16px; } .practice-home-card { padding: 22px; gap: 18px; } .practice-home-card h2 { font-size: 1.8rem; } .practice-card-bottom { align-items: flex-start; } .practice-card-bottom small { max-width: 20ch; } .writing-scores { grid-template-columns: 1fr; } }
+
+.grammar-practice-layout { display: grid; grid-template-columns: minmax(0, 1fr) 224px; gap: 20px; align-items: start; }
+.grammar-practice-layout > .practice-workspace { min-width: 0; }
+.question-navigator { position: sticky; top: 24px; padding: 20px; max-height: calc(100dvh - 48px); overflow-y: auto; }
+.question-navigator h2 { font-size: 1.1rem; margin: 0 0 6px; }
+.question-navigator > p { font-size: .85rem; margin: 0 0 14px; }
+.question-legend { display: grid; gap: 6px; font-size: .8rem; }
+.question-legend span span { display: inline-block; width: 18px; font-weight: 800; }
+.question-navigator .question-current-hint { font-size: .75rem; margin: 10px 0 14px; }
+.question-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.question-jump { position: relative; min-height: 44px; border: 1px solid #8a9b90; border-radius: 8px; background: #fff; color: #304b3d; font: inherit; font-weight: 700; cursor: pointer; }
+.question-jump.is-answered { background: #deeee3; border-color: #62866c; color: #214e33; }
+.question-jump[aria-current="step"] { outline: 3px solid #214e33; outline-offset: 1px; }
+.question-jump:focus-visible { outline: 3px solid #224ebe; outline-offset: 2px; }
+.question-jump:disabled { opacity: .6; cursor: wait; }
+.question-status { position: absolute; font-size: .6rem; right: 3px; bottom: 1px; }
+@media (max-width: 1100px) {
+  .grammar-practice-layout { grid-template-columns: minmax(0, 1fr); }
+  .question-navigator { position: static; order: -1; max-height: none; }
+  .question-grid { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
+  .question-legend { display: flex; gap: 16px; flex-wrap: wrap; }
+}

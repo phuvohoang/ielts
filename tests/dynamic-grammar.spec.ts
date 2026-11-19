@@ -481,3 +481,91 @@ test("identifies old questions with missing underlines and allows skipping witho
   await expect(card(page)).not.toHaveAttribute("data-exercise-id", id!);
   expect(mock.gradeCalls).toBe(0);
 });
+
+test("last question hides Next and the side panel finds skipped questions without losing drafts", async ({
+  page,
+}) => {
+  const mock = await mockAPI(page);
+  await start(page);
+  await page.getByLabel("Question count", { exact: true }).selectOption("20");
+  await page
+    .getByLabel("Exercise type", { exact: true })
+    .selectOption("word_formation");
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
+  await expect(card(page)).toBeVisible();
+  const navigator = page.getByRole("complementary", {
+    name: "Điều hướng câu hỏi",
+  });
+  for (let number = 1; number <= 15; number++) {
+    await navigator
+      .getByRole("button", {
+        name: `Câu ${number} — Chưa trả lời`,
+        exact: true,
+      })
+      .click();
+    await page
+      .getByLabel("Your answer", { exact: true })
+      .fill(`draft ${number}`);
+    await expect(
+      navigator.getByRole("button", {
+        name: `Câu ${number} — Đã trả lời`,
+        exact: true,
+      }),
+    ).toBeVisible();
+  }
+  await navigator
+    .getByRole("button", { name: "Câu 20 — Chưa trả lời", exact: true })
+    .click();
+  await page.getByLabel("Your answer", { exact: true }).fill("last draft");
+  await expect(
+    page.getByText("16/20 answered · 20 ready", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Next Question", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    navigator.getByRole("button", { name: "Câu 20 — Đã trả lời", exact: true }),
+  ).toHaveAttribute("aria-current", "step");
+  for (let number = 16; number <= 19; number++)
+    await expect(
+      navigator.getByRole("button", {
+        name: `Câu ${number} — Chưa trả lời`,
+        exact: true,
+      }),
+    ).toBeVisible();
+  await navigator
+    .getByRole("button", { name: "Câu 16 — Chưa trả lời", exact: true })
+    .click();
+  await expect(page.getByLabel("Your answer", { exact: true })).toHaveValue("");
+  await expect(
+    page.getByRole("button", { name: "Next Question", exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(
+    navigator.getByRole("button", {
+      name: "Câu 16 — Chưa trả lời",
+      exact: true,
+    }),
+  ).toHaveAttribute("aria-current", "step");
+  await navigator
+    .getByRole("button", { name: "Câu 20 — Đã trả lời", exact: true })
+    .click();
+  await expect(page.getByLabel("Your answer", { exact: true })).toHaveValue(
+    "last draft",
+  );
+  await expect(
+    page.getByRole("button", { name: "Next Question", exact: true }),
+  ).toHaveCount(0);
+  expect(mock.gradeCalls).toBe(0);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: `test-results/question-panel-${test.info().project.name}.png`,
+    fullPage: true,
+  });
+});
