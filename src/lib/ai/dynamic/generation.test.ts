@@ -1194,3 +1194,44 @@ it("requires genuine error-correction defects instead of false absolute tense ru
   expect(prompt).toContain("while/when/since");
   expect(prompt).toContain("will can express willingness");
 });
+
+it("puts trusted repair requirements in the author system prompt and designs unambiguous conditional errors", async () => {
+  const { env, AI } = environment(),
+    standard = AI.run.getMockImplementation()!;
+  let calls = 0;
+  AI.run.mockImplementation(async (model, input) => {
+    const result = await standard(model, input);
+    const questions = (
+      result.response as { questions: ReturnType<typeof contentFixture>[] }
+    ).questions;
+    for (const q of questions) {
+      q.rootWord = null;
+      q.targetWord = null;
+      if (calls++ === 0) {
+        q.questionText = "If students will study every day, they pass.";
+        q.referenceAnswers = ["If students study every day, they pass."];
+      }
+    }
+    return result;
+  });
+  const config = {
+    ...settings,
+    topics: ["conditionals"],
+    exerciseType: "error_correction" as const,
+    difficulty: "A2" as const,
+  };
+  await generateBatch(
+    env,
+    config,
+    crypto.randomUUID(),
+    makePlan(config).slice(0, 1),
+    [],
+    [],
+  );
+  const system = (
+    AI.run.mock.calls[1][1] as { messages: { content: string }[] }
+  ).messages[0].content;
+  expect(system).toContain("SERVER REPAIR REQUIREMENT");
+  expect(system).toContain("MANDATORY CONDITIONAL ERROR DESIGN");
+  expect(system).toContain("willingness");
+});

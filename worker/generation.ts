@@ -316,11 +316,20 @@ export async function generateBatch(
             )
               ? "\nFor this rewrite, identify the source phrase being replaced: underlinedText MUST contain its exact unique text, and instruction should refer to this underlined phrase. Do not supply the transformed answer as the source phrase."
               : "");
+          const correctionContract =
+            item.topicId === "conditionals" &&
+            item.exerciseType === "error_correction"
+              ? "\nMANDATORY CONDITIONAL ERROR DESIGN: Write a CORRECT if-clause. Put the one genuine error ONLY in the result clause: an auxiliary followed by a malformed verb construction (for example will attends -> will attend, will to submit -> will submit, would has -> would have). Never make removal of will/would from the if-clause the proposed correction. Use a new original situation, not the examples. Keep the selected conditional time relationship."
+              : "";
+          const repairContract = hints.get(item.ordinal)
+            ? "\nSERVER REPAIR REQUIREMENT: The prior item failed these deterministic checks. Fix this exact defect using a new source; do not repeat the same structure: " +
+              hints.get(item.ordinal)
+            : "";
           const raw = await withTimeout(
             (signal) =>
               callStructured(
                 env,
-                annotatedPrompt,
+                annotatedPrompt + correctionContract + repairContract,
                 {
                   sessionNonce: crypto.randomUUID(),
                   settings: { ...settings, questionCount: 1 },
