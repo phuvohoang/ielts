@@ -1,12 +1,12 @@
 import { expect, it } from "vitest";
 import { rewriteProblem } from "./rewrite-guard";
-import { publicQuestion } from "./schema";
+import { publicQuestion, type PrivateQuestion } from "./schema";
 import { questionFixture } from "./test-support";
 import { gradeGenerated } from "../../../../worker/sessions";
 import { summary } from "../schema";
 const source =
   "The director provided clear instructions for all staff members regarding the new training program.";
-function question() {
+function question(): PrivateQuestion {
   return {
     ...questionFixture(crypto.randomUUID(), {
       topicId: "word-formation",
