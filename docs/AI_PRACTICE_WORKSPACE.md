@@ -60,3 +60,12 @@ no claim of official examiner certification or guaranteed perfect answers is mad
 Run unit tests, build, worker dry run, desktop/mobile browser tests and Pages tests.
 Before publishing verify live audio playback, reading submission, a writing task
 and grammar grading with AI. Synthetic fixtures are confined to test-support files.
+
+## Sentence-task constraints
+
+Sentence-task sources may not contain embedded task templates, labelled solutions
+or complete accepted answers. Opening phrases are public task constraints and are
+shown before submission, but a phrase equal to a complete key is rejected for new
+questions and suppressed for older cached questions. Older local drafts without
+this newly public field remain readable; the client allows adding it during a
+partial-batch repair without changing existing question IDs or results.

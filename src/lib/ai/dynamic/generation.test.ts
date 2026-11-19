@@ -1031,3 +1031,53 @@ it("authors non-word-family grammar with the selected rule rather than forced de
   expect(rows[0].rootWord).toBeNull();
   expect(rows[0].referenceAnswers[0]).toContain("had left");
 });
+
+it("rejects public sentence templates, leaked solutions and hidden opening constraints", () => {
+  const base = {
+    ...questionFixture(crypto.randomUUID(), {
+      topicId: "verb-tenses",
+      exerciseType: "sentence_transformation",
+      ordinal: 0,
+    }),
+    rootWord: null,
+    questionText:
+      "They started maintaining the train lines five years ago and still maintain them.",
+    instruction: "Rewrite using the Present Perfect Continuous.",
+    referenceAnswers: [
+      "They have been maintaining the train lines for five years.",
+    ],
+    acceptedVariants: [],
+    requiredOpening: null,
+  };
+  expect(qualityIssues(base)).toEqual([]);
+  expect(
+    qualityIssues({
+      ...base,
+      questionText: "Complete the second sentence. " + base.questionText,
+    }),
+  ).toContain(
+    "Keep task directions and labelled solutions out of the source sentence",
+  );
+  expect(
+    qualityIssues({
+      ...base,
+      questionText:
+        base.questionText + "\nSource sentence: " + base.referenceAnswers[0],
+    }),
+  ).toContain(
+    "Source contains a complete accepted answer; require a real transformation",
+  );
+  expect(
+    qualityIssues({ ...base, instruction: "Begin with the provided words." }),
+  ).toContain("Instruction refers to a missing opening constraint");
+  expect(
+    qualityIssues({ ...base, requiredOpening: base.referenceAnswers[0] }),
+  ).toContain("Opening must not expose a complete answer");
+  const valid = { ...base, requiredOpening: "They have been" };
+  expect(publicQuestion(valid).requiredOpening).toBe("They have been");
+  expect(publicQuestion(valid)).not.toHaveProperty("referenceAnswers");
+  expect(
+    publicQuestion({ ...base, requiredOpening: base.referenceAnswers[0] })
+      .requiredOpening,
+  ).toBeNull();
+});

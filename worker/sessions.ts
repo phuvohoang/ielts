@@ -9,6 +9,7 @@ import {
   examSubmissionSchema,
   makePlan,
   publicQuestion,
+  visibleOpening,
   type PrivateQuestion,
   type Settings,
 } from "../src/lib/ai/dynamic/schema";
@@ -54,7 +55,7 @@ export function asExercise(q: PrivateQuestion): Exercise {
     question: q.questionText,
     instruction: q.instruction,
     ...(q.rootWord ? { rootWord: q.rootWord } : {}),
-    ...(q.requiredOpening ? { requiredOpening: q.requiredOpening } : {}),
+    ...(visibleOpening(q) ? { requiredOpening: visibleOpening(q)! } : {}),
     referenceAnswers: q.referenceAnswers,
     acceptedVariants: q.acceptedVariants,
     grammarRules: q.grammarRules,

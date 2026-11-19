@@ -438,6 +438,11 @@ export function GrammarExercise() {
               />
               <h2>{q.instruction}</h2>
               <p className="ai-question">{q.questionText}</p>
+              {q.requiredOpening && (
+                <p>
+                  Begin with: <strong>{q.requiredOpening}</strong>
+                </p>
+              )}
               {q.rootWord && (
                 <p>
                   Root word: <strong>{q.rootWord}</strong>

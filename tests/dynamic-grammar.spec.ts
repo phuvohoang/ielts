@@ -398,3 +398,46 @@ test("20-question practice opens the exercise first and keeps nine accepted ques
     fullPage: true,
   });
 });
+
+test("shows a required opening before submission while keeping the complete sentence key hidden", async ({
+  page,
+}) => {
+  const mock = await mockAPI(page);
+  // The API fixture is private; only a safe partial opening becomes public.
+  await page.route("**/api/grammar/generate", async (route, request) => {
+    const body = request.postDataJSON();
+    if (!body.sessionId) {
+      await route.fallback();
+      return;
+    }
+    const session = mock.sessions.get(body.sessionId)!;
+    for (const q of session.questions) {
+      q.requiredOpening = q.referenceAnswers[0]
+        .split(" ")
+        .slice(0, 3)
+        .join(" ");
+      q.instruction += " Begin with the provided words.";
+    }
+    await route.fallback();
+  });
+  await start(page);
+  await page
+    .getByLabel("Exercise type", { exact: true })
+    .selectOption("sentence_transformation");
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
+  await expect(card(page)).toBeVisible();
+  const first = [...mock.sessions.values()][0].questions[0];
+  await expect(
+    card(page).getByText(`Begin with: ${first.requiredOpening}`, {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Reference answer", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    card(page).getByText(first.referenceAnswers[0], { exact: true }),
+  ).toHaveCount(0);
+});
