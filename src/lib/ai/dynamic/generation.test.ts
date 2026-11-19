@@ -1160,3 +1160,37 @@ it("permits a separate exam retake only after submission and keeps the original 
   expect((await grade(false, changed)).status).toBe(409);
   expect((await grade(false, old)).status).toBe(200);
 });
+
+it("requires genuine error-correction defects instead of false absolute tense rules", async () => {
+  const { env, AI } = environment(),
+    standard = AI.run.getMockImplementation()!;
+  AI.run.mockImplementation(async (model, input) => {
+    const result = await standard(model, input);
+    const body = result.response as {
+      questions: ReturnType<typeof contentFixture>[];
+    };
+    for (const q of body.questions) {
+      q.rootWord = null;
+      q.targetWord = null;
+    }
+    return result;
+  });
+  const config = {
+    ...settings,
+    topics: ["verb-tenses"],
+    exerciseType: "error_correction" as const,
+    difficulty: "A2" as const,
+  };
+  await generateBatch(
+    env,
+    config,
+    crypto.randomUUID(),
+    makePlan(config).slice(0, 1),
+    [],
+    [],
+  );
+  const prompt = JSON.stringify(AI.run.mock.calls[0]);
+  expect(prompt).toContain("unambiguously malformed");
+  expect(prompt).toContain("while/when/since");
+  expect(prompt).toContain("will can express willingness");
+});

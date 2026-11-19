@@ -62,7 +62,7 @@ const grammarFormatContracts: Record<string, string> = {
   multiple_choice:
     "Provide a contextual grammar question with four distinct choices a,b,c,d and one best key. referenceAnswers must contain the correct option TEXT. Give three private distractor explanations. Do not force word families.",
   error_correction:
-    "Provide a full English source sentence with exactly ONE genuine error in the selected grammar rule. State exactly one error in instruction. Reference answers must be complete corrected sentences, preserving meaning.",
+    "Provide a full English source sentence with exactly ONE genuine error in the selected grammar rule. State exactly one error in instruction. Reference answers must be complete corrected sentences, preserving meaning. Do not label a grammatical tense choice as an error merely because of while/when/since. For tense correction use an unambiguously malformed verb/auxiliary construction (was wrote, did went, will to attend), not an optional simple/continuous preference. For conditional correction do not assume if + will is always wrong; will can express willingness. Use a genuine malformed auxiliary/verb pattern in a clearly intended conditional. For reported speech do not use optional backshift as the sole alleged error; prefer an invalid reporting-verb pattern or indirect-question word order.",
   sentence_transformation:
     "Provide a grammatical full source sentence and explicit structural transformation constraints for the selected grammar rule. Use complete references preserving participants, quantities, tense, time and emphasis. Do not force a word-family change unless that is the selected skill.",
   paraphrasing:
