@@ -259,12 +259,14 @@ export class GrammarSessions {
           );
           // Persist batch first; a recovered request can finish the metadata update without regenerating it.
           await this.storage.put(`batch:${input.batchIndex}`, batch);
-        } catch {
+        } catch (error) {
+          const failure = error as { code?: string; reason?: string };
           return send(
             {
               error:
                 "Không thể tạo bộ câu hỏi đã kiểm định. Hãy thử Retry Generation; các câu đã có vẫn được giữ.",
-              code: "GENERATION_UNAVAILABLE",
+              code: failure.code ?? "GENERATION_UNAVAILABLE",
+              reason: failure.reason ?? "unknown",
             },
             503,
           );
