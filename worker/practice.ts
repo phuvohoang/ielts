@@ -133,25 +133,33 @@ const auditor = `Independently solve and audit this AI-authored IELTS General ex
 async function generate(env: Env, settings: Stored["settings"]) {
   let reasons: string[] = [];
   for (let i = 0; i < 2; i++) {
-    const c = await structured(
-      env,
-      author,
-      { settings, nonce: crypto.randomUUID(), previousRejection: reasons },
-      exerciseContentSchema,
-      "skill_authoring",
-    );
-    reasons = contentIssues(c, settings);
-    if (reasons.length) continue;
-    const audit = await structured(
-      env,
-      auditor,
-      { settings, content: c },
-      auditSchema,
-      "skill_audit",
-      900,
-    );
-    if (audit.valid) return c;
-    reasons = audit.reasons;
+    try {
+      const c = await structured(
+        env,
+        author,
+        { settings, nonce: crypto.randomUUID(), previousRejection: reasons },
+        exerciseContentSchema,
+        "skill_authoring",
+      );
+      reasons = contentIssues(c, settings);
+      if (reasons.length) continue;
+      const audit = await structured(
+        env,
+        auditor,
+        { settings, content: c },
+        auditSchema,
+        "skill_audit",
+        900,
+      );
+      if (audit.valid) return c;
+      reasons = audit.reasons;
+    } catch (error) {
+      if (!(error instanceof z.ZodError) && !(error instanceof SyntaxError))
+        throw error;
+      reasons = [
+        "Return complete valid JSON matching the supplied schema; no omitted fields or truncated output.",
+      ];
+    }
   }
   throw Error("QUALITY_REJECTED");
 }
@@ -396,14 +404,16 @@ export async function handlePractice(
       {
         error:
           e instanceof z.ZodError
-            ? "Dữ liệu bài luyện không hợp lệ. Bài làm vẫn được giữ."
+            ? "AI chưa trả về nội dung đúng định dạng. Bài làm vẫn được giữ; hãy thử lại."
             : "AI chưa hoàn tất yêu cầu. Bài làm vẫn được giữ; hãy thử lại.",
         code:
           e instanceof Error && e.message === "QUALITY_REJECTED"
             ? "QUALITY_REJECTED"
-            : "PRACTICE_UNAVAILABLE",
+            : e instanceof Error && /^AUDIO_PROVIDER_\d{3}$/.test(e.message)
+              ? e.message
+              : "PRACTICE_UNAVAILABLE",
       },
-      { status: e instanceof z.ZodError ? 400 : 503 },
+      { status: 503 },
     );
   }
 }
