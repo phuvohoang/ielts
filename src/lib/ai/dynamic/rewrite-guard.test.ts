@@ -80,6 +80,7 @@ it("does not award partial credit for a copied source after AI grading, while pr
   expect(result.score).toBe(0);
   expect(result.status).toBe("incorrect");
   expect(result.feedbackVi).toContain("chép lại câu gốc");
+  expect(result.correctedAnswer).toBe(q.referenceAnswers[0]);
   expect(enforceRewriteChange(q, q.referenceAnswers[0], ai)).toBe(ai);
   const uncertain = {
     ...ai,

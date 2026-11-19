@@ -52,6 +52,8 @@ export function enforceRewriteChange(
     ...result,
     status: "incorrect",
     score: 0,
+    correctedAnswer: q.referenceAnswers[0],
+    alternativeAnswers: q.acceptedVariants,
     feedbackVi:
       "Bạn đã chép lại câu gốc, chưa thực hiện yêu cầu biến đổi. Cần viết lại câu và thay đổi cấu trúc hoặc dạng từ theo chỉ dẫn; chỉ đổi chữ hoa hoặc dấu câu không được tính điểm.",
   };
