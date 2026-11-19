@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { runModel as runProviderModel } from "./provider";
 import {
   knownResult,
   normalizeAnswer,
@@ -7,7 +8,7 @@ import {
   type Exercise,
 } from "../src/lib/ai/schema";
 export interface Env {
-  AI: {
+  AI?: {
     run(
       model: string,
       input: unknown,
@@ -15,6 +16,10 @@ export interface Env {
     ): Promise<unknown>;
   };
   AI_MODEL: string;
+  AI_PROVIDER?: "cloudflare" | "gemini";
+  GEMINI_API_KEY?: string;
+  GEMINI_MODEL?: string;
+  GEMINI_GENERATION_MODEL?: string;
   AI_GENERATION_MODEL?: string;
   AI_GENERATION_SCHEMA_STYLE?: string;
   AI_SCHEMA_STYLE?: string;
@@ -212,7 +217,8 @@ export async function infer(
       : "";
     return withTimeout(
       (signal) =>
-        env.AI.run(
+        runProviderModel(
+          env,
           env.AI_MODEL,
           {
             messages: [
@@ -401,6 +407,8 @@ export async function cachedGrade(env: Env, q: Exercise, answer: string) {
         new TextEncoder().encode(
           JSON.stringify([
             GRADER_REVISION,
+            env.AI_PROVIDER,
+            env.GEMINI_MODEL,
             env.AI_MODEL,
             env.AI_SCHEMA_STYLE,
             q.id,
