@@ -20,6 +20,8 @@ export interface Env {
   GEMINI_API_KEY?: string;
   GEMINI_MODEL?: string;
   GEMINI_GENERATION_MODEL?: string;
+  GEMINI_TTS_MODEL?: string;
+  AI_PRACTICE_ONLY?: string;
   AI_GENERATION_MODEL?: string;
   AI_GENERATION_SCHEMA_STYLE?: string;
   AI_SCHEMA_STYLE?: string;
@@ -396,8 +398,13 @@ export async function infer(
   }
   throw Object.assign(Error("AI unavailable"), failure);
 }
-export async function cachedGrade(env: Env, q: Exercise, answer: string) {
-  const known = knownResult(q, answer);
+export async function cachedGrade(
+  env: Env,
+  q: Exercise,
+  answer: string,
+  forceAI = false,
+) {
+  const known = forceAI ? undefined : knownResult(q, answer);
   if (known) return known;
   // Exact input in the hash preserves case/punctuation relevant to grammar; no plaintext cache keys.
   const key = Array.from(

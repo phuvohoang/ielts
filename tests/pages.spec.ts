@@ -1,66 +1,32 @@
 import { test, expect } from "@playwright/test";
-
-test("GitHub Pages assets, hash navigation, and refresh work under the repository path", async ({
+test("Pages serves the four-skill workspace and redirects old theory deep links", async ({
   page,
 }) => {
   const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/ielts/");
   await expect(
-    page.getByRole("heading", { name: "Make room for progress." }),
+    page.getByRole("heading", { name: "Hôm nay bạn muốn luyện gì?" }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Start learning", exact: true }).click();
-  await expect(page).toHaveURL(/\/ielts\/#\/path$/);
-  await expect(
-    page.getByRole("heading", {
-      name: "Understand first. Practise with purpose.",
-    }),
-  ).toBeVisible();
-  await page.reload();
-  await expect(
-    page.getByRole("heading", {
-      name: "Understand first. Practise with purpose.",
-    }),
-  ).toBeVisible();
-  await page.goto("/ielts/#/practice?advanced=1");
-  await page
-    .getByRole("button", { name: "Start practice", exact: true })
-    .click();
-  await expect(page.locator(".practice-card h2")).toBeVisible();
-  expect(errors).toEqual([]);
-});
-
-test("Pages opens four-field family recall through the library link", async ({
-  page,
-}) => {
-  await page.goto("/ielts/#/families");
-  await page.getByRole("link", { name: "Practise word-family recall" }).click();
-  await expect(page).toHaveURL(/\/ielts\/#\/families\/recall$/);
-  await page.getByRole("button", { name: "Start word-family recall" }).click();
-  await expect(page.getByRole("textbox")).toHaveCount(4);
-  await expect(
-    page.getByRole("button", { name: "Check all four forms" }),
-  ).toBeDisabled();
-});
-
-test("Pages opens and refreshes the dynamic session builder with keys hidden", async ({
-  page,
-}) => {
-  await page.goto("/ielts/#/lessons/01.2");
-  await expect(
-    page.getByRole("heading", { name: "Grammar Practice", exact: true }),
-  ).toBeVisible();
+  await expect(page.locator(".practice-home-card")).toHaveCount(4);
+  await page.goto("/ielts/#/learn/sentence-foundations-01");
+  await expect(page).toHaveURL(/#\/grammar$/);
   await expect(
     page.getByRole("button", { name: "Generate Practice", exact: true }),
-  ).toBeDisabled();
-  await expect(
-    page.getByRole("heading", { name: "Reference answer", exact: true }),
-  ).toHaveCount(0);
+  ).toBeEnabled();
   await page.reload();
   await expect(
-    page.getByRole("heading", {
-      name: "Build your practice session",
-      exact: true,
-    }),
+    page.getByRole("heading", { name: "Luyện ngữ pháp", exact: true }),
   ).toBeVisible();
+  for (const skill of ["listening", "reading", "writing"]) {
+    await page.goto(`/ielts/#/${skill}`);
+    await expect(
+      page.getByRole("button", { name: "Tạo bài bằng AI", exact: true }),
+    ).toBeEnabled();
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Tạo bài luyện", exact: true }),
+    ).toBeVisible();
+  }
+  expect(errors).toEqual([]);
 });

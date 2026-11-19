@@ -41,25 +41,65 @@ export const topics: Topic[] = [
       "Accept grammatical natural equivalents preserving meaning, tense, intensity and explicit instructions. Exact reference wording is not mandatory for sentences. A validated single-word set is authoritative for ordinary forms; unfamiliar alternatives need AI assessment. Do not penalise stylistic differences.",
   },
   ...[
-    ["verb-tenses", "Verb Tenses"],
-    ["nouns-articles", "Nouns & Articles"],
-    ["sentence-structure", "Sentence Structure"],
-    ["subject-verb-agreement", "Subject–Verb Agreement"],
-    ["prepositions", "Prepositions"],
-    ["adjectives-adverbs", "Adjectives & Adverbs"],
-    ["conditionals", "Conditionals"],
-    ["passive-voice", "Passive Voice"],
-    ["relative-clauses", "Relative Clauses"],
-  ].map(([topicId, displayName]): Topic => ({
-    topicId,
-    displayName,
-    description: "Generation rules are being prepared.",
-    enabled: false,
-    supportedExerciseTypes: [],
-    supportedLevels: [],
-    generationGuidelines: "",
-    gradingRubric: "",
-  })),
+    [
+      "verb-tenses",
+      "Verb Tenses",
+      "Practise tense choice and verb forms in clear time contexts. Preserve sequence, aspect and time markers; never penalise a valid alternative tense where the context permits it.",
+    ],
+    [
+      "nouns-articles",
+      "Nouns & Articles",
+      "Practise a/an/the/zero article, countability, quantifiers and singular/plural agreement. Supply sufficient discourse context to make article choice defensible; avoid ambiguous generic/specific readings.",
+    ],
+    [
+      "sentence-structure",
+      "Sentence Structure",
+      "Practise complete sentences, subject/verb/object/complement order, clauses and verb patterns. Error correction must contain one genuine grammatical defect, not an optional stylistic preference.",
+    ],
+    [
+      "subject-verb-agreement",
+      "Subject–Verb Agreement",
+      "Practise subject–verb agreement with clear referents and number. Avoid regional collective-noun conventions with multiple valid answers unless all valid variants are accepted.",
+    ],
+    [
+      "prepositions",
+      "Prepositions",
+      "Practise natural prepositions of time/place and common verb/adjective collocations. Do not invent exclusive rules; accept standard British and American variants where appropriate.",
+    ],
+    [
+      "adjectives-adverbs",
+      "Adjectives & Adverbs",
+      "Practise adjective/adverb placement, linking verbs, comparison and degree. Distinguish grammar from style and preserve explicit intensity in rewrites.",
+    ],
+    [
+      "conditionals",
+      "Conditionals",
+      "Practise real, hypothetical and past counterfactual conditions with enough context to select the intended meaning. Allow natural modal alternatives that retain meaning.",
+    ],
+    [
+      "passive-voice",
+      "Passive Voice",
+      "Practise active/passive transformations while preserving tense, aspect, participants and agent information. Use only transitive constructions supporting natural passives.",
+    ],
+    [
+      "relative-clauses",
+      "Relative Clauses",
+      "Practise defining/non-defining relative clauses with clear antecedents, punctuation and pronoun omission. Accept standard valid pronouns and equivalent clause structures.",
+    ],
+  ].map(
+    ([topicId, displayName, guidance]): Topic => ({
+      topicId,
+      displayName,
+      description: guidance.split(".")[0] + ".",
+      enabled: true,
+      supportedExerciseTypes: formats.filter((f) => f !== "word_formation"),
+      supportedLevels: levels,
+      generationGuidelines: guidance,
+      gradingRubric:
+        "Judge the stated grammar rule in its full context. Accept natural equivalent English preserving meaning, time, degree and explicit instructions. Do not require exact reference wording or invent hidden restrictions. " +
+        guidance,
+    }),
+  ),
 ];
 export const difficultyGuidelines = {
   A1: "Very common concrete vocabulary, one short simple clause, elementary noun/adjective/verb families. No advanced affixes or embedded clauses.",

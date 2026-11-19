@@ -98,7 +98,11 @@ export function qualityIssues(
     !q.rootWord?.match(/^[A-Za-z -]{2,60}$/)
   )
     issues.push("Missing valid root word");
-  if (cloze && answers.some((a) => !a.match(/^[A-Za-z]+(?:[-'][A-Za-z]+)*$/)))
+  if (
+    cloze &&
+    q.topicId === "word-formation" &&
+    answers.some((a) => !a.match(/^[A-Za-z]+(?:[-'][A-Za-z]+)*$/))
+  )
     issues.push("Expected single-word answers");
   if (q.constraint === "adverb_before_adjective" && q.answerForm !== "adverb")
     issues.push("Adverb required before adjective");
@@ -106,6 +110,7 @@ export function qualityIssues(
     issues.push("Adjective required before noun");
   if (
     q.answerForm === "adverb" &&
+    q.topicId === "word-formation" &&
     cloze &&
     answers.some(
       (a) =>

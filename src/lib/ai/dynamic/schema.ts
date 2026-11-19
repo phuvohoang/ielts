@@ -52,7 +52,14 @@ export const contentSchema = z
     grammarRules: z.array(z.string().min(1).max(200)).min(1).max(5),
     targetSkills: z.array(z.string().min(1).max(100)).min(1).max(5),
     explanationVi: z.string().min(20).max(2000),
-    answerForm: z.enum(["noun", "verb", "adjective", "adverb", "sentence"]),
+    answerForm: z.enum([
+      "noun",
+      "verb",
+      "adjective",
+      "adverb",
+      "sentence",
+      "other",
+    ]),
     constraint: z.enum([
       "adverb_before_adjective",
       "adjective_before_noun",
