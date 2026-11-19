@@ -6,7 +6,8 @@ mastery unlocks. Historical lesson/word-family/static-practice URLs redirect to
 Grammar; old error/progress links redirect to history. Unused theory content is
 not imported by the application. Old schemas and stored history remain compatible.
 
-Grammar retains the existing progressive 10–50-question pipeline, now with ten
+Grammar generates the selected 10, 20 or 50 questions in saved ten-question batches,
+then opens the exercise workspace only after the complete set is ready. It has ten
 configured grammar topic profiles. `AI_PRACTICE_ONLY=true` forces provider grading
 for known answers and MCQs as well as unfamiliar free text. The historical grading
 API stays compatible for saved data. No new static question bank is activated.
@@ -15,10 +16,9 @@ API stays compatible for saved data. No new static question bank is activated.
 
 `POST /api/practice/generate` accepts skill, CEFR level, task1/task2, optional focus
 and bounded recent titles. A new random Durable Object owns private keys and a
-seven-day capability token. Structured Gemini generation is followed by independent
-auditing, with at most two author/audit attempts. Deterministic checks verify
-question counts, unique numbering, key/options, exact source evidence, source
-length and answer word limits. Reading and Listening provide five questions per
+seven-day capability token. Structured Gemini generation is published after format parsing, with one retry for
+malformed output. There is no separate AI audit, semantic approval score, source
+evidence gate or answer-quality repair loop before the learner can practise. Reading and Listening provide five questions per
 short practice set, not a full official IELTS paper.
 
 Public responses strip answers, evidence, explanations and the listening transcript.
@@ -65,7 +65,6 @@ and grammar grading with AI. Synthetic fixtures are confined to test-support fil
 
 Sentence-task sources may not contain embedded task templates, labelled solutions
 or complete accepted answers. Opening phrases are public task constraints and are
-shown before submission, but a phrase equal to a complete key is rejected for new
-questions and suppressed for older cached questions. Older local drafts without
+shown before submission, and a phrase equal to a complete key is suppressed in public responses. Older local drafts without
 this newly public field remain readable; the client allows adding it during a
 partial-batch repair without changing existing question IDs or results.
