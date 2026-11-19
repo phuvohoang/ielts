@@ -68,3 +68,17 @@ or complete accepted answers. Opening phrases are public task constraints and ar
 shown before submission, and a phrase equal to a complete key is suppressed in public responses. Older local drafts without
 this newly public field remain readable; the client allows adding it during a
 partial-batch repair without changing existing question IDs or results.
+
+## No-op rewrite prevention
+
+Word-formation rewrites include a private targetWord field (never sent to the
+browser). A narrow deterministic guard rejects unchanged source/reference pairs,
+copied accepted variants, a requested target word already present in the source,
+an unchanged root and target metadata missing from the reference. Comparison
+ignores case, punctuation and underline presentation while preserving actual words
+and numbers. Only the failed ordinal is retried within the existing bounded
+authoring budget; other question IDs and keys remain checkpointed. This does not
+restore the removed independent AI auditor or general quality scoring pipeline.
+
+Older cached tasks remain readable and are not regenerated or regraded. This fix
+acts during authoring only; grading behaviour is unchanged.

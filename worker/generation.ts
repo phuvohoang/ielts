@@ -13,6 +13,8 @@ import {
 } from "../src/lib/ai/dynamic/quality";
 import { decodeModelBody, withTimeout, boundedMap, type Env } from "./grading";
 import { runModel } from "./provider";
+import { rewriteProblem } from "../src/lib/ai/dynamic/rewrite-guard";
+class RewriteFailure extends Error {}
 export const GENERATION_VERSION = 1;
 const contexts = [
   "public transport",
@@ -153,9 +155,11 @@ export async function generateBatch(
         ? "GENERATION_TIMEOUT"
         : error instanceof z.ZodError || error instanceof SyntaxError
           ? "GENERATION_RESPONSE_INVALID"
-          : "GENERATION_PROVIDER_ERROR";
+          : error instanceof RewriteFailure
+            ? "GENERATION_TASK_INVALID"
+            : "GENERATION_PROVIDER_ERROR";
     const detail =
-      fields ||
+      (error instanceof RewriteFailure ? error.message : fields) ||
       (code === "GENERATION_PROVIDER_ERROR" ? providerProblem(error) : "");
     failure = {
       code,
@@ -181,6 +185,13 @@ export async function generateBatch(
             "paraphrasing",
           ].includes(item.exerciseType);
           const itemContent = contentSchema.extend({
+            targetWord:
+              item.topicId === "word-formation" &&
+              ["sentence_transformation", "paraphrasing"].includes(
+                item.exerciseType,
+              )
+                ? z.string().trim().min(1).max(80)
+                : contentSchema.shape.targetWord.unwrap(),
             underlinedText: contentSchema.shape.underlinedText.unwrap(),
             rootWord:
               item.topicId === "word-formation"
@@ -242,6 +253,7 @@ export async function generateBatch(
               : " Match the requested grammar topic, context and CEFR level, not word formation.");
           const annotatedPrompt =
             taskPrompt +
+            "\nReturn targetWord as the exact changed word-family form used in the full reference answer for word-formation rewrites; otherwise null. The source must not already contain targetWord. Never use a copied source as a reference or variant. A reference must actually introduce the required form while preserving meaning. BAD: root clarity, requested adjective, source already says clear instructions. GOOD: source says the instructions were easy to understand, reference uses clear instructions. These constraints apply to every accepted variant too." +
             (["sentence_transformation", "paraphrasing"].includes(
               item.exerciseType,
             )
@@ -284,24 +296,24 @@ export async function generateBatch(
           );
           const content = itemOutput.parse(raw).questions[0];
           if (content.rootWord) usedRoots.add(content.rootWord.toLowerCase());
-          return {
-            question: privateQuestionSchema.parse({
-              ...normalizeQuestionAnswers(content),
-              ...item,
-              id: crypto.randomUUID(),
-              sessionId,
-              difficulty: settings.difficulty,
-              generationVersion: GENERATION_VERSION,
-            }),
-            ordinal: item.ordinal,
-          };
+          const question = privateQuestionSchema.parse({
+            ...normalizeQuestionAnswers(content),
+            ...item,
+            id: crypto.randomUUID(),
+            sessionId,
+            difficulty: settings.difficulty,
+            generationVersion: GENERATION_VERSION,
+          });
+          const problem = rewriteProblem(question);
+          if (problem) throw new RewriteFailure(problem);
+          return { question, ordinal: item.ordinal };
         } catch (error) {
           return { error, ordinal: item.ordinal };
         }
       },
       2,
     );
-    // Author once; semantic evaluation belongs to grading after submission.
+    // Keep parsed rows that pass the narrow no-op rewrite guard; retry only missing slots.
     for (const row of rows) {
       if ("error" in row) {
         hints.set(row.ordinal, note(row.error, "authoring"));

@@ -53,6 +53,7 @@ export function contentFixture(item: PlanItem, salt = 0): QuestionContent {
   );
   const mcq = item.exerciseType === "multiple_choice";
   return {
+    targetWord: adverb,
     underlinedText: null,
     questionText: cloze
       ? sentence.replace(adverb, "___")

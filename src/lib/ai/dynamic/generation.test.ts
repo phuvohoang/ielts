@@ -1024,3 +1024,47 @@ it("rejects public sentence templates, leaked solutions and hidden opening const
       .requiredOpening,
   ).toBeNull();
 });
+
+it("never publishes a copied rewrite and retries only that slot while retaining the other nine IDs", async () => {
+  const { env, AI, stores } = environment();
+  const standard = AI.run.getMockImplementation()!;
+  let bad = true;
+  const authorOrdinals: number[] = [];
+  AI.run.mockImplementation(async (model, input) => {
+    const v = input as { messages: { content: string }[] };
+    const data = JSON.parse(v.messages[1].content);
+    const response = await standard(model, input);
+    if (v.messages[0].content.startsWith("Create ORIGINAL")) {
+      const ordinal = data.plan[0].ordinal;
+      authorOrdinals.push(ordinal);
+      if (bad && ordinal === 5) {
+        const content = (
+          response.response as {
+            questions: ReturnType<typeof contentFixture>[];
+          }
+        ).questions[0];
+        content.questionText = content.referenceAnswers[0];
+      }
+    }
+    return response;
+  });
+  const session = await create(env);
+  expect((await batch(env, session, 0)).status).toBe(503);
+  const checkpoint = (await stores
+    .get(session.sessionId)!
+    .get<PrivateQuestion[]>("batch:0"))!;
+  expect(checkpoint).toHaveLength(9);
+  expect(checkpoint.some((q) => q.ordinal === 5)).toBe(false);
+  expect(authorOrdinals.filter((n) => n === 5)).toHaveLength(3);
+  bad = false;
+  const ready = generationResponseSchema.parse(
+    await (await batch(env, session, 0)).json(),
+  );
+  expect(ready.questions).toHaveLength(10);
+  expect(
+    ready.questions.filter((q) => q.ordinal !== 5).map((q) => q.id),
+  ).toEqual(checkpoint.map((q) => q.id));
+  expect(authorOrdinals.filter((n) => n !== 5)).toHaveLength(9);
+  expect(authorOrdinals.filter((n) => n === 5)).toHaveLength(4);
+  expect(JSON.stringify(ready)).not.toContain("targetWord");
+});

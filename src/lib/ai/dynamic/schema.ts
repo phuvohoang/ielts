@@ -46,6 +46,8 @@ export const contentSchema = z
   .object({
     questionText: text,
     // Optional so earlier saved questions and backups remain readable.
+    // Private target form supports a deterministic no-op check; optional for old data.
+    targetWord: z.string().trim().min(1).max(80).nullable().optional(),
     underlinedText: z.string().trim().min(1).max(1200).nullable().optional(),
     instruction: text,
     rootWord: z.string().trim().max(80).nullable(),
@@ -100,6 +102,7 @@ export const privateQuestionSchema = contentSchema
 export type PrivateQuestion = z.infer<typeof privateQuestionSchema>;
 export const publicQuestionSchema = privateQuestionSchema
   .omit({
+    targetWord: true,
     referenceAnswers: true,
     acceptedVariants: true,
     explanationVi: true,
@@ -126,16 +129,14 @@ export function visibleOpening(q: PrivateQuestion): string | null {
 }
 export function publicQuestion(q: PrivateQuestion): PublicQuestion {
   // Older cached questions predate the source guards. Never expose an entire key.
-  return publicQuestionSchema
-    .strip()
-    .parse({
-      ...q,
-      requiredOpening: visibleOpening(q),
-      underlinedText:
-        q.underlinedText && q.questionText.includes(q.underlinedText)
-          ? q.underlinedText
-          : null,
-    });
+  return publicQuestionSchema.strip().parse({
+    ...q,
+    requiredOpening: visibleOpening(q),
+    underlinedText:
+      q.underlinedText && q.questionText.includes(q.underlinedText)
+        ? q.underlinedText
+        : null,
+  });
 }
 export const historySchema = z
   .object({
