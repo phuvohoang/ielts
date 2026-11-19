@@ -13,6 +13,7 @@ import {
   normalizeQuestionAnswers,
 } from "../src/lib/ai/dynamic/quality";
 import { decodeModelBody, withTimeout, boundedMap, type Env } from "./grading";
+import { runModel } from "./provider";
 export const GENERATION_VERSION = 1;
 export const auditChecks = [
   "grammatical",
@@ -114,7 +115,8 @@ export async function callStructured(
   const style = authoring
     ? env.AI_GENERATION_SCHEMA_STYLE || env.AI_SCHEMA_STYLE
     : env.AI_SCHEMA_STYLE;
-  const raw = await env.AI.run(
+  const raw = await runModel(
+    env,
     model,
     {
       messages: [

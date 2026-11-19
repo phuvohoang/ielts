@@ -11,6 +11,7 @@ import {
   examSubmissionSchema,
 } from "../src/lib/ai/dynamic/schema";
 import { type SessionEnv } from "./sessions";
+import { providerConfigured } from "./provider";
 export { GrammarSessions } from "./sessions";
 export default {
   async fetch(request: Request, env: SessionEnv): Promise<Response> {
@@ -44,7 +45,7 @@ export default {
       return new Response(null, { status: 204, headers });
     if (request.method !== "POST")
       return send({ error: "Method not allowed" }, 405);
-    if (!env.AI_MODEL || !env.AI || !env.GRADE_LIMIT || !env.GLOBAL_LIMIT)
+    if (!providerConfigured(env) || !env.GRADE_LIMIT || !env.GLOBAL_LIMIT)
       return send({ error: "Grader not configured" }, 503);
     if (!request.headers.get("content-type")?.includes("application/json"))
       return send({ error: "JSON required" }, 415);
