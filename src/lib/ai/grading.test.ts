@@ -1,6 +1,7 @@
 import { beforeEach, afterEach, describe, it, expect, vi } from "vitest";
 import "fake-indexeddb/auto";
-import worker, { infer, withTimeout, boundedMap } from "../../../worker/index";
+import worker from "../../../worker/index";
+import { infer, withTimeout, boundedMap } from "../../../worker/grading";
 import { b2Exercises } from "./content";
 import { knownResult, resultSchema, summary, type GradeResult } from "./schema";
 import { gradeExercise } from "./client";
@@ -285,7 +286,7 @@ it("computes score with pending excluded, keeps retries and includes attempts in
     })),
   );
   const backup = await exportBackup();
-  expect(backup.version).toBe(3);
+  expect(backup.version).toBe(4);
   expect(backup.aiAttempts).toHaveLength(4);
   await importBackup(backup);
   expect(await db.aiAttempts.count()).toBe(4);

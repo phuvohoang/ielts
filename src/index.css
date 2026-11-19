@@ -1076,4 +1076,209 @@ textarea {
   margin-top: 8px;
 }
 
-.ai-card form {display:grid;gap:1rem}.ai-card input,.ai-card textarea{width:100%;padding:.8rem;border:1px solid #64748b;border-radius:.5rem;font:inherit}.ai-question{font-size:1.3rem}.ai-feedback{margin-top:1.5rem;border-top:1px solid #cbd5e1;padding-top:1.5rem}.answer-diff{line-height:2}.answer-diff del{background:#fee2e2;color:#7f1d1d;text-decoration:line-through}.answer-diff ins{background:#dcfce7;color:#14532d;text-decoration:underline}.ai-card progress{width:100%;accent-color:#286457}
+.ai-card form {
+  display: grid;
+  gap: 1rem;
+}
+.ai-card input,
+.ai-card textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #64748b;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+.ai-question {
+  font-size: 1.3rem;
+}
+.ai-feedback {
+  margin-top: 1.5rem;
+  border-top: 1px solid #cbd5e1;
+  padding-top: 1.5rem;
+}
+.answer-diff {
+  line-height: 2;
+}
+.answer-diff del {
+  background: #fee2e2;
+  color: #7f1d1d;
+  text-decoration: line-through;
+}
+.answer-diff ins {
+  background: #dcfce7;
+  color: #14532d;
+  text-decoration: underline;
+}
+.ai-card progress {
+  width: 100%;
+  accent-color: #286457;
+}
+
+/* Dynamic practice follows the existing quiet green study palette. */
+.builder-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.builder-heading h2 {
+  margin-top: 0;
+}
+.session-tag {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  background: #edf2e8;
+  color: #36543a;
+  padding: 0.5rem 0.75rem;
+  border-radius: 2rem;
+}
+.session-builder fieldset,
+.ai-card fieldset {
+  border: 0;
+  padding: 0;
+  margin: 1.5rem 0;
+  min-width: 0;
+}
+.session-builder legend,
+.ai-card legend {
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+.topic-choice {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  border: 1px solid #d5ded1;
+  border-radius: 0.65rem;
+  padding: 0.8rem;
+  cursor: pointer;
+}
+.topic-choice input {
+  margin-top: 0.25rem;
+  accent-color: #365f48;
+}
+.topic-choice span span {
+  display: block;
+  font-size: 0.78rem;
+  color: #566253;
+  margin-top: 0.3rem;
+}
+.topic-choice strong {
+  font-size: 0.9rem;
+}
+.topic-choice small {
+  margin-left: 0.6rem;
+  font-size: 0.7rem;
+  color: #5b665a;
+}
+.topic-upcoming {
+  background: #f4f5f1;
+  cursor: default;
+}
+.builder-controls {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.builder-controls label {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.builder-controls select {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  border: 1px solid #a9b5a3;
+  border-radius: 0.5rem;
+  padding: 0.75rem 0.5rem;
+  background: white;
+  font: inherit;
+}
+.practice-theory {
+  border-top: 1px solid #d5ded1;
+  padding: 1rem 0;
+}
+.practice-theory summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.practice-consent {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin: 1rem 0;
+}
+.muted {
+  font-size: 0.85rem;
+  color: #566253;
+}
+.practice-error {
+  padding: 1rem;
+  border-left: 3px solid #9c4c24;
+  background: #fff3e8;
+}
+.practice-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.saved-sessions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.mcq-options {
+  display: grid;
+  gap: 0.7rem;
+}
+.mcq-options label {
+  border: 1px solid #b4c1ac;
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+}
+.ai-card .mcq-options input {
+  width: auto;
+  accent-color: #365f48;
+}
+.generation-progress {
+  border-left: 3px solid #739665;
+}
+.generation-progress h2 {
+  font-size: 1rem;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #286457;
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .builder-heading {
+    flex-direction: column;
+  }
+  .topic-grid {
+    grid-template-columns: 1fr;
+  }
+  .builder-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .session-tag {
+    white-space: normal;
+  }
+  .practice-navigation {
+    flex-wrap: wrap;
+  }
+}

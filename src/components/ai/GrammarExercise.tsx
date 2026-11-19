@@ -1,417 +1,689 @@
 import { useEffect, useRef, useState } from "react";
-import { diffWordsWithSpace } from "diff";
-import { b2Exercises, mixedB2Exercises } from "../../lib/ai/content";
-import { gradeExercise } from "../../lib/ai/client";
-import {
-  summary,
-  type GradeResult,
-  type AIExerciseAttempt,
-} from "../../lib/ai/schema";
-import { db } from "../../lib/db";
+import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
+import { CorrectionDiff } from "./CorrectionDiff";
+import { db } from "../../lib/db";
+import { summary } from "../../lib/ai/schema";
+import { formatLabels } from "../../lib/ai/dynamic/topics";
+import { SessionBuilder } from "./SessionBuilder";
+import {
+  localSessionSchema,
+  validateSettings,
+  type PracticeSession,
+  type Settings,
+} from "../../lib/ai/dynamic/schema";
+import {
+  createSession,
+  loadBatch,
+  gradeAnswers,
+  submitExam,
+} from "../../lib/ai/dynamic/client";
+import { saveSession, saveGraded } from "../../lib/ai/dynamic/persistence";
+const initial: Settings = {
+  topics: ["word-formation"],
+  questionCount: 10,
+  difficulty: "B2",
+  exerciseType: "mixed",
+  feedbackMode: "instant",
+};
 const labels = {
   correct: "Correct",
   partially_correct: "Partially correct",
   incorrect: "Incorrect",
   needs_review: "Needs review",
 };
-function CorrectionDiff({
-  answer,
-  correction,
-}: {
-  answer: string;
-  correction: string;
-}) {
-  return (
-    <p className="answer-diff" aria-label="Answer correction">
-      {diffWordsWithSpace(answer, correction).map((part, i) =>
-        part.removed ? (
-          <del key={i}>
-            <span className="sr-only">Removed: </span>
-            {part.value}
-          </del>
-        ) : part.added ? (
-          <ins key={i}>
-            <span className="sr-only">Added: </span>
-            {part.value}
-          </ins>
-        ) : (
-          <span key={i}>{part.value}</span>
-        ),
-      )}
-    </p>
-  );
-}
 export function GrammarExercise() {
-  const [history, setHistory] = useState<AIExerciseAttempt[]>([]),
-    [loaded, setLoaded] = useState(false);
-  const [index, setIndex] = useState(0),
-    [answer, setAnswer] = useState(""),
-    [result, setResult] = useState<GradeResult>(),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState(""),
+  const [settings, setSettings] = useState<Settings>(initial),
     [learned, setLearned] = useState(false),
-    [done, setDone] = useState(false),
-    [retryIds, setRetryIds] = useState<string[]>();
-  const lock = useRef(false);
-  const [sessionId, setSessionId] = useState("");
-  const [mixed, setMixed] = useState(false);
-  const pool = retryIds
-    ? b2Exercises.filter((q) => retryIds.includes(q.id))
-    : mixed
-      ? mixedB2Exercises
-      : b2Exercises;
-  const q = pool[index];
+    [loaded, setLoaded] = useState(false);
+  const [session, setSession] = useState<PracticeSession>(),
+    [saved, setSaved] = useState<PracticeSession[]>([]),
+    [historyCount, setHistoryCount] = useState(0);
+  const [creating, setCreating] = useState(false),
+    [generating, setGenerating] = useState(false),
+    [grading, setGrading] = useState(false);
+  const [generationError, setGenerationError] = useState(""),
+    [error, setError] = useState(""),
+    [phase, setPhase] = useState("");
+  const live = useRef<PracticeSession | undefined>(undefined),
+    generationLock = useRef(false),
+    gradeLock = useRef(false),
+    createLock = useRef(false),
+    examLock = useRef(false);
+  function show(value: PracticeSession | undefined) {
+    live.current = value;
+    setSession(value);
+  }
+  function update(patch: Partial<PracticeSession>) {
+    if (!live.current) return;
+    const next = { ...live.current, ...patch, updatedAt: Date.now() };
+    show(next);
+    void saveSession(next).catch(() =>
+      setError(
+        "Không lưu được tiến độ. Kiểm tra dung lượng trình duyệt trước khi tải lại.",
+      ),
+    );
+  }
+  async function refreshHistory() {
+    setSaved(
+      await db.practiceSessions.orderBy("updatedAt").reverse().toArray(),
+    );
+    setHistoryCount(await db.aiAttempts.count());
+  }
   useEffect(() => {
     let active = true;
-    db.aiAttempts
-      .orderBy("date")
-      .toArray()
-      .then((rows) => {
+    Promise.all([
+      db.practiceSessions.orderBy("updatedAt").reverse().toArray(),
+      db.aiAttempts.count(),
+    ])
+      .then(([sessions, count]) => {
         if (!active) return;
-        setHistory(rows);
-        setSessionId(rows.at(-1)?.sessionId ?? crypto.randomUUID());
+        setSaved(sessions);
+        setHistoryCount(count);
+        if (sessions[0]) {
+          show(localSessionSchema.parse(sessions[0]));
+          setSettings(sessions[0].settings);
+        }
         setLoaded(true);
       })
-      .catch(() => setError("Không đọc được tiến độ. Hãy tải lại trang."));
+      .catch(() =>
+        setError("Không đọc được tiến độ đã lưu. Hãy tải lại trang."),
+      );
     return () => {
       active = false;
     };
   }, []);
-  const current = history.filter((a) => a.sessionId === sessionId);
-  const latest = new Map<string, AIExerciseAttempt>();
-  for (const a of current) latest.set(a.exerciseId, a);
-  const totals = summary([...latest.values()].map((a) => a.result));
-  async function submit() {
-    if (lock.current || !answer.trim() || !q) return;
-    lock.current = true;
-    setBusy(true);
-    setError("");
+  async function generateNext() {
+    const current = live.current;
+    if (!current || current.generationComplete || generationLock.current)
+      return;
+    generationLock.current = true;
+    setGenerating(true);
+    setGenerationError("");
+    setPhase(
+      `Creating questions · batch ${current.nextBatch + 1}/${current.settings.questionCount / 10}. AI is also checking question quality.`,
+    );
     try {
-      const report = await gradeExercise(q, answer.trim());
-      const attempt: AIExerciseAttempt = {
-        id: crypto.randomUUID(),
-        sessionId,
-        exerciseId: q.id,
-        version: q.version,
-        userAnswer: answer.trim(),
-        date: Date.now(),
-        result: report,
+      const batch = await loadBatch(current);
+      setPhase(
+        "Validating questions · checking the session, schema and ordering.",
+      );
+      const latest = live.current;
+      if (latest?.sessionId !== current.sessionId) return;
+      const next = {
+        ...latest,
+        questions: [...latest.questions, ...batch.questions],
+        nextBatch: batch.nextBatch,
+        generationComplete: batch.complete,
+        updatedAt: Date.now(),
       };
-      await db.aiAttempts.add(attempt);
-      setHistory((old) => [...old, attempt]);
-      setResult(report);
+      setPhase("Preparing session · saving validated questions.");
+      await saveSession(next);
+      show(next);
+      await refreshHistory();
+    } catch (e) {
+      setGenerationError(
+        e instanceof Error ? e.message : "Không tạo được câu hỏi. Hãy thử lại.",
+      );
+    } finally {
+      generationLock.current = false;
+      setGenerating(false);
+      setPhase("");
+    }
+  }
+  useEffect(() => {
+    if (
+      session &&
+      !session.generationComplete &&
+      !generationError &&
+      !generationLock.current
+    )
+      void generateNext();
+    // Each successful batch advances the persistent cursor. A failed batch requires an explicit retry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.sessionId, session?.nextBatch, generationError, generating]);
+  async function start() {
+    if (createLock.current || !learned) return;
+    createLock.current = true;
+    setCreating(true);
+    setError("");
+    setGenerationError("");
+    try {
+      const config = validateSettings(settings),
+        old = await db.practiceSessions.orderBy("updatedAt").toArray(),
+        attempts = await db.aiAttempts
+          .orderBy("date")
+          .reverse()
+          .limit(100)
+          .toArray();
+      const recent = old
+        .flatMap((s) => s.questions.map((q) => q.questionText))
+        .slice(-60);
+      const weak = [
+        ...new Set(
+          attempts
+            .filter(
+              (a) =>
+                a.result.status === "incorrect" ||
+                a.result.status === "partially_correct",
+            )
+            .flatMap(
+              (a) =>
+                old
+                  .flatMap((s) => s.questions)
+                  .find((q) => q.id === a.exerciseId)?.targetSkills ?? [],
+            ),
+        ),
+      ].slice(0, 15);
+      const response = await createSession(config, recent, weak);
+      const next: PracticeSession = {
+        ...response,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        nextBatch: 0,
+        generationComplete: false,
+        questions: [],
+        answers: {},
+        results: {},
+        reveals: {},
+        currentIndex: 0,
+        status: "practicing",
+        examSubmitted: false,
+      };
+      await saveSession(next);
+      show(next);
+      await refreshHistory();
     } catch (e) {
       setError(
         e instanceof Error
           ? e.message
-          : "Không kết nối được AI. Bài này chưa được chấm điểm.",
+          : "Không tạo được phiên học. Hãy thử lại.",
       );
     } finally {
-      setBusy(false);
-      lock.current = false;
+      createLock.current = false;
+      setCreating(false);
     }
   }
-  function select(i: number) {
-    setIndex(i);
-    const old = latest.get(pool[i].id);
-    setAnswer(old?.userAnswer ?? "");
-    setResult(old?.result);
+  async function grade(ids: string[]) {
+    if (gradeLock.current || !live.current) return;
+    gradeLock.current = true;
+    setGrading(true);
     setError("");
+    try {
+      const current = live.current,
+        missing: string[] = [];
+      for (let start = 0; start < ids.length; start += 8) {
+        const items = await gradeAnswers(current, ids.slice(start, start + 8));
+        const latest = live.current;
+        if (latest?.sessionId !== current.sessionId) return;
+        const results = { ...latest.results },
+          reveals = { ...latest.reveals };
+        for (const item of items) {
+          if (item.result) {
+            results[item.exerciseId] = item.result;
+            if (item.reveal) reveals[item.exerciseId] = item.reveal;
+          } else missing.push(item.exerciseId);
+        }
+        const next = { ...latest, results, reveals, updatedAt: Date.now() };
+        await saveGraded(
+          next,
+          items.flatMap((item) => (item.result ? [item.result] : [])),
+        );
+        show(next);
+      }
+      const latest = live.current!;
+      if (
+        latest.generationComplete &&
+        latest.questions.every((q) => latest.results[q.id])
+      )
+        update({ status: "completed" });
+      await refreshHistory();
+      if (missing.length)
+        setError(
+          `${missing.length} câu chưa được chấm. Câu trả lời đã lưu; hãy thử Retry grading.`,
+        );
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "AI chưa sẵn sàng. Câu trả lời vẫn được lưu và chưa bị tính sai.",
+      );
+    } finally {
+      gradeLock.current = false;
+      setGrading(false);
+    }
   }
-  const weak = [
-    ...new Set(
-      current
-        .filter((a) => a.result.status !== "correct")
-        .flatMap(
-          (a) =>
-            b2Exercises.find((q) => q.id === a.exerciseId)?.grammarRules ?? [],
-        ),
-    ),
-  ];
+  async function finishExam() {
+    if (!live.current || gradeLock.current || examLock.current) return;
+    examLock.current = true;
+    setError("");
+    setGrading(true);
+    try {
+      if (!live.current.examSubmitted) {
+        const frozenAnswers = await submitExam(live.current);
+        update({
+          answers: frozenAnswers,
+          examSubmitted: true,
+          status: "submitted",
+        });
+      }
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Không nộp được bài. Hãy thử lại.",
+      );
+      setGrading(false);
+      examLock.current = false;
+      return;
+    }
+    setGrading(false);
+    const current = live.current;
+    await grade(
+      current.questions
+        .filter(
+          (q) => !current.results[q.id] || current.results[q.id].needsReview,
+        )
+        .map((q) => q.id),
+    );
+    examLock.current = false;
+  }
+  const q = session?.questions[session.currentIndex],
+    result = q && session?.results[q.id],
+    reveal = q && session?.reveals[q.id],
+    answer = q ? (session?.answers[q.id] ?? "") : "";
+  const totals = summary(Object.values(session?.results ?? {})),
+    answered =
+      session?.questions.filter((q) => session.answers[q.id]?.trim()).length ??
+      0;
+  const exam = session?.settings.feedbackMode === "exam",
+    locked = !!result || !!session?.examSubmitted;
+  const expired = !!session && session.expiresAt <= Date.now();
+  const resume = async (id: string) => {
+    const row = await db.practiceSessions.get(id);
+    if (row) {
+      show(localSessionSchema.parse(row));
+      setSettings(row.settings);
+      setError("");
+      setGenerationError("");
+    }
+  };
   return (
     <>
       <div className="heading">
-        <div className="eyebrow">ADVANCED · GRAMMAR FOUNDATION 01.2</div>
-        <h1>Word Formation B2</h1>
-        <p>25 câu · Word Families → Context → Sentence Transformation</p>
+        <div className="eyebrow">
+          OPTIONAL ADVANCED PRACTICE · FOUNDATION 01.2
+        </div>
+        <h1>Grammar Practice</h1>
+        <p>
+          Fresh questions. Focused practice. English you can produce
+          independently.
+        </p>
       </div>
-      <section className="panel">
-        <h2>Learn before you practise</h2>
-        <p>
-          Bài nâng cao tự chọn. Bài này không mở khóa các quy tắc trong Learning
-          Path.
+      <SessionBuilder
+        settings={settings}
+        setSettings={setSettings}
+        learned={learned}
+        setLearned={setLearned}
+        loaded={loaded}
+        creating={creating}
+        generating={generating}
+        grading={grading}
+        hasSession={!!session}
+        onGenerate={() => void start()}
+        onNewSession={() => {
+          show(undefined);
+          setGenerationError("");
+          setError("");
+        }}
+      />
+      {!loaded && <p role="status">Loading saved progress…</p>}
+      {(creating || generating) && (
+        <section className="panel generation-progress" role="status">
+          <h2>{creating ? "Preparing session" : phase}</h2>
+          <p>
+            {session?.questions.length ?? 0}/
+            {session?.settings.questionCount ?? settings.questionCount}{" "}
+            validated questions ready. Batches contain 10 questions. You can
+            practise ready questions while the next batch is prepared.
+          </p>
+        </section>
+      )}
+      {generationError && (
+        <section className="panel" role="alert">
+          <p>{generationError}</p>
+          <Button
+            disabled={generating || expired}
+            onClick={() => void generateNext()}
+          >
+            Retry Generation
+          </Button>
+        </section>
+      )}
+      {error && (
+        <p className="practice-error" role="alert">
+          {error}
         </p>
-        <p>
-          <strong>Word Families:</strong> economic nói về nền kinh tế;
-          economical = tiết kiệm. considerable = đáng kể; considerate = chu đáo.
-          historic = có tầm quan trọng lịch sử; historical = thuộc về lịch sử.
-          sensible = hợp lý; sensitive = nhạy cảm. Hai nghĩa có thể chồng lấn:
-          luôn xét ngữ cảnh.
-        </p>
-        <p>
-          <strong>Sentence Transformation:</strong> Giữ Subject, ý nghĩa, thời
-          và mức độ. “gave a very careful reply” → “replied very carefully”; bỏ
-          very làm giảm mức độ. “find + Object + Adjective” → “found the room
-          warm”. Có thể dùng mệnh đề “found that the room was warm”.
-        </p>
-        <p>
-          <strong>Word Formation:</strong> Adjective bổ nghĩa Noun hoặc làm
-          Complement sau be; Adverb bổ nghĩa Verb hoặc Adjective: “statistically
-          significant”. Noun professionalism chỉ tác phong; effective mô tả tác
-          dụng. Prefix un-/im- có thể đổi nghĩa phủ định: unclear, impractical.
-          Không có một suffix đúng cho mọi ngữ cảnh.
-        </p>
-        <label>
-          <input
-            type="checkbox"
-            checked={learned}
-            onChange={(e) => setLearned(e.target.checked)}
-          />{" "}
-          Tôi đã đọc phần lý thuyết và muốn luyện tập nâng cao.
-        </label>
-      </section>
-      {!loaded ? (
-        <p role="status">Loading saved progress…</p>
-      ) : (
-        learned && (
-          <>
-            <section className="panel">
-              <h2>Session progress</h2>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={mixed}
-                  disabled={busy}
-                  onChange={(e) => {
-                    setMixed(e.target.checked);
-                    setRetryIds(undefined);
-                    setIndex(0);
-                    setAnswer("");
-                    setResult(undefined);
-                    setDone(false);
-                  }}
-                />{" "}
-                Mixed Grammar Practice · mix all parts
-              </label>
-              <p>
-                {latest.size}/25 answered · Score {totals.score}/
-                {totals.maxScore} graded · Correct {totals.correct} · Partially
-                correct {totals.partial} · Incorrect {totals.incorrect} ·
-                Pending review {totals.pending}
+      )}
+      {session && (
+        <>
+          <section className="panel" aria-label="Session progress">
+            <div className="builder-heading">
+              <h2>
+                {session.settings.feedbackMode === "exam"
+                  ? "Exam Mode"
+                  : "Instant Feedback"}{" "}
+                · {session.settings.difficulty}
+              </h2>
+              <span className="session-tag">
+                {session.settings.questionCount} questions
+              </span>
+            </div>
+            <p>
+              {answered}/{session.settings.questionCount} answered ·{" "}
+              {session.questions.length} ready · Score {totals.score}/
+              {totals.maxScore} graded
+            </p>
+            <p>
+              Correct {totals.correct} · Partially correct {totals.partial} ·
+              Incorrect {totals.incorrect} · Pending review {totals.pending}
+            </p>
+            <p>
+              Previous attempts: {historyCount}. All attempts are kept; unscored
+              answers are excluded from the score.
+            </p>
+            {expired && (
+              <p role="alert">
+                Server answer keys have expired. Your saved questions and
+                feedback remain available. Start a new session for new grading.
               </p>
-              <p>
-                Previous attempts: {history.length}. All attempts are kept.
-                Pending answers are excluded from the score.
-              </p>
-              {weak.length > 0 && (
-                <p>Suggested review topics: {weak.join(" · ")}</p>
-              )}
+            )}
+            <Button
+              variant="outline"
+              disabled={grading}
+              onClick={() => {
+                const index = session.questions.findIndex(
+                  (q) => !session.answers[q.id]?.trim(),
+                );
+                update({ currentIndex: index < 0 ? 0 : index });
+              }}
+            >
+              Resume Session
+            </Button>
+            {exam && (
               <Button
-                variant="outline"
-                disabled={busy}
-                onClick={() => {
-                  const next = pool.findIndex((q) => !latest.has(q.id));
-                  select(next < 0 ? 0 : next);
-                  setDone(false);
-                }}
+                disabled={
+                  grading ||
+                  expired ||
+                  !session.generationComplete ||
+                  answered !== session.settings.questionCount
+                }
+                onClick={() => void finishExam()}
               >
-                Resume unfinished questions
-              </Button>{" "}
-              <Button
-                variant="outline"
-                disabled={busy}
-                onClick={() => {
-                  setSessionId(crypto.randomUUID());
-                  setRetryIds(undefined);
-                  setIndex(0);
-                  setAnswer("");
-                  setResult(undefined);
-                  setDone(false);
-                }}
-              >
-                New session
+                {grading
+                  ? "Grading exam…"
+                  : session.examSubmitted
+                    ? "Retry exam grading"
+                    : "Submit session"}
               </Button>
-            </section>
-            {done ? (
-              <section className="panel">
-                <h2>Session summary</h2>
+            )}
+            {!exam &&
+              session.generationComplete &&
+              session.questions.every((q) => session.results[q.id]) && (
+                <h3>Session complete</h3>
+              )}
+          </section>
+          {q && (
+            <section className="panel ai-card" data-exercise-id={q.id}>
+              <p className="eyebrow">
+                {formatLabels[q.exerciseType]} · Question{" "}
+                {session.currentIndex + 1}/{session.settings.questionCount}
+              </p>
+              <progress
+                aria-label="Question progress"
+                value={session.currentIndex + 1}
+                max={session.settings.questionCount}
+              />
+              <h2>{q.instruction}</h2>
+              <p className="ai-question">{q.questionText}</p>
+              {q.rootWord && (
                 <p>
-                  {totals.correct} correct · {totals.partial} partially correct
-                  · {totals.incorrect} incorrect · {totals.pending} pending
-                  review
+                  Root word: <strong>{q.rootWord}</strong>
                 </p>
-                <p>
-                  Score: {totals.score}/{totals.maxScore} graded.{" "}
-                  {25 - latest.size} unanswered.
-                </p>
-                <Button
-                  onClick={() => {
-                    const ids = [...latest.values()]
-                      .filter((a) => a.result.status !== "correct")
-                      .map((a) => a.exerciseId);
-                    if (!ids.length) return;
-                    setRetryIds(ids);
-                    setIndex(0);
-                    setAnswer("");
-                    setResult(undefined);
-                    setDone(false);
-                  }}
-                  disabled={
-                    ![...latest.values()].some(
-                      (a) => a.result.status !== "correct",
-                    )
-                  }
-                >
-                  Retry incorrect / pending questions
-                </Button>
-              </section>
-            ) : (
-              q && (
-                <section className="panel ai-card" data-exercise-id={q.id}>
-                  <p className="eyebrow">
-                    Part {q.part} · {q.difficulty} · Question {index + 1}/
-                    {pool.length}
-                  </p>
-                  <progress
-                    aria-label="Question progress"
-                    value={index + 1}
-                    max={pool.length}
-                  />
-                  <h2>{q.instruction}</h2>
-                  <p className="ai-question">{q.question}</p>
-                  {q.rootWord && (
-                    <p>
-                      Root word: <strong>{q.rootWord}</strong>
-                    </p>
-                  )}
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      void submit();
-                    }}
-                  >
-                    <label htmlFor="ai-answer">Your answer</label>
-                    {q.type === "word_formation" || q.type === "fill_blank" ? (
+              )}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!exam) void grade([q.id]);
+                }}
+              >
+                {q.exerciseType === "multiple_choice" ? (
+                  <fieldset disabled={grading || locked}>
+                    <legend>Your answer</legend>
+                    <div className="mcq-options">
+                      {q.options.map((option) => (
+                        <label key={option.id}>
+                          <input
+                            type="radio"
+                            name={`choice-${q.id}`}
+                            value={option.id}
+                            checked={answer === option.id}
+                            onChange={() =>
+                              update({
+                                answers: {
+                                  ...session.answers,
+                                  [q.id]: option.id,
+                                },
+                              })
+                            }
+                          />
+                          {option.text}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                ) : (
+                  <>
+                    <label htmlFor="dynamic-answer">Your answer</label>
+                    {["word_formation", "fill_blank"].includes(
+                      q.exerciseType,
+                    ) ? (
                       <input
-                        id="ai-answer"
+                        id="dynamic-answer"
+                        autoComplete="off"
                         value={answer}
                         maxLength={3000}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        disabled={busy || !!result}
+                        disabled={grading || locked}
+                        onChange={(e) =>
+                          update({
+                            answers: {
+                              ...session.answers,
+                              [q.id]: e.target.value,
+                            },
+                          })
+                        }
                       />
                     ) : (
                       <textarea
-                        id="ai-answer"
+                        id="dynamic-answer"
+                        rows={3}
                         value={answer}
                         maxLength={3000}
-                        rows={3}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        disabled={busy || !!result}
+                        disabled={grading || locked}
+                        onChange={(e) =>
+                          update({
+                            answers: {
+                              ...session.answers,
+                              [q.id]: e.target.value,
+                            },
+                          })
+                        }
                       />
                     )}
-                    {!result && (
-                      <Button type="submit" disabled={busy || !answer.trim()}>
-                        {busy
-                          ? "Grading…"
-                          : error
-                            ? "Retry grading"
-                            : "Submit answer"}
-                      </Button>
+                  </>
+                )}
+                {!exam && !result && (
+                  <Button
+                    type="submit"
+                    disabled={grading || expired || !answer.trim()}
+                  >
+                    {grading
+                      ? "Grading…"
+                      : error
+                        ? "Retry grading"
+                        : "Check Answer"}
+                  </Button>
+                )}
+              </form>
+              {exam && !session.examSubmitted && (
+                <p>
+                  Answer saved. Feedback and answer keys appear only after you
+                  submit the complete session.
+                </p>
+              )}
+              {grading && (
+                <p role="status">
+                  AI đang kiểm tra bài. Câu trả lời đã được lưu.
+                </p>
+              )}
+              {result && (
+                <div className="ai-feedback" role="status">
+                  <h3>
+                    {labels[result.status]} ·{" "}
+                    {result.score === null ? "Unscored" : `${result.score}/1`}
+                  </h3>
+                  <p>
+                    <strong>Your original answer:</strong>{" "}
+                    {q.exerciseType === "multiple_choice"
+                      ? q.options.find((o) => o.id === result.userAnswer)?.text
+                      : result.userAnswer}
+                  </p>
+                  <p>{result.feedbackVi}</p>
+                  {result.status !== "correct" &&
+                    result.correctedAnswer &&
+                    q.exerciseType !== "multiple_choice" && (
+                      <CorrectionDiff
+                        answer={result.userAnswer}
+                        correction={result.correctedAnswer}
+                      />
                     )}
-                  </form>
-                  {busy && (
-                    <p role="status">
-                      AI đang kiểm tra ngữ pháp, ý nghĩa, thời và mức độ…
-                    </p>
-                  )}
-                  {error && (
-                    <p role="alert">
-                      {error} Câu trả lời vẫn được giữ trên màn hình.
-                    </p>
-                  )}
-                  {result && (
-                    <div className="ai-feedback" role="status">
-                      <h3>
-                        {labels[result.status]}
-                        {result.score !== null
-                          ? ` · ${result.score}/1`
-                          : " · Unscored"}
-                      </h3>
-                      <p>
-                        <strong>Your original answer:</strong>{" "}
-                        {result.userAnswer}
-                      </p>
-                      <p>{result.feedbackVi}</p>
-                      {result.status !== "correct" &&
-                        result.correctedAnswer && (
-                          <CorrectionDiff
-                            answer={result.userAnswer}
-                            correction={result.correctedAnswer}
-                          />
-                        )}
-                      <h3>Grammar explanation</h3>
-                      <p>{result.grammarRule}</p>
-                      <p>{result.explanationVi}</p>
-                      {result.explanationVi !== q.explanation && (
-                        <>
-                          <h3>Reviewed lesson explanation</h3>
-                          <p>{q.explanation}</p>
-                        </>
-                      )}
+                  <h3>Grammar explanation</h3>
+                  <p>{result.grammarRule}</p>
+                  <p>{result.explanationVi}</p>
+                  {reveal && (
+                    <>
                       <h3>Reference answer</h3>
-                      <p>{q.referenceAnswers[0]}</p>
-                      {result.alternativeAnswers.length > 0 && (
-                        <>
-                          <h3>Alternative acceptable answers</h3>
-                          <ul>
-                            {result.alternativeAnswers.map((a, i) => (
-                              <li key={i}>{a}</li>
-                            ))}
-                          </ul>
-                        </>
-                      )}
-                      {result.needsReview && (
+                      <p>{reveal.referenceAnswers.join(" / ")}</p>
+                      {reveal.acceptedVariants.length > 0 && (
                         <p>
-                          AI chưa chắc chắn. Kết quả này chưa được tính điểm.
-                          Bạn có thể thử chấm lại hoặc hỏi giáo viên.
+                          Also accepted: {reveal.acceptedVariants.join(" / ")}
                         </p>
                       )}
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setResult(undefined);
-                          setError("");
-                        }}
-                      >
-                        Retry exercise
-                      </Button>{" "}
-                      <Button
-                        onClick={() => {
-                          if (index === pool.length - 1) setDone(true);
-                          else select(index + 1);
-                        }}
-                      >
-                        Next question
-                      </Button>
-                    </div>
+                      {reveal.distractorExplanations.map((d) => (
+                        <p key={d.optionId}>
+                          <strong>
+                            {q.options.find((o) => o.id === d.optionId)?.text}:
+                          </strong>{" "}
+                          {d.explanationVi}
+                        </p>
+                      ))}
+                    </>
                   )}
-                  <p>
+                  {result.needsReview && (
+                    <p>AI chưa chắc chắn. Bài này chưa được tính điểm.</p>
+                  )}
+                  {!exam && (
                     <Button
-                      variant="ghost"
-                      disabled={busy}
-                      onClick={() => setDone(true)}
+                      variant="outline"
+                      disabled={grading}
+                      onClick={() => {
+                        const results = { ...session.results };
+                        delete results[q.id];
+                        const reveals = { ...session.reveals };
+                        delete reveals[q.id];
+                        update({ results, reveals, status: "practicing" });
+                        setError("");
+                      }}
                     >
-                      End session & summary
+                      Retry exercise
                     </Button>
-                  </p>
-                </section>
-              )
-            )}
-          </>
-        )
+                  )}
+                </div>
+              )}
+              <div className="practice-navigation">
+                <Button
+                  variant="outline"
+                  disabled={grading || session.currentIndex === 0}
+                  onClick={() => {
+                    update({ currentIndex: session.currentIndex - 1 });
+                    setError("");
+                  }}
+                >
+                  Previous Question
+                </Button>
+                <Button
+                  disabled={
+                    grading ||
+                    session.currentIndex + 1 >= session.questions.length
+                  }
+                  onClick={() => {
+                    update({ currentIndex: session.currentIndex + 1 });
+                    setError("");
+                  }}
+                >
+                  Next Question
+                </Button>
+              </div>
+            </section>
+          )}
+          <section className="panel">
+            <h2>Session Summary</h2>
+            <p>
+              {totals.correct} correct · {totals.partial} partially correct ·{" "}
+              {totals.incorrect} incorrect · {totals.pending} pending review
+            </p>
+            <p>
+              Score {totals.score}/{totals.maxScore} graded.{" "}
+              {session.settings.questionCount - answered} unanswered.
+            </p>
+            <p>
+              {session.generationComplete
+                ? "All questions generated."
+                : "More questions will appear as validated batches are saved."}{" "}
+              {session.status === "completed" ? "All answers evaluated." : ""}
+            </p>
+          </section>
+        </>
       )}
-      {error && !loaded && <p role="alert">{error}</p>}
+      <section className="panel">
+        <h2>Saved sessions</h2>
+        <p>
+          Refresh resumes the same questions. New sessions keep all earlier
+          attempts. Server keys remain available for 7 days; saved feedback
+          stays on this device.
+        </p>
+        {saved.length === 0 ? (
+          <p>No generated sessions yet.</p>
+        ) : (
+          <div className="saved-sessions">
+            {saved.map((s) => (
+              <Button
+                key={s.sessionId}
+                variant="outline"
+                disabled={grading || generating || creating}
+                onClick={() => void resume(s.sessionId)}
+              >
+                {new Date(s.createdAt).toLocaleDateString()} ·{" "}
+                {s.settings.difficulty} · {s.settings.questionCount} questions ·{" "}
+                {Object.keys(s.results).length} evaluated
+              </Button>
+            ))}
+          </div>
+        )}
+        <p>
+          <Link to="/lessons/01.2/archive">
+            Open the original 25-question lesson and its history
+          </Link>
+        </p>
+      </section>
     </>
   );
 }

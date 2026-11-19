@@ -1,0 +1,125 @@
+// Synthetic fixtures for deterministic tests only. Never imported by application or Worker entry points.
+import type { PlanItem, PrivateQuestion, QuestionContent } from "./schema";
+const families = [
+  ["CARE", "carefully", "careful", "care"],
+  ["PATIENCE", "patiently", "patient", "patience"],
+  ["CONFIDENCE", "confidently", "confident", "confidence"],
+  ["POLITENESS", "politely", "polite", "politeness"],
+  ["CLARITY", "clearly", "clear", "clarity"],
+  ["ACCURACY", "accurately", "accurate", "accuracy"],
+  ["EFFICIENCY", "efficiently", "efficient", "efficiency"],
+  ["QUIET", "quietly", "quiet", "quietness"],
+  ["REGULAR", "regularly", "regular", "regularity"],
+  ["SAFETY", "safely", "safe", "safety"],
+];
+const contexts = [
+  "inside the crowded railway terminal",
+  "during the annual outdoor festival",
+  "at the village health centre",
+  "near the remote mountain crossing",
+  "throughout the morning radio programme",
+  "beside the newly repaired bridge",
+  "through the busy coastal harbour",
+  "across the school sports complex",
+  "during an important laboratory inspection",
+  "after the regional farming conference",
+];
+const roles = [
+  "event organisers",
+  "delivery drivers",
+  "medical volunteers",
+  "ticket inspectors",
+  "museum visitors",
+  "office assistants",
+  "local shopkeepers",
+  "park rangers",
+  "factory workers",
+  "tour guides",
+];
+export function contentFixture(item: PlanItem, salt = 0): QuestionContent {
+  const i = item.ordinal,
+    [root, adverb, adjective, noun] = families[i % 10];
+  const context = contexts[(i + salt) % 10],
+    role = roles[(Math.floor(i / 10) + i + salt) % 10];
+  const sentence = [
+    `The ${role} had to work ${adverb} ${context}.`,
+    `The schedule required ${role} to complete each assigned task ${adverb} ${context}.`,
+    `Training helped the ${role} perform ${adverb} while facing unexpected challenges ${context}.`,
+    `A supervisor reminded several ${role} to behave ${adverb} throughout their shift ${context}.`,
+    `Experienced ${role} learned to respond ${adverb} whenever new responsibilities arose ${context}.`,
+  ][Math.floor(i / 10) % 5];
+  const cloze = ["word_formation", "fill_blank", "multiple_choice"].includes(
+    item.exerciseType,
+  );
+  const mcq = item.exerciseType === "multiple_choice";
+  return {
+    questionText: cloze
+      ? sentence.replace(adverb, "___")
+      : item.exerciseType === "error_correction"
+        ? sentence.replace(adverb, adjective)
+        : `The ${role} were ${adjective} ${context}.`,
+    instruction: cloze
+      ? "Use the correct word form to complete the sentence."
+      : item.exerciseType === "error_correction"
+        ? "Correct the word-form error."
+        : "Rewrite using an adverb to describe how they worked.",
+    rootWord: root,
+    referenceAnswers: [cloze ? adverb : sentence],
+    acceptedVariants: [],
+    grammarRules: ["Adverbs modify action verbs"],
+    targetSkills: ["Word family recall", "Adverb placement"],
+    explanationVi:
+      "Dùng Adverb để bổ nghĩa cho hành động work; chọn dạng từ phù hợp với vị trí và ngữ cảnh.",
+    answerForm: cloze ? "adverb" : "sentence",
+    constraint: cloze ? "other" : "sentence",
+    requiredOpening: null,
+    options: mcq
+      ? [
+          { id: "a", text: adverb },
+          { id: "b", text: adjective },
+          { id: "c", text: noun },
+          { id: "d", text: root === "CARE" ? "caring" : adverb + "ness" },
+        ]
+      : [],
+    correctOptionId: mcq ? "a" : null,
+    distractorExplanations: mcq
+      ? (["b", "c", "d"] as const).map((optionId) => ({
+          optionId,
+          explanationVi:
+            "Dạng này không phải Adverb phù hợp để bổ nghĩa cho Verb work.",
+        }))
+      : [],
+  };
+}
+export function questionFixture(
+  sessionId: string,
+  item: PlanItem,
+  salt = 0,
+): PrivateQuestion {
+  return {
+    ...contentFixture(item, salt),
+    ...item,
+    id: crypto.randomUUID(),
+    sessionId,
+    difficulty: "B2",
+    generationVersion: 1,
+  };
+}
+export function auditFixture(questions: PrivateQuestion[]) {
+  return {
+    verdicts: questions.map((q) => ({
+      id: q.id,
+      grammatical: true,
+      unambiguous: true,
+      wordFamilyValid: true,
+      answersFitSlot: true,
+      explanationConsistent: true,
+      levelAppropriate: true,
+      instructionsSatisfiable: true,
+      exactlyOneMcqAnswer: true,
+      distinctFromHistory: true,
+      confidence: 0.98,
+      reason: "Test fixture accepted",
+    })),
+  };
+}

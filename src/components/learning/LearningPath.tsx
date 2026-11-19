@@ -24,11 +24,11 @@ export function LearningPath() {
       <section className="panel">
         <h2>Advanced · Lesson 01.2</h2>
         <p>
-          Word Formation B2: 25 typed questions with AI feedback. Optional
+          AI Grammar Practice: fresh Word Formation exercises from A1 to C1. Optional
           advanced study; does not unlock foundation rules.
         </p>
         <Link className="button button-outline" to="/lessons/01.2">
-          Open Word Formation B2
+          Build a grammar practice session
         </Link>
       </section>
       <div className="learning-statuses">

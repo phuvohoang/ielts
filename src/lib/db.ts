@@ -1,3 +1,4 @@
+import { localSessionSchema, type PracticeSession } from "./ai/dynamic/schema";
 import {
   attemptSchema as aiAttemptSchema,
   type AIExerciseAttempt,
@@ -53,6 +54,7 @@ class LearningDB extends Dexie {
   lessons!: Table<LearningProgress, string>;
   checks!: Table<MasteryCheck, string>;
   aiAttempts!: Table<AIExerciseAttempt, string>;
+  practiceSessions!: Table<PracticeSession, string>;
   constructor() {
     super("ielts-grammar-mastery");
     this.version(1).stores({
@@ -65,6 +67,7 @@ class LearningDB extends Dexie {
       checks: "id,lessonId,startedAt",
     });
     this.version(3).stores({ aiAttempts: "id,sessionId,exerciseId,date" });
+    this.version(4).stores({ practiceSessions: "sessionId,updatedAt,status" });
   }
 }
 export const db = new LearningDB();
@@ -91,7 +94,8 @@ export const backupSchema = z.union([
   }),
   z
     .object({
-      version: z.union([z.literal(2), z.literal(3)]),
+      version: z.union([z.literal(2), z.literal(3), z.literal(4)]),
+      practiceSessions: z.array(localSessionSchema).optional(),
       aiAttempts: z.array(aiAttemptSchema).optional(),
       attempts: z.array(attemptSchema),
       progress: z.array(progressSchema),
@@ -100,8 +104,12 @@ export const backupSchema = z.union([
       checks: z.array(checkSchema),
     })
     .refine(
-      (b) => b.version !== 3 || b.aiAttempts !== undefined,
-      "Version 3 requires AI attempts",
+      (b) => b.version === 2 || b.aiAttempts !== undefined,
+      "Version 3 and later require AI attempts",
+    )
+    .refine(
+      (b) => b.version !== 4 || b.practiceSessions !== undefined,
+      "Version 4 requires generated sessions",
     )
     .refine(
       (b) =>
@@ -129,9 +137,11 @@ export async function exportBackup() {
       db.lessons,
       db.checks,
       db.aiAttempts,
+      db.practiceSessions,
     ],
     async () => ({
-      version: 3 as const,
+      version: 4 as const,
+      practiceSessions: await db.practiceSessions.toArray(),
       aiAttempts: await db.aiAttempts.toArray(),
       attempts: await db.attempts.toArray(),
       progress: await db.progress.toArray(),
@@ -152,6 +162,7 @@ export async function importBackup(input: unknown) {
       db.lessons,
       db.checks,
       db.aiAttempts,
+      db.practiceSessions,
     ],
     async () => {
       await Promise.all([
@@ -163,14 +174,18 @@ export async function importBackup(input: unknown) {
       await db.progress.bulkAdd(b.progress);
       await db.writing.bulkAdd(b.writing);
       // A v1 backup predates learning progress: preserve the new tables when restoring it.
-      if (b.version === 2 || b.version === 3) {
+      if (b.version === 2 || b.version === 3 || b.version === 4) {
         await db.lessons.clear();
         await db.checks.clear();
         await db.lessons.bulkAdd(b.lessons);
         await db.checks.bulkAdd(b.checks);
-        if (b.version === 3) {
+        if (b.version === 3 || b.version === 4) {
           await db.aiAttempts.clear();
           await db.aiAttempts.bulkAdd(b.aiAttempts ?? []);
+        }
+        if (b.version === 4) {
+          await db.practiceSessions.clear();
+          await db.practiceSessions.bulkAdd(b.practiceSessions ?? []);
         }
       }
     },

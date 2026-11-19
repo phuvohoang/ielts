@@ -43,20 +43,24 @@ test("Pages opens four-field family recall through the library link", async ({
   ).toBeDisabled();
 });
 
-test("Pages opens and refreshes Lesson 01.2 with answers hidden", async ({
+test("Pages opens and refreshes the dynamic session builder with keys hidden", async ({
   page,
 }) => {
   await page.goto("/ielts/#/lessons/01.2");
   await expect(
-    page.getByRole("heading", { name: "Word Formation B2", exact: true }),
+    page.getByRole("heading", { name: "Grammar Practice", exact: true }),
   ).toBeVisible();
-  await page.getByRole("checkbox").check();
-  await expect(page.getByLabel("Your answer", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Generate Practice", exact: true }),
+  ).toBeDisabled();
   await expect(
     page.getByRole("heading", { name: "Reference answer", exact: true }),
   ).toHaveCount(0);
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Word Formation B2", exact: true }),
+    page.getByRole("heading", {
+      name: "Build your practice session",
+      exact: true,
+    }),
   ).toBeVisible();
 });

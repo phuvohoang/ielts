@@ -3,7 +3,7 @@ import content from "../src/data/grammar-b2.json" with { type: "json" };
 test("completes all 25 typed questions, hides answers, persists and resumes without deleting attempts", async ({
   page,
 }) => {
-  await page.goto("/lessons/01.2");
+  await page.goto("/lessons/01.2/archive");
   await page.getByRole("checkbox").check();
   await expect(
     page.getByRole("heading", { name: "Reference answer", exact: true }),
@@ -56,7 +56,7 @@ test("completes all 25 typed questions, hides answers, persists and resumes with
 test("unknown alternatives never become wrong just because the AI service is unavailable", async ({
   page,
 }) => {
-  await page.goto("/lessons/01.2");
+  await page.goto("/lessons/01.2/archive");
   await page.getByRole("checkbox").check();
   await page
     .getByLabel("Your answer", { exact: true })
@@ -111,7 +111,7 @@ test("shows AI partial credit and accessible correction, prevents duplicate requ
       },
     });
   });
-  await page.goto("/lessons/01.2");
+  await page.goto("/lessons/01.2/archive");
   await page.getByRole("checkbox").check();
   await page.getByLabel("Your answer", { exact: true }).fill("economical");
   await page
@@ -139,7 +139,7 @@ test("shows AI partial credit and accessible correction, prevents duplicate requ
 test("Mixed Grammar Practice interleaves family and sentence exercises without revealing references", async ({
   page,
 }) => {
-  await page.goto("/lessons/01.2");
+  await page.goto("/lessons/01.2/archive");
   await page
     .getByLabel("Tôi đã đọc phần lý thuyết và muốn luyện tập nâng cao.")
     .check();

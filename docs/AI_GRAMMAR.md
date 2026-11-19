@@ -134,3 +134,7 @@ Production grammar explanations are now always retrieved from the reviewed autho
 Cloudflare default commands discover configuration at the repository root. Root wrangler.jsonc is generated from the canonical worker/wrangler.jsonc (adjusting only the entry-point path), preventing Vite/static-asset autodetection and missing-preview-block errors. Run npm run worker:sync-config after editing canonical configuration. worker:check verifies the files cannot drift and bundles the default root configuration. Existing explicit --config commands remain compatible. Neither configuration uploads website assets.
 
 For sentence transformations and paraphrasing, AI_SOURCE_COVERAGE=true adds a short reference-free comparison of the original source and answer for degree and material circumstances. It can catch an omitted intensifier or interview context independently of the main grader and can overturn a false synonym penalty. It shares the existing 50-second deadline; uncertainty or service failure stays unscored. Known reviewed variants still use the local hybrid path.
+
+## Dynamic generation upgrade
+
+See [DYNAMIC_GRAMMAR.md](./DYNAMIC_GRAMMAR.md) for the new session builder, generation endpoint, private answer-key storage, additive Dexie v4 migration, test commands and approval-gated deployment steps. The original authored 25-question lesson remains archived and its grading endpoint remains compatible.

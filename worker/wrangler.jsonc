@@ -29,6 +29,14 @@
         "limit": 60,
         "period": 60
       }
+    },
+    {
+      "name": "GENERATE_LIMIT",
+      "namespace_id": "2903",
+      "simple": {
+        "limit": 12,
+        "period": 60
+      }
     }
   ],
   "observability": {
@@ -63,7 +71,39 @@
           "limit": 30,
           "period": 60
         }
+      },
+      {
+        "name": "GENERATE_LIMIT",
+        "namespace_id": "3903",
+        "simple": {
+          "limit": 12,
+          "period": 60
+        }
+      }
+    ],
+    "durable_objects": {
+      "bindings": [
+        {
+          "name": "SESSIONS",
+          "class_name": "GrammarSessions"
+        }
+      ]
+    }
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SESSIONS",
+        "class_name": "GrammarSessions"
       }
     ]
-  }
+  },
+  "migrations": [
+    {
+      "tag": "dynamic-sessions-v1",
+      "new_sqlite_classes": [
+        "GrammarSessions"
+      ]
+    }
+  ]
 }
