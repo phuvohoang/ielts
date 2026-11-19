@@ -280,7 +280,7 @@ describe("generation and durable batches", () => {
     const standard = AI.run.getMockImplementation()!;
     AI.run.mockResolvedValue({ response: "{invalid" } as never);
     expect((await batch(env, s, 0)).status).toBe(503);
-    expect(AI.run).toHaveBeenCalledTimes(20);
+    expect(AI.run).toHaveBeenCalledTimes(30);
     AI.run.mockImplementation(standard);
     const parsed = await (await batch(env, s, 0)).json();
     expect(parsed.questions).toHaveLength(10);
@@ -304,7 +304,7 @@ describe("generation and durable batches", () => {
         [],
       ),
     ).rejects.toThrow("GENERATION_UNAVAILABLE");
-    expect(AI.run).toHaveBeenCalledTimes(13);
+    expect(AI.run).toHaveBeenCalledTimes(15);
   });
   it("times out an unresponsive model without publishing questions", async () => {
     vi.useFakeTimers();
@@ -833,4 +833,38 @@ it("enforces sentence formats and varies authoring contexts without exposing uns
   expect(qualityIssues({ ...q, referenceAnswers: ["carefully"] })).toContain(
     "Sentence task requires a complete reference sentence",
   );
+});
+
+it("repairs a twice-failed item on the third bounded attempt while keeping accepted peers", async () => {
+  const { env, AI } = environment(),
+    standard = AI.run.getMockImplementation()!;
+  let failures = 0;
+  AI.run.mockImplementation(async (model, input) => {
+    const messages = (input as { messages: { content: string }[] }).messages,
+      data = JSON.parse(messages[1].content);
+    if (
+      messages[0].content.startsWith("Create ORIGINAL") &&
+      data.plan[0].ordinal === 3 &&
+      failures < 2
+    ) {
+      failures++;
+      throw Error("transient provider problem");
+    }
+    return standard(model, input);
+  });
+  const result = await generateBatch(
+    env,
+    settings,
+    crypto.randomUUID(),
+    makePlan(settings),
+    [],
+    [],
+  );
+  expect(result).toHaveLength(10);
+  const author = AI.run.mock.calls.filter((c) =>
+    (
+      c[1] as { messages: { content: string }[] }
+    ).messages[0].content.startsWith("Create ORIGINAL"),
+  );
+  expect(author).toHaveLength(12);
 });
