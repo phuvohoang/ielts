@@ -143,23 +143,50 @@ it("serves accepted questions immediately, grades partial batches and repairs on
     const result = await standard(model, input);
     if (reject && messages[0].content.startsWith("Independently audit")) {
       const report = result.response as ReturnType<typeof auditFixture>;
-      const verdict = report.verdicts.find(v => v.ordinal === 3);
+      const verdict = report.verdicts.find((v) => v.ordinal === 3);
       if (verdict) verdict.checks[1] = false; // ambiguous: never publish it
     }
     return result;
   });
   const session = await create(env, { questionCount: 20 });
-  const load = () => worker.fetch(req("generate", { sessionId: session.sessionId, accessToken: session.accessToken, batchIndex: 0, allowPartial: true }), env);
+  const load = () =>
+    worker.fetch(
+      req("generate", {
+        sessionId: session.sessionId,
+        accessToken: session.accessToken,
+        batchIndex: 0,
+        allowPartial: true,
+      }),
+      env,
+    );
   const partial = generationResponseSchema.parse(await (await load()).json());
   expect(partial.questions).toHaveLength(9);
   expect(partial.nextBatch).toBe(0);
   expect(partial.complete).toBe(false);
-  expect(partial.questions.some(q => q.ordinal === 3)).toBe(false);
+  expect(partial.questions.some((q) => q.ordinal === 3)).toBe(false);
   expect(JSON.stringify(partial)).not.toContain("referenceAnswers");
-  const privateRows = (await stores.get(session.sessionId)!.get<PrivateQuestion[]>("batch:0"))!;
-  const graded = await worker.fetch(req("grade", { sessionId: session.sessionId, accessToken: session.accessToken, submissions: [{ exerciseId: privateRows[0].id, version: 1, userAnswer: privateRows[0].referenceAnswers[0] }] }), env);
+  const privateRows = (await stores
+    .get(session.sessionId)!
+    .get<PrivateQuestion[]>("batch:0"))!;
+  const graded = await worker.fetch(
+    req("grade", {
+      sessionId: session.sessionId,
+      accessToken: session.accessToken,
+      submissions: [
+        {
+          exerciseId: privateRows[0].id,
+          version: 1,
+          userAnswer: privateRows[0].referenceAnswers[0],
+        },
+      ],
+    }),
+    env,
+  );
   expect((await graded.json()).results[0].result.status).toBe("correct");
-  objects.set(session.sessionId, new GrammarSessions({ storage: stores.get(session.sessionId)! }, env));
+  objects.set(
+    session.sessionId,
+    new GrammarSessions({ storage: stores.get(session.sessionId)! }, env),
+  );
   AI.run.mockClear();
   const unchanged = generationResponseSchema.parse(await (await load()).json());
   expect(unchanged.questions).toEqual(partial.questions);
@@ -169,11 +196,17 @@ it("serves accepted questions immediately, grades partial batches and repairs on
   const repaired = generationResponseSchema.parse(await (await load()).json());
   expect(repaired.questions).toHaveLength(10);
   expect(repaired.nextBatch).toBe(1);
-  expect(repaired.questions.filter(q => q.ordinal !== 3)).toEqual(partial.questions);
+  expect(repaired.questions.filter((q) => q.ordinal !== 3)).toEqual(
+    partial.questions,
+  );
   expect(AI.run).toHaveBeenCalledTimes(2); // one author + one audit, not all ten
-  const second = generationResponseSchema.parse(await (await batch(env, session, 1)).json());
+  const second = generationResponseSchema.parse(
+    await (await batch(env, session, 1)).json(),
+  );
   expect(second.complete).toBe(true);
-  expect(new Set([...repaired.questions, ...second.questions].map(q => q.id)).size).toBe(20);
+  expect(
+    new Set([...repaired.questions, ...second.questions].map((q) => q.id)).size,
+  ).toBe(20);
 });
 
 it("keeps the legacy full-batch contract while preserving accepted rows for retry", async () => {
@@ -182,17 +215,27 @@ it("keeps the legacy full-batch contract while preserving accepted rows for retr
   AI.run.mockImplementation(async (model, input) => {
     const messages = (input as { messages: { content: string }[] }).messages;
     const data = JSON.parse(messages[1].content);
-    if (messages[0].content.startsWith("Create ORIGINAL") && data.plan[0].ordinal === 3) throw Error("temporary failure");
+    if (
+      messages[0].content.startsWith("Create ORIGINAL") &&
+      data.plan[0].ordinal === 3
+    )
+      throw Error("temporary failure");
     return standard(model, input);
   });
   const s = await create(env);
   expect((await batch(env, s, 0)).status).toBe(503);
-  const before = (await stores.get(s.sessionId)!.get<PrivateQuestion[]>("batch:0"))!;
+  const before = (await stores
+    .get(s.sessionId)!
+    .get<PrivateQuestion[]>("batch:0"))!;
   expect(before).toHaveLength(9);
   AI.run.mockImplementation(standard);
   AI.run.mockClear();
-  const repaired = generationResponseSchema.parse(await (await batch(env, s, 0)).json());
-  expect(repaired.questions.filter(q => q.ordinal !== 3)).toEqual(before.map(publicQuestion));
+  const repaired = generationResponseSchema.parse(
+    await (await batch(env, s, 0)).json(),
+  );
+  expect(repaired.questions.filter((q) => q.ordinal !== 3)).toEqual(
+    before.map(publicQuestion),
+  );
   expect(AI.run).toHaveBeenCalledTimes(2);
 });
 afterEach(() => {
@@ -207,7 +250,11 @@ beforeEach(async () => {
 describe("topic registry and balanced planning", () => {
   it("rejects disabled/unknown topics, duplicates, unsupported formats and invalid counts", () => {
     expect(() =>
-      validateSettings({ ...settings, topics: ["verb-tenses"] }),
+      validateSettings({
+        ...settings,
+        topics: ["verb-tenses"],
+        exerciseType: "word_formation",
+      }),
     ).toThrow();
     expect(() =>
       validateSettings({ ...settings, topics: ["unknown"] }),
@@ -224,9 +271,10 @@ describe("topic registry and balanced planning", () => {
     expect(() =>
       validateSettings({ ...settings, exerciseType: "invented" }),
     ).toThrow();
-    expect(topics.filter((t) => t.enabled).map((t) => t.topicId)).toEqual([
-      "word-formation",
-    ]);
+    expect(topics.filter((t) => t.enabled)).toHaveLength(10);
+    expect(topics.every((t) => t.generationGuidelines && t.gradingRubric)).toBe(
+      true,
+    );
   });
   it("distributes multiple enabled topics and their formats evenly using the same registry engine", () => {
     const registry = [
@@ -413,7 +461,7 @@ describe("generation and durable batches", () => {
     expect(
       (
         await worker.fetch(
-          req("generate", { ...settings, topics: ["verb-tenses"] }),
+          req("generate", { ...settings, topics: ["unknown-topic"] }),
           env,
         )
       ).status,
@@ -648,7 +696,7 @@ describe("exam gating and additive persistence", () => {
     expect(await db.aiAttempts.count()).toBe(1);
     expect(await db.practiceSessions.count()).toBe(2);
     const backup = await exportBackup();
-    expect(backup.version).toBe(4);
+    expect(backup.version).toBe(5);
     await importBackup(backup);
     expect(await db.practiceSessions.count()).toBe(2);
     const old = { ...backup, version: 3, practiceSessions: undefined };
@@ -929,4 +977,107 @@ it("repairs a twice-failed item on the third bounded attempt while keeping accep
     ).messages[0].content.startsWith("Create ORIGINAL"),
   );
   expect(author).toHaveLength(12);
+});
+
+it("authors non-word-family grammar with the selected rule rather than forced derivation", async () => {
+  const { env, AI } = environment(),
+    standard = AI.run.getMockImplementation()!;
+  AI.run.mockImplementation(async (model, input) => {
+    const v = input as { messages: { content: string }[] };
+    if (v.messages[0].content.startsWith("Create ORIGINAL")) {
+      expect(v.messages[0].content).toContain("not word formation");
+      return {
+        response: {
+          questions: [
+            {
+              ...contentFixture({
+                topicId: "verb-tenses",
+                exerciseType: "sentence_transformation",
+                ordinal: 0,
+              }),
+              questionText: "The bus left before I arrived at the station.",
+              instruction:
+                "Rewrite using the Past Perfect for the earlier action.",
+              rootWord: null,
+              referenceAnswers: [
+                "The bus had left before I arrived at the station.",
+              ],
+              acceptedVariants: [],
+              grammarRules: ["Past Perfect marks the earlier past action"],
+              targetSkills: ["Sequence of past events"],
+              answerForm: "sentence",
+              constraint: "sentence",
+            },
+          ],
+        },
+      } as never;
+    }
+    return standard(model, input);
+  });
+  const rows = await generateBatch(
+    env,
+    { ...settings, topics: ["verb-tenses"] },
+    crypto.randomUUID(),
+    [
+      {
+        topicId: "verb-tenses",
+        exerciseType: "sentence_transformation",
+        ordinal: 0,
+      },
+    ],
+    [],
+    [],
+  );
+  expect(rows[0].rootWord).toBeNull();
+  expect(rows[0].referenceAnswers[0]).toContain("had left");
+});
+
+it("rejects public sentence templates, leaked solutions and hidden opening constraints", () => {
+  const base = {
+    ...questionFixture(crypto.randomUUID(), {
+      topicId: "verb-tenses",
+      exerciseType: "sentence_transformation",
+      ordinal: 0,
+    }),
+    rootWord: null,
+    questionText:
+      "They started maintaining the train lines five years ago and still maintain them.",
+    instruction: "Rewrite using the Present Perfect Continuous.",
+    referenceAnswers: [
+      "They have been maintaining the train lines for five years.",
+    ],
+    acceptedVariants: [],
+    requiredOpening: null,
+  };
+  expect(qualityIssues(base)).toEqual([]);
+  expect(
+    qualityIssues({
+      ...base,
+      questionText: "Complete the second sentence. " + base.questionText,
+    }),
+  ).toContain(
+    "Keep task directions and labelled solutions out of the source sentence",
+  );
+  expect(
+    qualityIssues({
+      ...base,
+      questionText:
+        base.questionText + "\nSource sentence: " + base.referenceAnswers[0],
+    }),
+  ).toContain(
+    "Source contains a complete accepted answer; require a real transformation",
+  );
+  expect(
+    qualityIssues({ ...base, instruction: "Begin with the provided words." }),
+  ).toContain("Instruction refers to a missing opening constraint");
+  expect(
+    qualityIssues({ ...base, requiredOpening: base.referenceAnswers[0] }),
+  ).toContain("Opening must not expose a complete answer");
+  const valid = { ...base, requiredOpening: "They have been" };
+  expect(publicQuestion(valid).requiredOpening).toBe("They have been");
+  expect(publicQuestion(valid)).not.toHaveProperty("referenceAnswers");
+  expect(
+    publicQuestion({ ...base, requiredOpening: base.referenceAnswers[0] })
+      .requiredOpening,
+  ).toBeNull();
 });

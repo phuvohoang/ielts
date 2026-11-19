@@ -1,14 +1,3 @@
-import { LegacyGrammarExercise } from "./components/ai/LegacyGrammarExercise";
-import { GrammarExercise } from "./components/ai/GrammarExercise";
-import { LearningPath } from "./components/learning/LearningPath";
-import { LessonFlow } from "./components/learning/LessonFlow";
-import { RuleFeedback } from "./components/learning/RuleFeedback";
-import { canPractise, lessonById } from "./lib/foundation";
-import { syncLearningAttempt } from "./lib/learning";
-import { QuestionPrompt, HighlightedText } from "./components/QuestionPrompt";
-import { selectSession, questionStates } from "./lib/selection";
-import { quarantinedIds } from "./lib/importer";
-import { FamilyRecall } from "./components/FamilyRecall";
 import { useEffect, useState } from "react";
 import {
   BrowserRouter,
@@ -17,149 +6,106 @@ import {
   Route,
   Routes,
   Link,
-  useSearchParams,
+  Navigate,
 } from "react-router-dom";
 import {
+  Headphones,
   BookOpen,
-  LayoutDashboard,
-  Route as PathIcon,
-  Layers,
   PencilLine,
-  FlaskConical,
-  CircleAlert,
-  ChartNoAxesCombined,
-  Settings as SettingsIcon,
-  ArrowUpRight,
-  ArrowRight,
-  Check,
-  Flame,
+  Languages,
   Menu,
   X,
+  ArrowUpRight,
+  History as HistoryIcon,
+  Settings as SettingsIcon,
 } from "lucide-react";
+import { GrammarExercise } from "./components/ai/GrammarExercise";
+import { SkillPractice, skillNames } from "./components/practice/SkillPractice";
 import { Button } from "./components/ui/button";
-import {
-  families,
-  questions,
-  types,
-  grade,
-  questionById,
-  type Question,
-} from "./lib/content";
-import { useLearning } from "./lib/store";
-import {
-  db,
-  record,
-  exportBackup,
-  importBackup,
-  resolveAttempt,
-} from "./lib/db";
-import { sections } from "./data/lessons";
-const nav = [
-  ["/", "Dashboard", LayoutDashboard],
-  ["/path", "Learning Path", PathIcon],
-  ["/lessons", "Grammar Lessons", BookOpen],
-  ["/families", "Word Families", Layers],
-  ["/practice", "Practice Lab", FlaskConical],
-  ["/writing", "Writing Trainer", PencilLine],
-  ["/errors", "Error Bank", CircleAlert],
-  ["/progress", "Progress & Analytics", ChartNoAxesCombined],
-  ["/settings", "Settings", SettingsIcon],
-] as const;
-const weakRuleIds = (attempts: { questionId: string; result: string }[]) => [
-  ...new Set(
-    attempts
-      .filter((a) => a.result === "incorrect")
-      .flatMap((a) => questionById.get(a.questionId)?.grammar_rule_ids ?? []),
-  ),
+import { db, exportBackup, importBackup } from "./lib/db";
+import type { PracticeRecord } from "./lib/practice/schema";
+const skills = [
+  {
+    path: "/listening",
+    title: "Nghe",
+    subtitle: "Listening",
+    icon: Headphones,
+    description:
+      "Audio mới, câu hỏi rõ ràng. Nghe và trả lời theo cách của bạn.",
+    meta: "5 câu · Audio AI",
+  },
+  {
+    path: "/reading",
+    title: "Đọc",
+    subtitle: "General Reading",
+    icon: BookOpen,
+    description:
+      "Đọc tình huống đời sống và công việc. Đối chiếu dẫn chứng sau khi nộp.",
+    meta: "5 câu · Đoạn đọc mới",
+  },
+  {
+    path: "/writing",
+    title: "Viết",
+    subtitle: "General Writing",
+    icon: PencilLine,
+    description:
+      "Thư Task 1 hoặc bài luận Task 2. Nhận góp ý ngay trên bài viết.",
+    meta: "Task 1 / 2 · Phản hồi AI",
+  },
+  {
+    path: "/grammar",
+    title: "Ngữ pháp",
+    subtitle: "Grammar",
+    icon: Languages,
+    description:
+      "Tự điền từ, sửa câu và diễn đạt lại. Luyện đúng điểm bạn muốn cải thiện.",
+    meta: "10–50 câu · Chấm AI",
+  },
 ];
-const pct = (n: number, d: number) => (d ? Math.round((n / d) * 100) : 0);
-function useStats() {
-  const s = useLearning();
-  const judged = s.attempts.filter((a) => a.result !== "review");
-  const recognition = judged.filter((a) =>
-    ["Identify Word Class", "Error Detection"].includes(a.type),
-  );
-  const production = judged.filter(
-    (a) => !["Identify Word Class", "Error Detection"].includes(a.type),
-  );
-  return {
-    ...s,
-    accuracy: pct(
-      judged.filter((a) => a.result === "correct").length,
-      judged.length,
-    ),
-    recognition: pct(
-      recognition.filter((a) => a.result === "correct").length,
-      recognition.length,
-    ),
-    production: pct(
-      production.filter((a) => a.result === "correct").length,
-      production.length,
-    ),
-    due: selectSession(
-      questions.filter((q) => canPractise(q, s.lessons)),
-      s.attempts,
-      {
-        now: Date.now(),
-        limit: questions.length,
-        dueOnly: true,
-      },
-    ),
-    mastered: s.lessons.filter(
-      (p) => p.completed.includes("mastery") && p.masteredAt,
-    ).length,
-  };
-}
-// GitHub Pages cannot rewrite application paths; hashes keep deep links refreshable.
 const AppRouter =
   import.meta.env.VITE_ROUTER_MODE === "hash" ? HashRouter : BrowserRouter;
-
 function App() {
   const [open, setOpen] = useState(false);
-  const { refresh, error, loaded } = useLearning();
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
   return (
     <AppRouter>
-      <div className="app">
+      <div className="app practice-app">
         <aside className={open ? "sidebar open" : "sidebar"}>
-          <Link className="brand" to="/">
+          <Link className="brand" to="/" onClick={() => setOpen(false)}>
             <span className="brand-mark">i.</span>
             <span>
-              grammar<span className="brand-light">studio</span>
-              <small>YOUR IELTS STUDY COMPANION</small>
+              ielts<span className="brand-light">practice</span>
+              <small>GENERAL TRAINING · YOUR DAILY PRACTICE</small>
             </span>
           </Link>
-          <p className="nav-caption">YOUR WORKSPACE</p>
-          <nav>
-            {nav.map(([path, label, Icon]) => (
-              <NavLink
-                end={path === "/"}
-                onClick={() => setOpen(false)}
-                key={path}
-                to={path}
-              >
-                <Icon size={18} />
-                {label}
+          <p className="nav-caption">CHỌN KỸ NĂNG</p>
+          <nav aria-label="Kỹ năng luyện tập">
+            {skills.map((s) => (
+              <NavLink to={s.path} key={s.path} onClick={() => setOpen(false)}>
+                <s.icon size={19} />
+                {s.title}
+                <span className="nav-skill-en">{s.subtitle}</span>
               </NavLink>
             ))}
           </nav>
           <div className="sidebar-note">
-            <span className="eyebrow">A LITTLE, EVERY DAY</span>
+            <span className="eyebrow">LÀM BÀI. NHẬN PHẢN HỒI. TIẾN BỘ.</span>
             <p>
-              Accuracy grows
+              Một bài luyện
               <br />
-              with practice.
+              mỗi ngày.
             </p>
-            <span>One sentence at a time.</span>
+            <span>IELTS General · Mục tiêu 6.5</span>
           </div>
-          <div className="profile">
-            <span className="avatar">L</span>
-            <div>
-              Independent learner<small>General Training · Target 6.5</small>
-            </div>
-          </div>
+          <nav aria-label="Dữ liệu cá nhân" className="utility-nav">
+            <NavLink to="/history" onClick={() => setOpen(false)}>
+              <HistoryIcon size={18} />
+              Lịch sử bài làm
+            </NavLink>
+            <NavLink to="/settings" onClick={() => setOpen(false)}>
+              <SettingsIcon size={18} />
+              Sao lưu & cài đặt
+            </NavLink>
+          </nav>
         </aside>
         <main>
           <header className="topbar">
@@ -170,51 +116,71 @@ function App() {
             >
               {open ? <X /> : <Menu />}
             </button>
-            <span>MY LEARNING SPACE</span>
+            <Link to="/">YOUR PRACTICE SPACE</Link>
             <div>
-              <span className="status-dot" /> Saved on this device{" "}
-              <span className="avatar small">L</span>
+              <span className="status-dot" /> Tự động lưu trên thiết bị này
             </div>
           </header>
-          {error && (
-            <p role="alert" className="notice">
-              {error}
-            </p>
-          )}
           <div className="page">
-            {!loaded ? (
-              <p role="status">Loading your saved learning history…</p>
-            ) : (
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/path" element={<LearningPath />} />
-                <Route path="/learn/:lessonId" element={<LessonFlow />} />
-                <Route path="/lessons/01.2" element={<GrammarExercise />} />
-                <Route path="/lessons/01.2/archive" element={<LegacyGrammarExercise />} />
-                <Route path="/lessons" element={<LearningPath />} />
-                <Route path="/lessons/legacy" element={<Lessons />} />
-                <Route path="/families" element={<Families />} />
-                <Route path="/families/recall" element={<FamilyRecall />} />
-                <Route path="/practice" element={<Practice />} />
-                <Route path="/writing" element={<Writing />} />
-                <Route path="/errors" element={<Errors />} />
-                <Route path="/progress" element={<Progress />} />
-                <Route path="/settings" element={<Settings />} />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/listening"
+                element={<SkillPractice key="listening" skill="listening" />}
+              />
+              <Route
+                path="/reading"
+                element={<SkillPractice key="reading" skill="reading" />}
+              />
+              <Route
+                path="/writing"
+                element={<SkillPractice key="writing" skill="writing" />}
+              />
+              <Route path="/grammar" element={<GrammarExercise />} />
+              <Route path="/history" element={<PracticeHistory />} />
+              <Route path="/settings" element={<Settings />} />
+              {[
+                "/path",
+                "/learn/:lessonId",
+                "/lessons",
+                "/lessons/*",
+                "/families/*",
+                "/practice",
+                "/errors",
+                "/progress",
+              ].map((path) => (
                 <Route
-                  path="*"
+                  key={path}
+                  path={path}
                   element={
-                    <>
-                      <h1>Page not found</h1>
-                      <Link to="/">Return to dashboard</Link>
-                    </>
+                    <Navigate
+                      to={
+                        path === "/errors" || path === "/progress"
+                          ? "/history"
+                          : "/grammar"
+                      }
+                      replace
+                    />
                   }
                 />
-              </Routes>
-            )}
+              ))}
+              <Route
+                path="*"
+                element={
+                  <>
+                    <h1>Không tìm thấy trang</h1>
+                    <Link to="/">Chọn kỹ năng luyện tập</Link>
+                  </>
+                }
+              />
+            </Routes>
           </div>
           <footer>
-            BUILT FOR STEADY PROGRESS{" "}
-            <span>Learn it. Recall it. Make it yours.</span>
+            IELTS GENERAL PRACTICE
+            <span>
+              Nội dung và phản hồi do AI tạo · Điểm luyện tập không phải kết quả
+              thi chính thức.
+            </span>
           </footer>
         </main>
       </div>
@@ -238,1046 +204,135 @@ function Heading({
     </div>
   );
 }
-function Dashboard() {
-  const s = useStats();
-  const today = new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
-  const dates = new Set([
-    ...s.attempts.map((a) => new Date(a.date).toLocaleDateString("en-CA")),
-    ...s.writing.map((w) => new Date(w.date).toLocaleDateString("en-CA")),
-  ]);
-  let streak = 0;
-  const cursor = new Date();
-  if (!dates.has(cursor.toLocaleDateString("en-CA")))
-    cursor.setDate(cursor.getDate() - 1);
-  while (dates.has(cursor.toLocaleDateString("en-CA"))) {
-    streak++;
-    cursor.setDate(cursor.getDate() - 1);
-  }
+function Home() {
   return (
     <>
-      <div className="date-line">
-        {today}
-        <span>
-          <Flame size={15} /> {streak} day streak
-        </span>
-      </div>
-      <Heading
-        tag="SMALL STEPS. STRONGER ENGLISH."
-        title="Make room for progress."
-      >
-        Build the grammar confidence to turn your ideas into clear English.
+      <Heading tag="IELTS GENERAL TRAINING" title="Hôm nay bạn muốn luyện gì?">
+        Chọn một kỹ năng. Tạo bài mới bằng AI. Làm bài và nhận phản hồi.
       </Heading>
-      <section className="hero">
-        <div>
-          <span className="pill">YOUR NEXT STEP · SENTENCE FOUNDATIONS</span>
-          <h2>
-            Good writing starts
-            <br />
-            with a clear sentence.
-          </h2>
-          <p>
-            Study one grammar rule in Vietnamese.
-            <br />
-            Understand the examples, then put it into practice.
-          </p>
-          <Link className="button button-primary" to="/path">
-            {s.attempts.length ? "Continue learning" : "Start learning"}{" "}
-            <ArrowRight size={17} />
-          </Link>
-          <span className="hero-meta">
-            Sentence Foundations · 4 rule-based lessons
-          </span>
-        </div>
-        <div className="word-art" aria-hidden="true">
-          <span className="art-label">A WORD. MANY POSSIBILITIES.</span>
-          <div className="word-card one">
-            <small>NOUN</small>success<span> /səkˈses/</span>
-          </div>
-          <div className="word-card two">
-            <small>ADJECTIVE</small>successful
-            <Check size={21} />
-          </div>
-          <div className="word-card three">
-            <small>ADVERB</small>successfully<span>↗</span>
-          </div>
-          <div className="art-dots">
-            · · · · ·<br />· · · · ·<br />· · · · ·
-          </div>
-        </div>
-      </section>
-      <div className="stats-grid">
-        {[
-          ["Due for review", s.due.length, "Keep yesterday’s learning alive"],
-          [
-            "Practice accuracy",
-            s.attempts.length ? `${s.accuracy}%` : "—",
-            `${s.attempts.length} answers submitted`,
-          ],
-          [
-            "Word families",
-            `${s.progress.length} / 25`,
-            "Your vocabulary, taking shape",
-          ],
-          ["Lesson mastery", `${s.mastered} / 4`, "Foundation starts here"],
-        ].map(([label, value, hint]) => (
-          <div className="stat" key={label}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-            <small>{hint}</small>
-          </div>
-        ))}
-      </div>
-      <div className="dashboard-bottom">
-        <section className="panel">
-          <div className="section-heading">
-            <h2>Today’s study plan</h2>
-            <span className="muted">180 min / day</span>
-          </div>
-          {[
-            [
-              "01",
-              "Learn the foundations",
-              "Theory + annotated examples",
-              "45 min",
-              "/lessons",
-            ],
-            [
-              "02",
-              "Make the words stick",
-              "Word families + spaced review",
-              "30 min",
-              "/practice?due=1",
-            ],
-            [
-              "03",
-              "Put it into your own words",
-              "Writing practice + self-correction",
-              "45 min",
-              "/writing",
-            ],
-          ].map(([n, title, sub, time, url]) => (
-            <Link className="plan-row" to={url} key={n}>
-              <span className="step">{n}</span>
-              <div>
-                <strong>{title}</strong>
-                <small>{sub}</small>
-              </div>
-              <span>{time}</span>
-              <ArrowUpRight size={17} />
-            </Link>
-          ))}
-          <p className="plan-foot">
-            + 60 min of independent listening, reading & speaking practice.
-          </p>
-        </section>
-        <section className="panel weekly">
-          <div className="section-heading">
-            <h2>Your week, so far</h2>
-            <ChartNoAxesCombined size={20} />
-          </div>
-          <div className="week-bars">
-            {Array.from({ length: 7 }, (_, i) => {
-              const d = new Date();
-              d.setDate(d.getDate() - 6 + i);
-              const n = s.attempts.filter(
-                (a) => new Date(a.date).toDateString() === d.toDateString(),
-              ).length;
-              return (
-                <div key={i}>
-                  <span className="bar-track">
-                    <span style={{ height: `${Math.min(n * 5, 100)}%` }} />
-                  </span>
-                  <small>
-                    {d.toLocaleDateString("en", { weekday: "narrow" })}
-                  </small>
-                </div>
-              );
-            })}
-          </div>
-          <p>
-            {s.attempts.length
-              ? "Every attempt is a step forward."
-              : "A fresh start looks good on you."}
-          </p>
-          <small>Your activity will appear as you practise.</small>
-          <Link to="/progress">
-            View your progress <ArrowRight size={14} />
-          </Link>
-        </section>
-      </div>
-      <section className="panel focus-panel">
-        <div>
-          <h3>Due today · {s.due.length}</h3>
-          {s.due.length ? (
-            <p>
-              {s.due
-                .slice(0, 4)
-                .map((q) => q.type)
-                .join(", ")}
-            </p>
-          ) : (
-            <p>No reviews due. New practice will build your queue.</p>
-          )}
-          <Link to="/practice?due=1">Open review queue →</Link>
-        </div>
-        <div>
-          <h3>New word families · {families.length - s.progress.length}</h3>
-          <p>
-            {families
-              .filter((f) => !s.progress.some((p) => p.id === f.id))
-              .slice(0, 4)
-              .map((f) => f.root)
-              .join(", ") || "All families started."}
-          </p>
-          <Link to="/families">Explore the library →</Link>
-        </div>
-        <div>
-          <h3>
-            Writing errors to revisit ·{" "}
-            {
-              s.attempts.filter(
-                (a) =>
-                  [
-                    "Sentence Correction",
-                    "Writing Error Recall",
-                    "Vietnamese to English",
-                  ].includes(a.type) && a.result !== "correct",
-              ).length
-            }
-          </h3>
-          <p>
-            {s.attempts.some((a) => a.result === "incorrect")
-              ? `Focus rules: ${weakRuleIds(s.attempts)
-                  .slice(0, 2)
-                  .map((id) => lessonById.get(id)?.title ?? id)
-                  .join(" · ")}`
-              : "Weak grammar rules appear after your first corrections."}
-          </p>
-          <Link to="/errors">Review your errors →</Link>
-        </div>
-      </section>
-    </>
-  );
-}
-function Lessons() {
-  const [active, setActive] = useState(0);
-  const s = sections[active];
-  return (
-    <>
-      <Heading
-        tag="LEGACY GRAMMAR REFERENCE · LESSON 01"
-        title="Parts of Speech & Word Formation."
-      >
-        Learn the pattern. Notice the difference. Build your own sentence.
-      </Heading>
-      <div className="tabs">
-        {sections.map((x, i) => (
-          <Button
-            variant={active === i ? "default" : "outline"}
-            key={x.code}
-            onClick={() => setActive(i)}
-          >
-            {x.code} · {x.title}
-          </Button>
-        ))}
-      </div>
-      <section className="panel lesson">
-        <span className="eyebrow">{s.code}</span>
-        <h2>{s.title}</h2>
-        <p lang="vi">{s.intro}</p>
-        {s.rules.map(([title, rule, good, bad]) => (
-          <article className="rule" key={title}>
-            <h3>{title}</h3>
-            <p lang="vi">{rule}</p>
-            <p className="example good">✓ {good}</p>
-            <p className="example bad">✕ {bad}</p>
-          </article>
-        ))}
-        {active === 1 && (
-          <p>
-            Common suffixes: noun -tion, -ment, -ness; adjective -ful, -ive,
-            -al; adverb -ly. These are clues, not universal rules. Good → well;
-            fast → fast; hard ≠ hardly (hầu như không). “Information” is
-            uncountable; “informations” is incorrect.
-          </p>
-        )}
-        {active === 2 && (
-          <p>
-            Learn chunks: make a decision, achieve success, depend on someone,
-            explain something to someone. “Economic” relates to the economy;
-            “economical” means using few resources. “Interested” describes a
-            feeling; “interesting” describes its cause.
-          </p>
-        )}
-        <Link
-          className="button button-primary"
-          to={`/practice?section=${active}&advanced=1`}
-        >
-          Practise {s.code} <ArrowRight size={16} />
-        </Link>
-      </section>
-      <div className="notice">
-        This previous reference remains available. Use the Learning Path for
-        prerequisite theory, focused practice and lesson mastery checks.{" "}
-        <Link to="/path">Open Learning Path →</Link>
-      </div>
-    </>
-  );
-}
-function Families() {
-  const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<string | null>(null);
-  const { progress } = useLearning();
-  const list = families.filter((f) =>
-    `${f.root} ${f.meaning} ${f.topic}`
-      .toLowerCase()
-      .includes(search.toLowerCase()),
-  );
-  return (
-    <>
-      <Heading
-        tag="YOUR LEXICAL TOOLKIT"
-        title="One root. A family of possibilities."
-      >
-        25 word families · Empty forms mean no common form is taught.
-      </Heading>
-      <section className="panel recall-intro">
-        <div>
-          <h2>Can you recall every form?</h2>
-          <p>
-            Type the noun, adjective, adverb and verb from memory. Hide the
-            library and test yourself.
-          </p>
-        </div>
-        <Link className="button button-primary" to="/families/recall">
-          Practise word-family recall <ArrowRight size={16} />
-        </Link>
-      </section>
-      <label className="field">
-        Search by word, topic or Vietnamese meaning
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Try education or Work…"
-        />
-      </label>
-      <div className="family-grid">
-        {list.map((f) => (
-          <section className="panel family" key={f.id}>
-            <div className="section-heading">
-              <span className="badge">
-                {f.cefr} · {f.topic}
-              </span>
-              <span className="muted">
-                {progress.find((p) => p.id === f.id)?.mastered
-                  ? "Mastered"
-                  : progress.some((p) => p.id === f.id)
-                    ? "Learning"
-                    : "New"}
+      <div className="practice-home-grid">
+        {skills.map((s, i) => (
+          <Link to={s.path} className="practice-home-card" key={s.path}>
+            <div className="practice-card-top">
+              <span className="skill-number">0{i + 1}</span>
+              <s.icon size={27} />
+            </div>
+            <div>
+              <span className="eyebrow">{s.subtitle}</span>
+              <h2>{s.title}</h2>
+              <p>{s.description}</p>
+            </div>
+            <div className="practice-card-bottom">
+              <small>{s.meta}</small>
+              <span>
+                Bắt đầu <ArrowUpRight size={18} />
               </span>
             </div>
-            <h2>{f.root}</h2>
-            <p className="muted">
-              /{f.ipa}/ · {f.meaning}
-            </p>
-            {Object.entries(f.forms).map(([pos, words]) => (
-              <div className="form-row" key={pos}>
-                <span>{pos}</span>
-                <strong>{words.join(", ") || "—"}</strong>
-              </div>
-            ))}
-            <Button
-              variant="ghost"
-              onClick={() => setSelected(selected === f.id ? null : f.id)}
-            >
-              {selected === f.id ? "Close details" : "Explore family"}{" "}
-              <ArrowUpRight size={16} />
-            </Button>
-            <Link
-              className="button button-outline"
-              to={`/families/recall?family=${f.id}`}
-            >
-              Recall this family
-            </Link>
-            {selected === f.id && (
-              <div className="family-details">
-                <p>{f.examples[0]}</p>
-                <h3>Collocations & patterns</h3>
-                <p>{f.collocations.join(" · ")}</p>
-                <p>{f.verbPatterns.join(" · ")}</p>
-                <h3>Watch out</h3>
-                <p>{f.mistakes[0]}</p>
-                <Link to={`/practice?family=${f.id}`}>
-                  Practise this family →
-                </Link>
-              </div>
-            )}
-          </section>
+          </Link>
         ))}
       </div>
-      {!list.length && <p>No families match your search.</p>}
+      <div className="practice-home-note">
+        <span className="status-dot" />
+        <p>
+          Bài làm tự động lưu trên trình duyệt này. Bạn có thể dừng và tiếp tục
+          khi quay lại.
+        </p>
+        <Link to="/history">Xem bài đã lưu →</Link>
+      </div>
     </>
   );
 }
-function Practice() {
-  const [params] = useSearchParams();
-  const stats = useStats();
-  const [advanced, setAdvanced] = useState(params.get("advanced") === "1");
-  const [kind, setKind] = useState("all");
-  const [family, setFamily] = useState(params.get("family") || "all");
-  const [topic, setTopic] = useState("all");
-  const [difficulty, setDifficulty] = useState("all");
-  const [count, setCount] = useState("10");
-  const [queue, setQueue] = useState<Question[]>([]);
-  const [index, setIndex] = useState(0);
-  const [answer, setAnswer] = useState("");
-  const [result, setResult] = useState("");
-  const [results, setResults] = useState<{ q: Question; r: string }[]>([]);
-  const [started, setStarted] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  const due = params.has("due");
-  const section = params.get("section");
-  const sectionTypes =
-    section === "0"
-      ? ["Identify Word Class", "Error Detection"]
-      : section === "1"
-        ? ["Word Formation", "Fill in the Blank"]
-        : section === "2"
-          ? ["Vietnamese to English", "Sentence Building"]
-          : section === "3"
-            ? ["Sentence Correction", "Writing Error Recall"]
-            : null;
+function PracticeHistory() {
+  const [runs, setRuns] = useState<PracticeRecord[]>([]),
+    [legacy, setLegacy] = useState<
+      { id: string; text: string; feedback: string }[]
+    >([]),
+    [error, setError] = useState("");
   useEffect(() => {
-    setAdvanced(params.get("advanced") === "1");
-    setStarted(false);
-    setResult("");
-    setAnswer("");
-    setError("");
-    setFamily(params.get("family") || "all");
-    setKind("all");
-    setTopic("all");
-    setDifficulty("all");
-  }, [params]);
-  const requestedQuestion = questionById.get(params.get("question") || "");
-  const unrestricted =
-    requestedQuestion && !quarantinedIds.has(requestedQuestion.id)
-      ? [requestedQuestion]
-      : questions;
-  const sourcePool = unrestricted.filter(
-    (q) =>
-      q.learning_stage !== "mastery" &&
-      (advanced || canPractise(q, stats.lessons)),
-  );
-  const pool = sourcePool.filter(
-    (q) =>
-      (kind === "all" || q.type === kind) &&
-      (family === "all" || q.family === family) &&
-      (topic === "all" || q.topic === topic) &&
-      (difficulty === "all" || q.difficulty === difficulty) &&
-      (!sectionTypes || sectionTypes.includes(q.type)),
-  );
-  const savedQuestionStates = questionStates(stats.attempts);
-  const eligible = pool.filter((q) => {
-    const state = savedQuestionStates.get(q.id);
-    return state ? state.next <= Date.now() : !due;
-  });
-  function start() {
-    if (!stats.loaded || stats.error) return;
-    setQueue(
-      selectSession(pool, stats.attempts, {
-        now: Date.now(),
-        limit: count === "unlimited" ? pool.length : Number(count),
-        dueOnly: due,
-      }),
-    );
-    setIndex(0);
-    setResults([]);
-    setStarted(true);
-    setResult("");
-    setAnswer("");
-    setError("");
-  }
-  async function submit() {
-    if (!answer.trim() || busy || result) return;
-    setBusy(true);
-    try {
-      const q = queue[index];
-      if (!advanced && !canPractise(q, stats.lessons))
-        throw Error("Study the prerequisite theory first.");
-      const r = grade(q, answer);
-      await record({
-        questionId: q.id,
-        family: q.family,
-        type: q.type,
-        answer,
-        result: r,
-        date: Date.now(),
-      });
-      await stats.refresh();
-      setResult(r);
-      setResults((old) => [...old, { q, r }]);
-    } catch {
-      setError("Could not save your answer. Please try again.");
-    } finally {
-      setBusy(false);
-    }
-  }
-  const q = queue[index];
+    Promise.all([
+      db.practiceRuns.orderBy("updatedAt").reverse().toArray(),
+      db.aiAttempts.orderBy("date").reverse().toArray(),
+      db.writing.toArray(),
+      db.attempts.orderBy("date").reverse().toArray(),
+    ])
+      .then(([r, a, w, old]) => {
+        setRuns(r);
+        setLegacy([
+          ...a.map((x) => ({
+            id: x.id,
+            text: x.userAnswer,
+            feedback: x.result.feedbackVi,
+          })),
+          ...w.map((x) => ({
+            id: `w-${x.id}`,
+            text: x.text,
+            feedback: "Bài viết đã lưu trước khi chuyển sang luyện AI.",
+          })),
+          ...old.map((x) => ({
+            id: `a-${x.id}`,
+            text: x.answer,
+            feedback:
+              x.result === "correct"
+                ? "Đúng"
+                : x.result === "incorrect"
+                  ? "Chưa đúng"
+                  : "Cần xem lại",
+          })),
+        ]);
+      })
+      .catch(() => setError("Không đọc được lịch sử. Hãy tải lại trang."));
+  }, []);
   return (
     <>
-      <Heading
-        tag={due ? "SPACED REPETITION" : "ACTIVE RECALL"}
-        title={due ? "Bring it back to mind." : "Your practice lab."}
-      >
-        Think first. Write it yourself. Learn from the correction.
+      <Heading tag="YOUR WORK" title="Lịch sử bài làm">
+        Bài đã tạo, bài đang làm và phản hồi của bạn.
       </Heading>
-      {!started && (
-        <section className="panel">
-          <h2>
-            {advanced
-              ? "Advanced Mixed Practice"
-              : "Practice what you have learned"}
-          </h2>
-          <p>
-            Default practice includes only rules whose theory and annotated
-            examples you completed. Mastery questions stay inside the learning
-            flow.
-          </p>
-          <label className="check-row">
-            <input
-              type="checkbox"
-              checked={advanced}
-              onChange={(e) => setAdvanced(e.target.checked)}
-            />
-            Advanced Mixed Practice — include unlearned rules
-          </label>
-          {advanced ? (
-            <p className="notice">
-              Unrestricted mode can include grammar you have not studied.
-              Results stay in history but do not complete theory or award lesson
-              mastery.
-            </p>
-          ) : (
-            <Link className="button button-primary" to="/path">
-              Study the next grammar rule →
-            </Link>
-          )}
-        </section>
-      )}
-      {!started && advanced && (
-        <section className="panel recall-intro">
-          <div>
-            <h2>Word-family recall</h2>
-            <p>Write all four word classes yourself, without choices.</p>
-          </div>
-          <Link className="button button-primary" to="/families/recall">
-            Practise all four forms →
-          </Link>
-        </section>
-      )}
-      {!started ? (
-        <section className="panel">
-          <div className="filter-grid">
-            <label className="field">
-              Exercise type
-              <select value={kind} onChange={(e) => setKind(e.target.value)}>
-                <option value="all">All eight types</option>
-                {types.map((t) => (
-                  <option key={t}>{t}</option>
-                ))}
-              </select>
-            </label>
-            <label className="field">
-              Word family
-              <select
-                value={family}
-                onChange={(e) => setFamily(e.target.value)}
-              >
-                <option value="all">All families</option>
-                {families.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.root}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="field">
-              Topic
-              <select value={topic} onChange={(e) => setTopic(e.target.value)}>
-                <option value="all">All topics</option>
-                {[...new Set(sourcePool.map((q) => q.topic))]
-                  .sort()
-                  .map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
-              </select>
-            </label>
-            <label className="field">
-              Difficulty
-              <select
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value)}
-              >
-                <option value="all">All levels</option>
-                {[...new Set(sourcePool.map((q) => q.difficulty))]
-                  .sort()
-                  .map((level) => (
-                    <option key={level}>{level}</option>
-                  ))}
-              </select>
-            </label>
-            <label className="field">
-              Session size
-              <select value={count} onChange={(e) => setCount(e.target.value)}>
-                {["10", "20", "50", "100", "unlimited"].map((n) => (
-                  <option key={n}>{n}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <p>
-            {!stats.loaded && (
-              <span role="status">Loading your saved learning history… </span>
-            )}
-            {eligible.length} eligible questions · {pool.length} match your
-            filters. Unseen questions come first. Completed questions return
-            only when their next review is due; missed questions wait at least
-            one day. Unlimited mode continues through eligible questions without
-            repeating IDs in the session.
-          </p>
-          <Button
-            disabled={!stats.loaded || !!stats.error || !eligible.length}
-            onClick={() => start()}
-          >
-            Start practice <ArrowRight size={16} />
-          </Button>
-          {!eligible.length && (
-            <p>
-              No questions are eligible right now.{" "}
-              {due ? "You have no reviews due today." : "Try broader filters."}
-            </p>
-          )}
-        </section>
-      ) : q ? (
-        <section className="panel practice-card" data-question-id={q.id}>
-          <div className="section-heading">
-            <span className="badge">{q.type}</span>
-            <span>
-              {index + 1} / {count === "unlimited" ? "∞" : queue.length}
-            </span>
-          </div>
-          <progress value={index} max={queue.length} />
-          <QuestionPrompt question={q} />
-          <p className="muted">
-            {q.topic} · {q.difficulty}
-          </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void submit();
-            }}
-          >
-            {q.choices.length ? (
-              <div className="choices">
-                {q.choices.map((c) => (
-                  <label
-                    key={c}
-                    className={answer === c ? "choice selected" : "choice"}
-                  >
-                    <input
-                      type="radio"
-                      name="answer"
-                      value={c}
-                      checked={answer === c}
-                      disabled={!!result || busy}
-                      onChange={() => setAnswer(c)}
-                    />
-                    {c}
-                  </label>
-                ))}
-              </div>
-            ) : (
-              <label className="field">
-                Your answer
-                <textarea
-                  autoFocus
-                  value={answer}
-                  disabled={!!result || busy}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  placeholder="Write your answer here…"
-                />
-              </label>
-            )}
-            {!result && (
-              <Button disabled={!answer.trim() || busy} type="submit">
-                {busy ? "Saving…" : "Check answer"}
-              </Button>
-            )}
-          </form>
-          {error && <p role="alert">{error}</p>}
-          {result && (
-            <div className={`feedback ${result}`} role="status">
-              <h3>
-                {result === "correct"
-                  ? "Well done."
-                  : result === "review"
-                    ? "Needs review."
-                    : "Let’s learn from this."}
-              </h3>
-              <RuleFeedback question={q} />
-              <p lang="vi">{q.explanation}</p>
-              {q.auditNote && (
-                <p className="audit-note">Content note: {q.auditNote}</p>
-              )}
-              {result !== "correct" && (
-                <p>
-                  Reference answer: <strong>{q.answers[0]}</strong>
-                </p>
-              )}
-              {result === "review" && (
-                <p>
-                  A different answer can still be valid. This response is
-                  excluded from accuracy and awaits your review in the Error
-                  Bank.
-                </p>
-              )}
-              <Button
-                onClick={() => {
-                  if (count === "unlimited" && index === queue.length - 1)
-                    setQueue((old) => [
-                      ...old,
-                      ...selectSession(pool, stats.attempts, {
-                        now: Date.now(),
-                        limit: pool.length,
-                        dueOnly: due,
-                        exclude: old.map((item) => item.id),
-                      }),
-                    ]);
-                  setIndex((i) => i + 1);
-                  setAnswer("");
-                  setResult("");
-                }}
-              >
-                Next question <ArrowRight size={16} />
-              </Button>
-            </div>
-          )}
-          <Button
-            className="end-session"
-            variant="ghost"
-            onClick={() => setIndex(queue.length)}
-          >
-            End session
-          </Button>
-        </section>
-      ) : (
-        <section className="panel">
-          <h2>Practice, completed.</h2>
-          <p>
-            {results.length} attempts ·{" "}
-            {results.filter((r) => r.r === "correct").length} correct ·{" "}
-            {results.filter((r) => r.r === "review").length} requiring review
-          </p>
-          <div className="actions">
-            <Link className="button button-outline" to="/practice?due=1">
-              Open due review queue
-            </Link>
-            <p className="muted">
-              Missed questions are saved for spaced review, not repeated
-              immediately.
-            </p>
-            <Button variant="outline" onClick={() => setStarted(false)}>
-              New session
-            </Button>
-          </div>
-        </section>
-      )}
-    </>
-  );
-}
-function Writing() {
-  const { writing, refresh } = useLearning();
-  const [text, setText] = useState("");
-  const [original, setOriginal] = useState("");
-  const [checks, setChecks] = useState<string[]>([]);
-  const [message, setMessage] = useState("");
-  async function save() {
-    try {
-      await db.writing.add({
-        text,
-        original,
-        date: Date.now(),
-        applied: checks.length === 3,
-      });
-      await refresh();
-      setMessage("Writing saved on this device.");
-      setText("");
-      setChecks([]);
-    } catch {
-      setMessage("Saving failed. Please try again.");
-    }
-  }
-  return (
-    <>
-      <Heading tag="FROM KNOWING TO USING" title="Make the words your own.">
-        General Training Task 1 · Write a letter to a community centre
-        suggesting a new course.
-      </Heading>
+      {error && <p role="alert">{error}</p>}
       <section className="panel">
-        <p>
-          Write at least 150 words. Explain the course, why residents would
-          benefit, and how you could help. Use at least three word families from
-          Lesson 01.
-        </p>
-        <div className="notice">
-          This is a self-review trainer. It does not provide an IELTS band score
-          or automated grammar certification.
-        </div>
-        <label className="field">
-          First draft (optional)
-          <textarea
-            value={original}
-            onChange={(e) => setOriginal(e.target.value)}
-          />
-        </label>
-        <label className="field">
-          Your revised writing
-          <textarea
-            className="writing-area"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Dear Sir or Madam,…"
-          />
-        </label>
-        <span className="muted">
-          {text.trim() ? text.trim().split(/\s+/).length : 0} words
-        </span>
-        <h3>Application checklist</h3>
-        {[
-          "I checked noun, verb, adjective and adverb positions.",
-          "I used at least three families and checked collocations.",
-          "I corrected errors and can explain my changes.",
-        ].map((c) => (
-          <label className="check-row" key={c}>
-            <input
-              type="checkbox"
-              checked={checks.includes(c)}
-              onChange={(e) =>
-                setChecks(
-                  e.target.checked
-                    ? [...checks, c]
-                    : checks.filter((x) => x !== c),
-                )
-              }
-            />
-            {c}
-          </label>
-        ))}
-        <Button
-          disabled={text.trim().split(/\s+/).length < 150}
-          onClick={() => void save()}
-        >
-          Save writing application
-        </Button>
-        <p role="status">{message}</p>
-      </section>
-      <h2>Your writing journal</h2>
-      {writing.length ? (
-        writing
-          .slice()
-          .reverse()
-          .map((w) => (
-            <article className="panel" key={w.id}>
-              <span className="badge">
-                {w.applied ? "Self-reviewed application" : "Draft saved"}
-              </span>
-              <p className="preserve">{w.text}</p>
-              <small>{new Date(w.date).toLocaleString()}</small>
-            </article>
-          ))
-      ) : (
-        <p className="muted">
-          Your saved drafts and revisions will appear here.
-        </p>
-      )}
-    </>
-  );
-}
-function Errors() {
-  const { attempts, refresh } = useLearning();
-  const [message, setMessage] = useState("");
-  async function resolve(id: number, result: "correct" | "incorrect") {
-    try {
-      await resolveAttempt(id, result);
-      await syncLearningAttempt(id);
-      await refresh();
-    } catch {
-      setMessage("Could not save review.");
-    }
-  }
-  return (
-    <>
-      <Heading tag="MISTAKES ARE LEARNING MATERIAL" title="Your error bank.">
-        Revisit incorrect answers and review open writing against the reference.
-      </Heading>
-      <p role="status">{message}</p>
-      {attempts.filter((a) => a.result !== "correct").length ? (
-        attempts
-          .filter((a) => a.result !== "correct")
-          .slice()
-          .reverse()
-          .map((a) => {
-            const q = questionById.get(a.questionId);
-            return (
-              <section className="panel" key={a.id}>
-                <span className="badge">
-                  {a.result === "review" ? "Requires review" : "Needs practice"}{" "}
-                  · {a.type}
-                </span>
-                <h3>
-                  {(q ? <HighlightedText text={q.prompt} /> : undefined) ??
-                    `Recall the ${families.find((f) => f.id === a.family)?.root ?? "word"} family`}
-                </h3>
-                <p className="preserve">Your answer: {a.answer}</p>
-                <p>
-                  Reference:{" "}
-                  {q?.answers[0] ??
-                    Object.entries(
-                      families.find((f) => f.id === a.family)?.forms ?? {},
-                    )
-                      .map(
-                        ([part, forms]) =>
-                          `${part}: ${forms.join(", ") || "none"}`,
-                      )
-                      .join(" · ")}
-                </p>
-                <p lang="vi">{q?.explanation}</p>
-                {a.result === "review" && (
-                  <div className="actions">
-                    <Button
-                      variant="outline"
-                      onClick={() => void resolve(a.id!, "correct")}
-                    >
-                      I verified this is correct
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => void resolve(a.id!, "incorrect")}
-                    >
-                      Needs correction
-                    </Button>
-                  </div>
-                )}
-                <Link
-                  to={
-                    a.type === "Word Family Recall"
-                      ? `/families/recall?family=${a.family}`
-                      : a.lessonId
-                        ? `/learn/${a.lessonId}`
-                        : `/practice?question=${a.questionId}&advanced=1`
-                  }
-                >
-                  Practise this family →
-                </Link>
-              </section>
-            );
-          })
-      ) : (
-        <section className="panel">
-          <h2>A clean slate.</h2>
-          <p>
-            Your incorrect answers and responses requiring review will appear
-            here.
-          </p>
-          <Link to="/practice">Start practising →</Link>
-        </section>
-      )}
-    </>
-  );
-}
-function Progress() {
-  const s = useStats();
-  const weak = s.progress
-    .slice()
-    .sort((a, b) => b.incorrect - a.incorrect)
-    .filter((p) => p.incorrect);
-  return (
-    <>
-      <Heading tag="EVIDENCE OF YOUR EFFORT" title="Progress you can see.">
-        Every number comes from your activity on this device.
-      </Heading>
-      <div className="stats-grid">
-        {[
-          ["Recognition", s.recognition + "%"],
-          ["Production", s.production + "%"],
-          ["Writing saved", s.writing.length],
-          [
-            "Needs review",
-            s.attempts.filter((a) => a.result === "review").length,
-          ],
-        ].map(([l, v]) => (
-          <div className="stat" key={l}>
-            <span>{l}</span>
-            <strong>{v}</strong>
-          </div>
-        ))}
-      </div>
-      <section className="panel">
-        <h2>Focus for your next session</h2>
-        {weak.length ? (
-          weak.map((p) => (
-            <p key={p.id}>
-              <Link to={`/practice?family=${p.id}`}>
-                {families.find((f) => f.id === p.id)?.root}
-              </Link>{" "}
-              · {p.incorrect} incorrect · next review{" "}
-              {new Date(p.next).toLocaleDateString()}
-            </p>
-          ))
-        ) : (
-          <p>
-            No weak families identified yet. Complete a practice session to find
-            your focus.
-          </p>
-        )}
-        <h3>Weak grammar rules</h3>
-        {s.attempts.some((a) => a.result === "incorrect") ? (
-          <p>
-            {weakRuleIds(s.attempts).map((id) => (
-              <span className="weak-rule" key={id}>
-                {lessonById.get(id)?.title ?? id}{" "}
-                {lessonById.get(id)?.available ? (
-                  <Link to={`/learn/${id}`}>Revisit rule →</Link>
-                ) : (
-                  <span className="badge">Theory upcoming · Advanced rule</span>
-                )}
-                <br />
-              </span>
+        <h2>Bài luyện AI</h2>
+        {runs.length ? (
+          <div className="practice-history-list">
+            {runs.map((r) => (
+              <Link key={r.id} to={`/${r.exercise.settings.skill}?id=${r.id}`}>
+                <span>{r.exercise.title}</span>
+                <small>
+                  {skillNames[r.exercise.settings.skill]} ·{" "}
+                  {new Date(r.date).toLocaleDateString("vi-VN")} ·{" "}
+                  {r.result ? "Đã chấm" : "Tiếp tục làm"}
+                </small>
+              </Link>
             ))}
-            Revisit your specific corrections in the{" "}
-            <Link to="/errors">Error Bank</Link>.
-          </p>
+          </div>
         ) : (
-          <p>No recorded grammar errors yet.</p>
+          <p>
+            Chưa có bài Nghe, Đọc hoặc Viết mới.{" "}
+            <Link to="/">Chọn một kỹ năng để bắt đầu.</Link>
+          </p>
         )}
-        <h3>Mastery requirements</h3>
         <p>
-          Lesson mastery requires the full learning cycle, a due review, and a
-          completed mastery check with at least 80%. Sentence Foundations:{" "}
-          {s.mastered} / 4 lessons mastered.
+          <Link to="/grammar">Mở bài ngữ pháp và các bài đã lưu →</Link>
         </p>
       </section>
+      <details className="panel practice-history">
+        <summary>Lịch sử cũ ({legacy.length} bài làm)</summary>
+        <p>
+          Dữ liệu trước khi đổi giao diện vẫn được giữ. Bạn có thể xuất toàn bộ
+          trong phần sao lưu.
+        </p>
+        {legacy.map((x) => (
+          <div className="answer-feedback" key={x.id}>
+            <p>{x.text}</p>
+            <p>{x.feedback}</p>
+          </div>
+        ))}
+      </details>
     </>
   );
 }
+
 function Settings() {
   const [message, setMessage] = useState("");
-  const { refresh } = useLearning();
+  const refresh = async () => {};
   async function backup() {
     try {
       const blob = new Blob([JSON.stringify(await exportBackup(), null, 2)], {
@@ -1304,7 +359,7 @@ function Settings() {
         <p>
           IELTS General Training · Current estimate 5.0–5.5 · Overall target 6.5
         </p>
-        <p>Listening 7.0 · Reading 7.0 · Writing 6.0+ · Speaking 6.0+</p>
+        <p>Listening 7.0 · Reading 7.0 · Writing 6.0+</p>
         <p>Daily plan: 180 minutes · 24 weeks</p>
         <h2>Backup & restore</h2>
         <p>
@@ -1333,22 +388,20 @@ function Settings() {
                 setMessage("Backup restored.");
               } catch {
                 setMessage(
-                  "Invalid backup or restore failed. Use a valid version 1 or version 2 backup.",
+                  "Invalid backup or restore failed. Use a valid backup.",
                 );
               }
             }}
           />
         </label>
         <p role="status">{message}</p>
-        <h3>Available now</h3>
         <p>
-          Lesson 01, word families, practice, spaced reviews and writing
-          self-review.
+          Bốn kỹ năng: Nghe, Đọc, Viết và Ngữ pháp. Không có bài học lý thuyết
+          hay điều kiện mở khoá.
         </p>
-        <h3>Upcoming</h3>
         <p>
-          Lessons 02–32, automated writing feedback, listening and reading
-          modules.
+          Âm thanh đã tải được lưu trên thiết bị này; bản sao lưu JSON chứa bài
+          làm và kết quả, không kèm file âm thanh.
         </p>
       </section>
     </>

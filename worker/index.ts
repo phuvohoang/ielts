@@ -12,6 +12,11 @@ import {
 } from "../src/lib/ai/dynamic/schema";
 import { type SessionEnv } from "./sessions";
 import { providerConfigured } from "./provider";
+import {
+  practiceSettingsSchema,
+  practiceIdentitySchema,
+  practiceSubmissionSchema,
+} from "../src/lib/practice/schema";
 export { GrammarSessions } from "./sessions";
 export default {
   async fetch(request: Request, env: SessionEnv): Promise<Response> {
@@ -37,6 +42,9 @@ export default {
         "/api/grammar/grade",
         "/api/grammar/generate",
         "/api/grammar/submit-exam",
+        "/api/practice/generate",
+        "/api/practice/grade",
+        "/api/practice/audio",
       ].includes(path)
     )
       return send({ error: "Not found" }, 404);
@@ -64,6 +72,61 @@ export default {
         { error: "Invalid or oversized request" },
         e instanceof Error && e.message === "large" ? 413 : 400,
       );
+    }
+    if (path.startsWith("/api/practice/")) {
+      if (!env.SESSIONS || !env.GENERATE_LIMIT)
+        return send({ error: "Practice unavailable" }, 503);
+      const op = path.split("/").at(-1)!;
+      try {
+        const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+        if (
+          !(
+            await (op === "grade" ? env.GRADE_LIMIT : env.GENERATE_LIMIT).limit(
+              { key: ip },
+            )
+          ).success ||
+          !(await env.GLOBAL_LIMIT.limit({ key: "ielts-grammar" })).success
+        )
+          return send(
+            { error: "Yêu cầu quá nhanh. Hãy thử lại sau một phút." },
+            429,
+          );
+        const parsed = (
+          op === "generate"
+            ? practiceSettingsSchema
+            : op === "grade"
+              ? practiceSubmissionSchema
+              : practiceIdentitySchema.pick({ id: true, token: true }).strict()
+        ).parse(raw);
+        const id = "id" in parsed ? parsed.id : crypto.randomUUID();
+        const response = await env.SESSIONS.get(
+          env.SESSIONS.idFromName(id),
+        ).fetch(
+          new Request(`https://session/skills/${op}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Session-Id": id },
+            body: JSON.stringify(parsed),
+          }),
+        );
+        return new Response(response.body, {
+          status: response.status,
+          headers: {
+            ...headers,
+            "Content-Type":
+              response.headers.get("Content-Type") || "application/json",
+          },
+        });
+      } catch (e) {
+        return send(
+          {
+            error:
+              e instanceof z.ZodError
+                ? "Dữ liệu không hợp lệ."
+                : "Dịch vụ luyện tập chưa sẵn sàng. Hãy thử lại.",
+          },
+          e instanceof z.ZodError ? 400 : 503,
+        );
+      }
     }
     if (
       path !== "/api/grammar/grade" ||

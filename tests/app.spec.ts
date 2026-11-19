@@ -1,5 +1,47 @@
-import { test,expect } from '@playwright/test'
-test('learner can practise, persist progress, and revisit errors',async({page})=>{await page.goto('/');await expect(page.getByRole('heading',{name:'Make room for progress.'})).toBeVisible();await page.goto('/practice?advanced=1&question=PSWF-001');await page.getByLabel('Exercise type').selectOption('Identify Word Class');await page.getByRole('button',{name:'Start practice'}).click();await expect(page.getByText('Reference answer:')).toHaveCount(0);await page.getByRole('radio',{name:'noun',exact:true}).check();await page.getByRole('button',{name:'Check answer'}).click();await expect(page.getByRole('heading',{name:'Well done.'})).toBeVisible();await page.reload();await page.goto('/progress');await expect(page.getByText('100%',{exact:true})).toBeVisible();await page.goto('/path');await expect(page.getByText('Upcoming',{exact:true})).toHaveCount(26);await page.goto('/families');await page.getByRole('textbox').fill('education');await expect(page.getByRole('heading',{name:'educate',exact:true})).toBeVisible()})
-test('all pages render without horizontal overflow or runtime errors',async({page})=>{const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));for(const route of ['/','/lessons','/families','/writing','/errors','/settings']){await page.goto(route);await expect(page.locator('h1')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true)}expect(errors).toEqual([]);await page.goto('/');await page.screenshot({path:`test-results/dashboard-${test.info().project.name}.png`,fullPage:true})
-
-})
+import { test, expect } from "@playwright/test";
+test("four-skill workspace removes theory, lessons and gates and keeps mobile layouts usable", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "Hôm nay bạn muốn luyện gì?" }),
+  ).toBeVisible();
+  await expect(page.locator(".practice-home-card")).toHaveCount(4);
+  await expect(
+    page.getByRole("link", {
+      name: /Learning Path|Grammar Lessons|Start learning/,
+    }),
+  ).toHaveCount(0);
+  for (const route of [
+    "/listening",
+    "/reading",
+    "/writing",
+    "/grammar",
+    "/history",
+    "/settings",
+  ]) {
+    await page.goto(route);
+    await expect(page.locator("h1")).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+  await page.goto("/learn/sentence-foundations-01");
+  await expect(page).toHaveURL(/\/grammar$/);
+  await expect(
+    page.getByRole("button", { name: "Generate Practice", exact: true }),
+  ).toBeEnabled();
+  await expect(page.locator(".practice-theory,.practice-consent")).toHaveCount(
+    0,
+  );
+  expect(errors).toEqual([]);
+  await page.goto("/");
+  await page.screenshot({
+    path: `test-results/practice-home-${test.info().project.name}.png`,
+    fullPage: true,
+  });
+});

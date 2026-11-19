@@ -1,3 +1,4 @@
+import { practiceRecordSchema, type PracticeRecord } from "./practice/schema";
 import { localSessionSchema, type PracticeSession } from "./ai/dynamic/schema";
 import {
   attemptSchema as aiAttemptSchema,
@@ -55,6 +56,8 @@ class LearningDB extends Dexie {
   checks!: Table<MasteryCheck, string>;
   aiAttempts!: Table<AIExerciseAttempt, string>;
   practiceSessions!: Table<PracticeSession, string>;
+  practiceRuns!: Table<PracticeRecord, string>;
+  practiceAudio!: Table<{ id: string; blob: Blob }, string>;
   constructor() {
     super("ielts-grammar-mastery");
     this.version(1).stores({
@@ -68,6 +71,10 @@ class LearningDB extends Dexie {
     });
     this.version(3).stores({ aiAttempts: "id,sessionId,exerciseId,date" });
     this.version(4).stores({ practiceSessions: "sessionId,updatedAt,status" });
+    this.version(5).stores({
+      practiceRuns: "id,updatedAt,date",
+      practiceAudio: "id",
+    });
   }
 }
 export const db = new LearningDB();
@@ -94,8 +101,14 @@ export const backupSchema = z.union([
   }),
   z
     .object({
-      version: z.union([z.literal(2), z.literal(3), z.literal(4)]),
+      version: z.union([
+        z.literal(2),
+        z.literal(3),
+        z.literal(4),
+        z.literal(5),
+      ]),
       practiceSessions: z.array(localSessionSchema).optional(),
+      practiceRuns: z.array(practiceRecordSchema).optional(),
       aiAttempts: z.array(aiAttemptSchema).optional(),
       attempts: z.array(attemptSchema),
       progress: z.array(progressSchema),
@@ -108,8 +121,14 @@ export const backupSchema = z.union([
       "Version 3 and later require AI attempts",
     )
     .refine(
-      (b) => b.version !== 4 || b.practiceSessions !== undefined,
+      (b) =>
+        (b.version !== 4 && b.version !== 5) ||
+        b.practiceSessions !== undefined,
       "Version 4 requires generated sessions",
+    )
+    .refine(
+      (b) => b.version !== 5 || b.practiceRuns !== undefined,
+      "Version 5 requires AI skill practice",
     )
     .refine(
       (b) =>
@@ -138,9 +157,11 @@ export async function exportBackup() {
       db.checks,
       db.aiAttempts,
       db.practiceSessions,
+      db.practiceRuns,
     ],
     async () => ({
-      version: 4 as const,
+      version: 5 as const,
+      practiceRuns: await db.practiceRuns.toArray(),
       practiceSessions: await db.practiceSessions.toArray(),
       aiAttempts: await db.aiAttempts.toArray(),
       attempts: await db.attempts.toArray(),
@@ -163,6 +184,7 @@ export async function importBackup(input: unknown) {
       db.checks,
       db.aiAttempts,
       db.practiceSessions,
+      db.practiceRuns,
     ],
     async () => {
       await Promise.all([
@@ -174,18 +196,27 @@ export async function importBackup(input: unknown) {
       await db.progress.bulkAdd(b.progress);
       await db.writing.bulkAdd(b.writing);
       // A v1 backup predates learning progress: preserve the new tables when restoring it.
-      if (b.version === 2 || b.version === 3 || b.version === 4) {
+      if (
+        b.version === 2 ||
+        b.version === 3 ||
+        b.version === 4 ||
+        b.version === 5
+      ) {
         await db.lessons.clear();
         await db.checks.clear();
         await db.lessons.bulkAdd(b.lessons);
         await db.checks.bulkAdd(b.checks);
-        if (b.version === 3 || b.version === 4) {
+        if (b.version === 3 || b.version === 4 || b.version === 5) {
           await db.aiAttempts.clear();
           await db.aiAttempts.bulkAdd(b.aiAttempts ?? []);
         }
-        if (b.version === 4) {
+        if (b.version === 4 || b.version === 5) {
           await db.practiceSessions.clear();
           await db.practiceSessions.bulkAdd(b.practiceSessions ?? []);
+          if (b.version === 5) {
+            await db.practiceRuns.clear();
+            await db.practiceRuns.bulkAdd(b.practiceRuns ?? []);
+          }
         }
       }
     },

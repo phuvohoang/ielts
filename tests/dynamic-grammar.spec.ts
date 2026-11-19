@@ -73,7 +73,8 @@ async function mockAPI(
     if (input.batchIndex === options.delayedBatch)
       await new Promise((resolve) => setTimeout(resolve, 800));
     const partial = options.partialBatch === input.batchIndex && !repairEnabled;
-    if (!partial) session.nextBatch = Math.max(session.nextBatch, input.batchIndex + 1);
+    if (!partial)
+      session.nextBatch = Math.max(session.nextBatch, input.batchIndex + 1);
     await route.fulfill({
       json: {
         sessionId: session.sessionId,
@@ -82,7 +83,7 @@ async function mockAPI(
         settings: session.settings,
         questions: session.questions
           .slice(input.batchIndex * 10, (input.batchIndex + 1) * 10)
-          .filter(q => !partial || q.ordinal !== input.batchIndex * 10 + 3)
+          .filter((q) => !partial || q.ordinal !== input.batchIndex * 10 + 3)
           .map(publicQuestion),
         nextBatch: session.nextBatch,
         complete: session.nextBatch * 10 === session.settings.questionCount,
@@ -145,7 +146,9 @@ async function mockAPI(
   });
   return {
     sessions,
-    finishRepair() { repairEnabled = true; },
+    finishRepair() {
+      repairEnabled = true;
+    },
     get generationCalls() {
       return generationCalls;
     },
@@ -162,11 +165,6 @@ async function start(page: Page) {
       exact: true,
     }),
   ).toBeVisible();
-  await page
-    .getByLabel("Tôi đã ôn quy tắc cần luyện và muốn thực hành nâng cao.", {
-      exact: true,
-    })
-    .check();
 }
 const card = (page: Page) => page.locator("[data-exercise-id]");
 const next = (page: Page) =>
@@ -187,7 +185,7 @@ test("creates fresh questions, persists typed drafts and grading, and preserves 
   });
   await expect(
     page.getByRole("checkbox", { name: /Verb Tenses/ }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await expect(
     page.getByRole("checkbox", { name: /Word Formation Build/ }),
   ).toBeChecked();
@@ -234,12 +232,9 @@ test("creates fresh questions, persists typed drafts and grading, and preserves 
   await expect(
     page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Tạo bài luyện mới", exact: true }).click();
   await page
-    .getByLabel("Tôi đã ôn quy tắc cần luyện và muốn thực hành nâng cao.", {
-      exact: true,
-    })
-    .check();
+    .getByRole("button", { name: "Tạo bài luyện mới", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Generate Practice", exact: true })
     .click();
@@ -339,33 +334,110 @@ test("a grading outage keeps the answer and score intact and supports retry", as
   expect(mock.gradeCalls).toBe(2);
 });
 
-test("20-question practice opens the exercise first and keeps nine accepted questions usable while repairing one", async ({ page }) => {
+test("20-question practice opens the exercise first and keeps nine accepted questions usable while repairing one", async ({
+  page,
+}) => {
   const mock = await mockAPI(page, { partialBatch: 0 });
   await start(page);
   await page.getByLabel("Question count", { exact: true }).selectOption("20");
-  await page.getByRole("button", { name: "Generate Practice", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
   await expect(card(page)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Build your practice session", exact: true })).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Kết quả bài luyện", exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", {
+      name: "Build your practice session",
+      exact: true,
+    }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Kết quả bài luyện", exact: true }),
+  ).toHaveCount(0);
   await expect(page.locator(".practice-history")).not.toHaveAttribute("open");
   await expect(page.getByLabel("Your answer", { exact: true })).toBeFocused();
   const initialId = await card(page).getAttribute("data-exercise-id");
   const first = [...mock.sessions.values()][0].questions[0];
-  await page.getByLabel("Your answer", { exact: true }).fill(first.referenceAnswers[0]);
+  await page
+    .getByLabel("Your answer", { exact: true })
+    .fill(first.referenceAnswers[0]);
   await page.getByRole("button", { name: "Check Answer", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Correct · 1/1", exact: true })).toBeVisible();
-  await expect(page.getByText("1/20 answered · 9 ready", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Retry Generation", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("1/20 answered · 9 ready", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Retry Generation", exact: true }),
+  ).toBeVisible();
   expect(mock.generationCalls).toBe(3); // bounded background repair, no infinite paid requests
   await page.reload();
   await expect(card(page)).toHaveAttribute("data-exercise-id", initialId!);
-  await expect(page.getByRole("heading", { name: "Correct · 1/1", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Retry Generation", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Retry Generation", exact: true }),
+  ).toBeVisible();
   mock.finishRepair();
-  await page.getByRole("button", { name: "Retry Generation", exact: true }).click();
-  await expect(page.getByText("1/20 answered · 20 ready", { exact: true })).toBeVisible();
+  await page
+    .getByRole("button", { name: "Retry Generation", exact: true })
+    .click();
+  await expect(
+    page.getByText("1/20 answered · 20 ready", { exact: true }),
+  ).toBeVisible();
   await expect(card(page)).toHaveAttribute("data-exercise-id", initialId!);
-  await expect(page.getByRole("heading", { name: "Correct · 1/1", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Kết quả bài luyện", exact: true })).toHaveCount(0);
-  await page.screenshot({ path: `test-results/practice-first-${test.info().project.name}.png`, fullPage: true });
+  await expect(
+    page.getByRole("heading", { name: "Correct · 1/1", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Kết quả bài luyện", exact: true }),
+  ).toHaveCount(0);
+  await page.screenshot({
+    path: `test-results/practice-first-${test.info().project.name}.png`,
+    fullPage: true,
+  });
+});
+
+test("shows a required opening before submission while keeping the complete sentence key hidden", async ({
+  page,
+}) => {
+  const mock = await mockAPI(page);
+  // The API fixture is private; only a safe partial opening becomes public.
+  await page.route("**/api/grammar/generate", async (route, request) => {
+    const body = request.postDataJSON();
+    if (!body.sessionId) {
+      await route.fallback();
+      return;
+    }
+    const session = mock.sessions.get(body.sessionId)!;
+    for (const q of session.questions) {
+      q.requiredOpening = q.referenceAnswers[0]
+        .split(" ")
+        .slice(0, 3)
+        .join(" ");
+      q.instruction += " Begin with the provided words.";
+    }
+    await route.fallback();
+  });
+  await start(page);
+  await page
+    .getByLabel("Exercise type", { exact: true })
+    .selectOption("sentence_transformation");
+  await page
+    .getByRole("button", { name: "Generate Practice", exact: true })
+    .click();
+  await expect(card(page)).toBeVisible();
+  const first = [...mock.sessions.values()][0].questions[0];
+  await expect(
+    card(page).getByText(`Begin with: ${first.requiredOpening}`, {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Reference answer", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    card(page).getByText(first.referenceAnswers[0], { exact: true }),
+  ).toHaveCount(0);
 });

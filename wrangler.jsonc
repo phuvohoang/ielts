@@ -12,7 +12,9 @@
     "AI_GENERATION_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
     "AI_GENERATION_SCHEMA_STYLE": "openai",
     "AI_PROVIDER": "gemini",
-    "GEMINI_MODEL": "gemini-3.5-flash-lite"
+    "GEMINI_MODEL": "gemini-3.5-flash-lite",
+    "GEMINI_TTS_MODEL": "gemini-3.8-flash-lite-tts",
+    "AI_PRACTICE_ONLY": "true"
   },
   "ratelimits": [
     {
@@ -55,7 +57,9 @@
       "AI_GENERATION_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
       "AI_GENERATION_SCHEMA_STYLE": "openai",
       "AI_PROVIDER": "gemini",
-      "GEMINI_MODEL": "gemini-3.5-flash-lite"
+      "GEMINI_MODEL": "gemini-3.5-flash-lite",
+      "GEMINI_TTS_MODEL": "gemini-3.8-flash-lite-tts",
+      "AI_PRACTICE_ONLY": "true"
     },
     "ratelimits": [
       {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { resultSchema } from "../schema";
+import { resultSchema, normalizeAnswer } from "../schema";
 import { formats, levels, topics, type Topic } from "./topics";
 const text = z.string().trim().min(1).max(1200);
 export const settingsSchema = z
@@ -52,7 +52,14 @@ export const contentSchema = z
     grammarRules: z.array(z.string().min(1).max(200)).min(1).max(5),
     targetSkills: z.array(z.string().min(1).max(100)).min(1).max(5),
     explanationVi: z.string().min(20).max(2000),
-    answerForm: z.enum(["noun", "verb", "adjective", "adverb", "sentence"]),
+    answerForm: z.enum([
+      "noun",
+      "verb",
+      "adjective",
+      "adverb",
+      "sentence",
+      "other",
+    ]),
     constraint: z.enum([
       "adverb_before_adjective",
       "adjective_before_noun",
@@ -89,19 +96,37 @@ export const privateQuestionSchema = contentSchema
   })
   .strict();
 export type PrivateQuestion = z.infer<typeof privateQuestionSchema>;
-export const publicQuestionSchema = privateQuestionSchema.omit({
-  referenceAnswers: true,
-  acceptedVariants: true,
-  explanationVi: true,
-  answerForm: true,
-  constraint: true,
-  correctOptionId: true,
-  distractorExplanations: true,
-  requiredOpening: true,
-});
+export const publicQuestionSchema = privateQuestionSchema
+  .omit({
+    referenceAnswers: true,
+    acceptedVariants: true,
+    explanationVi: true,
+    answerForm: true,
+    constraint: true,
+    correctOptionId: true,
+    distractorExplanations: true,
+    requiredOpening: true,
+  })
+  .extend({
+    // A task constraint is public, not an answer key. Optional for older saved work.
+    requiredOpening: z.string().max(150).nullable().optional(),
+  });
 export type PublicQuestion = z.infer<typeof publicQuestionSchema>;
+export function visibleOpening(q: PrivateQuestion): string | null {
+  if (
+    !q.requiredOpening ||
+    [...q.referenceAnswers, ...q.acceptedVariants].some(
+      (a) => normalizeAnswer(a) === normalizeAnswer(q.requiredOpening!),
+    )
+  )
+    return null;
+  return q.requiredOpening;
+}
 export function publicQuestion(q: PrivateQuestion): PublicQuestion {
-  return publicQuestionSchema.strip().parse(q);
+  // Older cached questions predate the source guards. Never expose an entire key.
+  return publicQuestionSchema
+    .strip()
+    .parse({ ...q, requiredOpening: visibleOpening(q) });
 }
 export const historySchema = z
   .object({

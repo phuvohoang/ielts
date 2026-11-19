@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
   topics,
@@ -10,8 +9,6 @@ import type { Settings } from "../../lib/ai/dynamic/schema";
 interface Props {
   settings: Settings;
   setSettings: (value: Settings) => void;
-  learned: boolean;
-  setLearned: (value: boolean) => void;
   loaded: boolean;
   creating: boolean;
   generating: boolean;
@@ -23,8 +20,6 @@ interface Props {
 export function SessionBuilder({
   settings,
   setSettings,
-  learned,
-  setLearned,
   loaded,
   creating,
   generating,
@@ -42,7 +37,7 @@ export function SessionBuilder({
             Choose your focus. Every new session is generated and checked by AI.
           </p>
         </div>
-        <span className="session-tag">Word Formation · A1–C1</span>
+        <span className="session-tag">Grammar · A1–C1</span>
       </div>
       <fieldset disabled={creating}>
         <legend>Grammar topics · select one or more</legend>
@@ -59,6 +54,7 @@ export function SessionBuilder({
                 onChange={(e) =>
                   setSettings({
                     ...settings,
+                    exerciseType: "mixed",
                     topics: e.target.checked
                       ? [...settings.topics, topic.topicId]
                       : settings.topics.filter((id) => id !== topic.topicId),
@@ -128,11 +124,21 @@ export function SessionBuilder({
               })
             }
           >
-            {(["mixed", ...formats] as const).map((format) => (
-              <option key={format} value={format}>
-                {formatLabels[format]}
-              </option>
-            ))}
+            {(["mixed", ...formats] as const)
+              .filter(
+                (format) =>
+                  format === "mixed" ||
+                  settings.topics.every((id) =>
+                    topics
+                      .find((t) => t.topicId === id)
+                      ?.supportedExerciseTypes.includes(format),
+                  ),
+              )
+              .map((format) => (
+                <option key={format} value={format}>
+                  {formatLabels[format]}
+                </option>
+              ))}
           </select>
         </label>
         <label>
@@ -153,42 +159,10 @@ export function SessionBuilder({
           </select>
         </label>
       </div>
-      <details className="practice-theory">
-        <summary>Learn before you practise · quick grammar reminder</summary>
-        <p>
-          <strong>Word Formation:</strong> Noun gọi tên người/vật/ý tưởng;
-          Adjective bổ nghĩa Noun hoặc làm Complement sau be; Adverb bổ nghĩa
-          Verb/Adjective. “a careful driver” → “drives carefully”.
-          “statistically significant” cần Adverb bổ nghĩa Adjective.
-        </p>
-        <p>
-          <strong>Word Families:</strong> Không chọn từ chỉ vì có suffix quen
-          thuộc. Xét vị trí, nghĩa và collocation. economic = thuộc nền kinh tế;
-          economical = tiết kiệm.
-        </p>
-        <p>
-          <strong>Sentence transformations:</strong> Giữ ý nghĩa, thì, mức độ và
-          bối cảnh. “gave a very careful reply” → “replied very carefully”; bỏ
-          very làm giảm mức độ.
-        </p>
-      </details>
-      <label className="practice-consent">
-        <input
-          type="checkbox"
-          checked={learned}
-          onChange={(e) => setLearned(e.target.checked)}
-        />{" "}
-        Tôi đã ôn quy tắc cần luyện và muốn thực hành nâng cao.
-      </label>
-      <p className="muted">
-        Optional practice does not unlock unlearned foundation rules.{" "}
-        <Link to="/path">Study the Learning Path first.</Link>
-      </p>
       <Button
         onClick={onGenerate}
         disabled={
           !loaded ||
-          !learned ||
           !settings.topics.length ||
           creating ||
           generating ||

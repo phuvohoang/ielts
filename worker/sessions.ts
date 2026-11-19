@@ -1,4 +1,5 @@
 import { generateBatch } from "./generation";
+import { handlePractice } from "./practice";
 import { cachedGrade, boundedMap, type Env } from "./grading";
 import {
   createSchema,
@@ -8,6 +9,7 @@ import {
   examSubmissionSchema,
   makePlan,
   publicQuestion,
+  visibleOpening,
   type PrivateQuestion,
   type Settings,
 } from "../src/lib/ai/dynamic/schema";
@@ -53,7 +55,7 @@ export function asExercise(q: PrivateQuestion): Exercise {
     question: q.questionText,
     instruction: q.instruction,
     ...(q.rootWord ? { rootWord: q.rootWord } : {}),
-    ...(q.requiredOpening ? { requiredOpening: q.requiredOpening } : {}),
+    ...(visibleOpening(q) ? { requiredOpening: visibleOpening(q)! } : {}),
     referenceAnswers: q.referenceAnswers,
     acceptedVariants: q.acceptedVariants,
     grammarRules: q.grammarRules,
@@ -98,6 +100,15 @@ export async function gradeGenerated(
   q: PrivateQuestion,
   answer: string,
 ) {
+  if (env.AI_PRACTICE_ONLY === "true") {
+    const text =
+      q.exerciseType === "multiple_choice"
+        ? q.options.find((o) => o.id === answer)?.text
+        : answer;
+    if (!text) throw Error("Invalid answer");
+    const result = await cachedGrade(env, asExercise(q), text, true);
+    return { ...result, userAnswer: answer };
+  }
   if (q.exerciseType === "multiple_choice")
     return deterministicResult(q, answer, answer === q.correctOptionId);
   const exercise = asExercise(q),
@@ -136,6 +147,13 @@ export class GrammarSessions {
     await this.storage.deleteAll();
   }
   async fetch(request: Request): Promise<Response> {
+    if (new URL(request.url).pathname.startsWith("/skills/")) {
+      const work = this.queue.then(() =>
+        handlePractice(request, this.env, this.storage),
+      );
+      this.queue = work.catch(() => undefined);
+      return work;
+    }
     if (
       !["/create", "/batch", "/submit-exam"].includes(
         new URL(request.url).pathname,
@@ -259,21 +277,27 @@ export class GrammarSessions {
             45000,
             {
               accepted: batch ?? [],
-              checkpoint: questions => this.storage.put(`batch:${input.batchIndex}`, questions),
+              checkpoint: (questions) =>
+                this.storage.put(`batch:${input.batchIndex}`, questions),
               publishPartial: input.allowPartial,
             },
           );
           // Persist batch first; a recovered request can finish the metadata update without regenerating it.
           await this.storage.put(`batch:${input.batchIndex}`, batch);
         } catch (error) {
-          batch = await this.storage.get<PrivateQuestion[]>(`batch:${input.batchIndex}`);
+          batch = await this.storage.get<PrivateQuestion[]>(
+            `batch:${input.batchIndex}`,
+          );
           // Only independently accepted items have been checkpointed. New clients
           // can practise them immediately; older clients keep the full-batch contract.
           if (input.allowPartial && batch?.length) {
             return send({
-              sessionId: meta.sessionId, accessToken: meta.accessToken,
-              settings: meta.settings, expiresAt: meta.expiresAt,
-              questions: batch.map(publicQuestion), nextBatch: meta.nextBatch,
+              sessionId: meta.sessionId,
+              accessToken: meta.accessToken,
+              settings: meta.settings,
+              expiresAt: meta.expiresAt,
+              questions: batch.map(publicQuestion),
+              nextBatch: meta.nextBatch,
               complete: false,
             });
           }

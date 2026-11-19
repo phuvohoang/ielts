@@ -85,6 +85,42 @@ export function qualityIssues(
       issues.push("Sentence task requires a complete reference sentence");
     if (q.questionText.includes("___"))
       issues.push("Sentence task requires a complete source sentence");
+    if (
+      /^\s*(?:complete the (?:second )?sentence|rewrite (?:the |this )?sentence|instruction\s*:|source sentence\s*:|constraint\s*:)/i.test(
+        q.questionText,
+      ) ||
+      /(?:^|\n)\s*(?:source sentence|reference answer|corrected answer|constraint|instruction)\s*:/i.test(
+        q.questionText,
+      )
+    )
+      issues.push(
+        "Keep task directions and labelled solutions out of the source sentence",
+      );
+    const source = normalizeAnswer(q.questionText);
+    if (
+      answers.some(
+        (a) =>
+          a.trim().split(/\s+/).length >= 4 &&
+          source.includes(normalizeAnswer(a)),
+      )
+    )
+      issues.push(
+        "Source contains a complete accepted answer; require a real transformation",
+      );
+    if (
+      /begin (?:with|using) (?:the )?(?:provided|given) words/i.test(
+        q.instruction,
+      ) &&
+      !q.requiredOpening
+    )
+      issues.push("Instruction refers to a missing opening constraint");
+    if (
+      q.requiredOpening &&
+      answers.some(
+        (a) => normalizeAnswer(a) === normalizeAnswer(q.requiredOpening!),
+      )
+    )
+      issues.push("Opening must not expose a complete answer");
   }
   if (
     ["sentence_transformation", "paraphrasing", "error_correction"].includes(
@@ -98,7 +134,11 @@ export function qualityIssues(
     !q.rootWord?.match(/^[A-Za-z -]{2,60}$/)
   )
     issues.push("Missing valid root word");
-  if (cloze && answers.some((a) => !a.match(/^[A-Za-z]+(?:[-'][A-Za-z]+)*$/)))
+  if (
+    cloze &&
+    q.topicId === "word-formation" &&
+    answers.some((a) => !a.match(/^[A-Za-z]+(?:[-'][A-Za-z]+)*$/))
+  )
     issues.push("Expected single-word answers");
   if (q.constraint === "adverb_before_adjective" && q.answerForm !== "adverb")
     issues.push("Adverb required before adjective");
@@ -106,6 +146,7 @@ export function qualityIssues(
     issues.push("Adjective required before noun");
   if (
     q.answerForm === "adverb" &&
+    q.topicId === "word-formation" &&
     cloze &&
     answers.some(
       (a) =>
