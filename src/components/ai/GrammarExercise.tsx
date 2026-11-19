@@ -590,7 +590,6 @@ export function GrammarExercise() {
               >
                 <p className="eyebrow">
                   {topics.find((t) => t.topicId === q.topicId)?.displayName} ·{" "}
-                  {topics.find((t) => t.topicId === q.topicId)?.displayName} ·{" "}
                   {formatLabels[q.exerciseType]} · Question {position + 1}/
                   {visibleQuestions.length}
                 </p>

@@ -257,3 +257,14 @@ it("rejects an answer supplied as the word-family root and incomplete underline 
   q.underlinedText = null;
   expect(draftIssues(q).join(" ")).toContain("exact unique source substring");
 });
+
+it("keeps meaning-comparison semantics distinct from a cloze task for the AI grader", async () => {
+  const { asExercise } = await import("../../../../worker/sessions");
+  const q = questionFixture(crypto.randomUUID(), {
+    topicId: "passive-voice",
+    exerciseType: "meaning_comparison",
+    ordinal: 0,
+  });
+  expect(asExercise(q).type).toBe("meaning_comparison");
+  expect(asExercise(q).rubric).toContain("selected interpretation");
+});

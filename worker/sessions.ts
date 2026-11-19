@@ -50,7 +50,7 @@ export function asExercise(q: PrivateQuestion): Exercise {
     id: q.id,
     version: 1,
     lessonId: `dynamic:${q.sessionId}`,
-    type: isChoiceFormat(q.exerciseType) ? "fill_blank" : q.exerciseType,
+    type: q.exerciseType === "multiple_choice" ? "fill_blank" : q.exerciseType,
     difficulty: q.difficulty,
     part: "C",
     question: q.questionText,
@@ -66,7 +66,10 @@ export function asExercise(q: PrivateQuestion): Exercise {
       "Preserve grammar, naturalness, meaning, tense, degree and explicit instructions. " +
       q.instruction +
       " " +
-      (q.gradingCriteria?.join("; ") ?? ""),
+      (q.gradingCriteria?.join("; ") ?? "") +
+      (q.exerciseType === "meaning_comparison"
+        ? " The answer is a selected interpretation of the provided sentences, not a rewrite. Assess whether that interpretation correctly describes their grammatical meaning or focus. Do not require it to restate their literal events."
+        : ""),
     objective: q.answerForm !== "sentence",
   };
 }
