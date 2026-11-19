@@ -3,6 +3,7 @@ import { callStructured } from "./generation";
 import { withTimeout, type Env } from "./grading";
 import {
   exerciseContentSchema,
+  privateItemSchema,
   practiceSettingsSchema,
   practiceSubmissionSchema,
   practiceIdentitySchema,
@@ -30,6 +31,42 @@ const auditSchema = z
 const gradeSchema = z
   .object({ items: z.array(itemGradeSchema).length(5) })
   .strict();
+// Guide native structured generation with type-specific answer contracts.
+// Legacy/private storage remains permissive so equivalent old encodings can be repaired.
+export const authoringContentSchema = exerciseContentSchema.extend({
+  questions: z
+    .array(
+      z.discriminatedUnion("type", [
+        privateItemSchema.extend({
+          type: z.literal("short_answer"),
+          wordLimit: z.literal(3),
+          options: privateItemSchema.shape.options.length(0),
+          answers: z
+            .array(
+              z
+                .string()
+                .trim()
+                .min(1)
+                .max(300)
+                .regex(/^\S+(?:\s+\S+){0,2}$/),
+            )
+            .min(1)
+            .max(6),
+        }),
+        privateItemSchema.extend({
+          type: z.literal("multiple_choice"),
+          options: privateItemSchema.shape.options.length(4),
+          answers: z.array(z.enum(["a", "b", "c", "d"])).length(1),
+        }),
+        privateItemSchema.extend({
+          type: z.literal("true_false_not_given"),
+          options: privateItemSchema.shape.options.length(0),
+          answers: z.array(z.enum(["TRUE", "FALSE", "NOT GIVEN"])).length(1),
+        }),
+      ]),
+    )
+    .max(5),
+});
 // Canonicalize equivalent encodings only; never infer a different answer.
 export function normalizeContent(
   c: PrivateContent,
@@ -54,11 +91,19 @@ export function normalizeContent(
         );
       if (q.type === "multiple_choice")
         answers = answers.map((a) => {
-          const id = a.toLowerCase();
+          const id = a
+            .toLowerCase()
+            .replace(/^(?:option|choice)\s+/, "")
+            .replace(/[.)]$/, "");
           if (q.options.some((o) => o.id === id)) return id;
-          const matches = q.options.filter((o) => o.text === a);
+          const canonical = (text: string) =>
+            text.trim().replace(/\s+/g, " ").toLowerCase();
+          const matches = q.options.filter(
+            (o) => canonical(o.text) === canonical(a),
+          );
           return matches.length === 1 ? matches[0].id : a;
         });
+      answers = [...new Set(answers)];
       let evidence = q.evidence.trim();
       if (evidence && !source.includes(evidence)) {
         const terms = evidence
@@ -212,19 +257,28 @@ async function generate(env: Env, settings: Stored["settings"]) {
   let repairNumbers: number[] = [];
   for (let i = 0; i < 2; i++) {
     try {
-      const raw = await structured(
-        env,
-        author,
-        {
-          settings,
-          nonce: crypto.randomUUID(),
-          previousRejection: reasons,
-          ...(repair
-            ? { repairContent: repair, repairQuestionNumbers: repairNumbers }
-            : {}),
-        },
-        exerciseContentSchema,
-        "skill_authoring",
+      const payload = {
+        settings,
+        nonce: crypto.randomUUID(),
+        previousRejection: reasons,
+        ...(repair
+          ? { repairContent: repair, repairQuestionNumbers: repairNumbers }
+          : {}),
+      };
+      const raw = exerciseContentSchema.parse(
+        await withTimeout(
+          (signal) =>
+            callStructured(
+              env,
+              author,
+              payload,
+              authoringContentSchema,
+              "skill_authoring",
+              signal,
+              4200,
+            ),
+          45000,
+        ),
       );
       const c = normalizeContent(
         repair

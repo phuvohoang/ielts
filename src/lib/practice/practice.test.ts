@@ -6,7 +6,11 @@ import {
   gradeGenerated,
   type SessionEnv,
 } from "../../../worker/sessions";
-import { contentIssues, normalizeContent } from "../../../worker/practice";
+import {
+  contentIssues,
+  normalizeContent,
+  authoringContentSchema,
+} from "../../../worker/practice";
 import { publicExerciseSchema, practiceRecordSchema } from "./schema";
 import { contentFixture, writingFixture, wavFixture } from "./test-support";
 import { db, exportBackup, importBackup } from "../db";
@@ -380,4 +384,47 @@ it("repairs an unsatisfiable short answer without replacing the source or accept
   expect(response.status).toBe(200);
   expect(attempts).toBe(2);
   expect(AI.run).toHaveBeenCalledTimes(3);
+});
+
+it("constrains native authoring to one MCQ/category key and short answers of at most three words", () => {
+  const c = contentFixture();
+  for (const q of c.questions) q.wordLimit = 3;
+  expect(authoringContentSchema.safeParse(c).success).toBe(true);
+  c.questions[0].answers = ["more than three words here"];
+  expect(authoringContentSchema.safeParse(c).success).toBe(false);
+  c.questions[0] = {
+    ...c.questions[0],
+    type: "multiple_choice",
+    options: [
+      { id: "a", text: "Nine" },
+      { id: "b", text: "Ten" },
+      { id: "c", text: "Eleven" },
+      { id: "d", text: "Twelve" },
+    ],
+    answers: ["a"],
+  };
+  expect(authoringContentSchema.safeParse(c).success).toBe(true);
+  c.questions[0].answers = ["a", "b"];
+  expect(authoringContentSchema.safeParse(c).success).toBe(false);
+});
+it("deduplicates aliases for one choice without collapsing different choices", () => {
+  const c = contentFixture();
+  c.questions[0] = {
+    ...c.questions[0],
+    type: "multiple_choice",
+    options: [
+      { id: "a", text: "Nine" },
+      { id: "b", text: "Ten" },
+      { id: "c", text: "Eleven" },
+      { id: "d", text: "Twelve" },
+    ],
+    answers: ["A", "nine", "Option A"],
+  };
+  expect(normalizeContent(c, settings() as never).questions[0].answers).toEqual(
+    ["a"],
+  );
+  c.questions[0].answers = ["a", "b"];
+  expect(normalizeContent(c, settings() as never).questions[0].answers).toEqual(
+    ["a", "b"],
+  );
 });
