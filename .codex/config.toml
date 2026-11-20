@@ -1,0 +1,3 @@
+# Project-scoped ReUI MCP. Uses OAuth; no secret is committed.
+[mcp_servers.reui]
+url = "https://mcp.reui.io?style=radix-vega"

@@ -1,3 +1,5 @@
+import { Badge } from "../reui/badge";
+import { PracticePanel } from "../practice/PracticePanel";
 import { CorrectionDiff } from "./CorrectionDiff";
 import { Button } from "../ui/button";
 import { practiceReport, retryQuestionIds } from "../../lib/ai/dynamic/results";
@@ -23,55 +25,76 @@ export function PracticeResults({
   const mistakes = report.questions.filter((q) =>
     ["incorrect", "partially_correct"].includes(session.results[q.id]?.status),
   );
-  const renderTable = (rows: typeof report.categories) => (
-    <div className="results-table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Nhóm</th>
-            <th>Điểm</th>
-            <th>Đúng</th>
-            <th>Sai</th>
-            <th>Đúng một phần</th>
-            <th>Cần xem lại</th>
-            <th>Chưa trả lời</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.id}>
-              <th scope="row">{r.label}</th>
-              <td>
-                {r.score}/{r.maxScore}
-              </td>
-              <td>{r.correct}</td>
-              <td>{r.incorrect}</td>
-              <td>{r.partial}</td>
-              <td>{r.pending}</td>
-              <td>{r.unanswered}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+  const renderBreakdown = (rows: typeof report.categories) => (
+    <ul className="result-breakdown">
+      {rows.map((r) => (
+        <li key={r.id}>
+          <div className="breakdown-heading">
+            <strong>{r.label}</strong>
+            <span className="tabular-nums">
+              {r.score}/{r.maxScore} điểm
+            </span>
+          </div>
+          <progress
+            aria-label={`${r.label}: điểm đã chấm`}
+            value={r.score}
+            max={r.maxScore || 1}
+          />
+          <div className="breakdown-detail">
+            <span>{r.correct} đúng</span>
+            <span>{r.incorrect} sai</span>
+            <span>{r.partial} đúng một phần</span>
+            <span>{r.pending} cần xem lại</span>
+            <span>{r.unanswered} chưa trả lời</span>
+          </div>
+        </li>
+      ))}
+    </ul>
   );
   return (
-    <section className="panel practice-results" aria-labelledby="results-title">
-      <h2 id="results-title">Practice Results</h2>
-      <p>
-        Score {report.score}/{report.maxScore} graded.
-      </p>
-      <p className="results-score">
-        {report.score}/{report.maxScore} điểm ·{" "}
-        {report.percentage === null
-          ? "Chưa có câu được chấm"
-          : `${report.percentage}%`}
-      </p>
-      <p>
-        {report.correct} đúng · {report.partial} đúng một phần ·{" "}
-        {report.incorrect} sai · {report.unanswered} chưa trả lời ·{" "}
-        {report.pending} cần xem lại
-      </p>
+    <PracticePanel className="practice-results" aria-labelledby="results-title">
+      <div className="builder-heading">
+        <div>
+          <span className="eyebrow">NHÌN LẠI BÀI LUYỆN</span>
+          <h2 id="results-title">Practice Results</h2>
+        </div>
+        <Badge variant="outline">{session.settings.difficulty}</Badge>
+      </div>
+      <div className="results-overview">
+        <div>
+          <p>
+            Score {report.score}/{report.maxScore} graded.
+          </p>
+          <p className="results-score">
+            {report.score}/{report.maxScore} điểm ·{" "}
+            {report.percentage === null
+              ? "Chưa có câu được chấm"
+              : `${report.percentage}%`}
+          </p>
+          <p>
+            {report.correct} đúng · {report.partial} đúng một phần ·{" "}
+            {report.incorrect} sai · {report.unanswered} chưa trả lời ·{" "}
+            {report.pending} cần xem lại
+          </p>
+        </div>
+        <dl className="result-metrics">
+          <div>
+            <dt>Đã chấm</dt>
+            <dd>
+              {report.correct + report.partial + report.incorrect}/
+              {report.questions.length}
+            </dd>
+          </div>
+          <div>
+            <dt>Chưa trả lời</dt>
+            <dd>{report.unanswered}</dd>
+          </div>
+          <div>
+            <dt>Cần xem lại</dt>
+            <dd>{report.pending}</dd>
+          </div>
+        </dl>
+      </div>
       {report.ungraded > 0 && (
         <p>
           {report.ungraded} câu đã nhập nhưng chưa nộp chấm. Điểm chưa tính các
@@ -79,10 +102,11 @@ export function PracticeResults({
         </p>
       )}
       <div className="results-actions">
-        <Button variant="outline" onClick={onReturn}>
+        <Button type="button" variant="outline" onClick={onReturn}>
           Tiếp tục làm bài
         </Button>
         <Button
+          type="button"
           variant="outline"
           onClick={onReview}
           disabled={!mistakes.length}
@@ -90,6 +114,7 @@ export function PracticeResults({
           Review Mistakes
         </Button>
         <Button
+          type="button"
           onClick={onRetry}
           disabled={
             !retry.length ||
@@ -100,19 +125,25 @@ export function PracticeResults({
         >
           Retry Incorrect Questions ({retry.length})
         </Button>
-        <Button variant="outline" onClick={onGenerate}>
+        <Button type="button" variant="outline" onClick={onGenerate}>
           Generate Another Practice
         </Button>
-        <Button variant="ghost" onClick={onConfigure}>
+        <Button type="button" variant="ghost" onClick={onConfigure}>
           Back to Configuration
         </Button>
       </div>
-      <h3>Performance by grammar category</h3>
-      {renderTable(report.categories)}
-      <h3>Performance by exercise format</h3>
-      {renderTable(report.formats)}
+      <div className="results-breakdown-grid">
+        <section>
+          <h3>Performance by grammar category</h3>
+          {renderBreakdown(report.categories)}
+        </section>
+        <section>
+          <h3>Performance by exercise format</h3>
+          {renderBreakdown(report.formats)}
+        </section>
+      </div>
       <h3>Gợi ý ôn tập</h3>
-      <ul>
+      <ul className="review-suggestions">
         {report.categories
           .filter((r) => r.incorrect || r.partial || r.unanswered)
           .slice(0, 5)
@@ -123,6 +154,14 @@ export function PracticeResults({
             </li>
           ))}
       </ul>
+      {!report.categories.some(
+        (r) => r.incorrect || r.partial || r.unanswered,
+      ) && (
+        <p>
+          Không có câu sai hoặc chưa trả lời. Bạn có thể xem lại phản hồi từng
+          câu bên dưới.
+        </p>
+      )}
       <h3>Chi tiết bài làm</h3>
       {report.questions.map((q) => {
         const result = session.results[q.id],
@@ -167,6 +206,6 @@ export function PracticeResults({
           ))}
         </details>
       )}
-    </section>
+    </PracticePanel>
   );
 }

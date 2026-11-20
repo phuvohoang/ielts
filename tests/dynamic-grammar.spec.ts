@@ -551,7 +551,7 @@ test("last question hides Next and the side panel finds skipped questions withou
       }),
     ).toBeVisible();
   await navigator
-    .getByRole("button", { name: "Câu 16 — Chưa trả lời", exact: true })
+    .getByRole("button", { name: "Câu chưa làm tiếp theo", exact: true })
     .click();
   await expect(page.getByLabel("Your answer", { exact: true })).toHaveValue("");
   await expect(
@@ -706,6 +706,18 @@ test("results aggregate category scores and retry only incorrect or unanswered q
   ).toBeVisible();
   await page.getByRole("button", { name: "View Results", exact: true }).click();
   await expect(
+    page.getByRole("button", { name: "Tiếp tục làm bài", exact: true }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: `test-results/reui-results-${test.info().project.name}.png`,
+    fullPage: true,
+  });
+  await expect(
     page.getByRole("heading", { name: "Practice Results", exact: true }),
   ).toBeVisible();
   await expect(
@@ -723,7 +735,11 @@ test("results aggregate category scores and retry only incorrect or unanswered q
   const navigator = page.getByRole("complementary", {
     name: "Điều hướng câu hỏi",
   });
-  await expect(navigator.getByRole("button")).toHaveCount(9);
+  await expect(
+    navigator
+      .getByRole("navigation", { name: "Chọn câu hỏi" })
+      .getByRole("button"),
+  ).toHaveCount(9);
   await expect(
     navigator.getByRole("button", { name: "Câu 1 — Đã trả lời", exact: true }),
   ).toHaveCount(0);
@@ -734,7 +750,11 @@ test("results aggregate category scores and retry only incorrect or unanswered q
     }),
   ).toHaveAttribute("aria-current", "step");
   await page.reload();
-  await expect(navigator.getByRole("button")).toHaveCount(9);
+  await expect(
+    navigator
+      .getByRole("navigation", { name: "Chọn câu hỏi" })
+      .getByRole("button"),
+  ).toHaveCount(9);
   await page.getByRole("button", { name: "View Results", exact: true }).click();
   await expect(
     page.getByText("Các lượt làm trước (1)", { exact: true }),
@@ -747,6 +767,10 @@ test("CEFR selection restricts advanced categories and subtopics before generati
 }) => {
   await page.goto("/grammar");
   await page.getByLabel("Difficulty", { exact: true }).selectOption("A2");
+  await page.screenshot({
+    path: `test-results/reui-configuration-${test.info().project.name}.png`,
+    fullPage: true,
+  });
   await expect(
     page.getByRole("checkbox", { name: "Inversion & Emphasis", exact: true }),
   ).toBeDisabled();

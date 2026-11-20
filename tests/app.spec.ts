@@ -8,7 +8,7 @@ test("four-skill workspace removes theory, lessons and gates and keeps mobile la
   await expect(
     page.getByRole("heading", { name: "Hôm nay bạn muốn luyện gì?" }),
   ).toBeVisible();
-  await expect(page.locator(".practice-home-card")).toHaveCount(4);
+  await expect(page.locator(".home-skill-link")).toHaveCount(4);
   await expect(
     page.getByRole("link", {
       name: /Learning Path|Grammar Lessons|Start learning/,

@@ -1,0 +1,22 @@
+{
+  "source": "https://mcp.reui.io/api/skills/download",
+  "version": "68f0e6fa91",
+  "files": {
+    "SKILL.md": "baa3be2c5e407e71afdd8d53f4c26a2bbeb3e091e4a468d2acddbe2d104333d5",
+    "agents/openai.yaml": "f6e76e511951f9736ba0767fe0b9351355bb51f31c0dadbe05f58be1c9fa40be",
+    "rules/adapting.md": "f597f5847e227792b0320e9a4406fd2fc8f9340aa4ec7c47eb20895150b5b02c",
+    "rules/anti-patterns.md": "f9c49e097c8f142b908cd739a6b21ace5f3838bfd2db605a434df754ecfd20c5",
+    "rules/cli.md": "28939eda9f0b3a86a6b4c9481fc73d1a23c3edeae889ebdaf811bebb498fe3ba",
+    "rules/color.md": "bb0e02828c9405ce0d61fa04ccd419d9b7b78fda3824c0b3dfdab15f5c4651cd",
+    "rules/components.md": "f0f50bb6276bf38b4fdbc54673cceeeeea8bce6feee108068cd3c45001c52145",
+    "rules/compose.md": "605de9f223a0c2ffcb0ebc8bfba4dc90e807bbaabae7de25505c457165e43153",
+    "rules/icons.md": "8edc3a2cefa752e46fd9911527bcc74e702e9ace651cfdd36c1171dbc2996d28",
+    "rules/layout.md": "fc58eec3c98be1d0513ba3c8edf89e466ead9828c037a5372579da44a8148897",
+    "rules/motion.md": "06a1da7861d17bc766fcf54b39f7c4a23476fd28a7a5f5ba130387c2cb922221",
+    "rules/quality.md": "8a62d02d3ab309b3c38f9e51bac1548da134b799024cbf9903258904509011ab",
+    "rules/registry.md": "e6441291bee4e19a904c3f9809bc67c3880c9af621ca1f11a8a4796a026f1994",
+    "rules/theming.md": "889530f947d65709bde1c9dbdd1c75c3af319790cec283beccc280e76f3c09f1",
+    "rules/workflow.md": "a41bfd6f38fbe5692a3c3a23e761cb651878cf5ba1d66f4cba591fd5c3ce28dc",
+    "tools.md": "a0254c67b6118e707a2229c8890fa86333165d0deac7255027d0ab2f9a522ace"
+  }
+}

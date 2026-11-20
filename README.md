@@ -101,3 +101,9 @@ Practice balances types, topics and B1/B2 levels, prioritizes unseen IDs, and sc
 See [the migration plan and implementation notes](docs/THEORY_FIRST_MIGRATION.md) for the four complete Sentence Foundations lessons, prerequisite gating, data preservation, version-1 backup support and grading limits. New learning progress is stored separately; historical exercise scores do not automatically certify theory completion. The current change is prepared for review and must not deploy before approval.
 
 AI-powered Lesson 01.2 adds 25 advanced typed Word Formation / Sentence Transformation questions and a separate Cloudflare Worker. See [AI grammar architecture, setup, release guide and limitations](docs/AI_GRAMMAR.md). This work does not deploy or modify the English Steps Worker. Free-form AI grading requires an approved configured Worker; service failures remain unscored.
+
+## ReUI developer tooling
+
+See [ReUI setup and activation](docs/REUI_SETUP.md) for the installed project skill, component registry and optional authenticated MCP connection.
+
+The [ReUI practice interface](docs/REUI_UI.md) applies these components to home, exercise configuration, practice navigation and result reports.
