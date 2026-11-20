@@ -130,6 +130,7 @@ test("Margin shell supports sidebar collapse and an accessible mobile sheet", as
     await expect(rail).toHaveAttribute("data-state", "collapsed");
     await toggle.click();
     await expect(rail).toHaveAttribute("data-state", "expanded");
+    await expect(rail).toHaveCSS("width", "256px");
   }
   expect(
     await page
