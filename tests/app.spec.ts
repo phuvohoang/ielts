@@ -87,3 +87,58 @@ test("setup selects and topic inputs share component height and a neutral theme"
     });
   }
 });
+
+test("Margin shell supports sidebar collapse and an accessible mobile sheet", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const toggle = page.getByRole("button", {
+    name: "Toggle navigation",
+    exact: true,
+  });
+  const family = await page
+    .locator("body")
+    .evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(family).toContain("Inter");
+  if (page.viewportSize()!.width < 768) {
+    await toggle.click();
+    const sheet = page.getByRole("dialog", { name: "Sidebar", exact: true });
+    await expect(sheet).toBeVisible();
+    await page.keyboard.press("Tab");
+    expect(
+      await page.evaluate(
+        () => !!document.activeElement?.closest('[role="dialog"]'),
+      ),
+    ).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+    await toggle.click();
+    await sheet.getByRole("link", { name: "Nghe", exact: true }).click();
+    await expect(sheet).toBeHidden();
+    await expect(
+      page.getByRole("heading", { name: "Luyện nghe", exact: true }),
+    ).toBeVisible();
+  } else {
+    const rail = page.locator('[data-slot="sidebar"][data-state]');
+    await expect(rail).toHaveAttribute("data-state", "expanded");
+    await expect(
+      page.locator('[data-slot="sidebar-menu-button"][data-active]'),
+    ).toHaveCount(1);
+    await page
+      .getByRole("button", { name: "Thu gọn sidebar", exact: true })
+      .click();
+    await expect(rail).toHaveAttribute("data-state", "collapsed");
+    await toggle.click();
+    await expect(rail).toHaveAttribute("data-state", "expanded");
+    await expect(rail).toHaveCSS("width", "256px");
+  }
+  expect(
+    await page
+      .locator(".workspace-scroll")
+      .evaluate((el) => el.scrollWidth <= el.clientWidth),
+  ).toBe(true);
+  await page.screenshot({
+    path: `test-results/margin-shell-${test.info().project.name}.png`,
+    fullPage: true,
+  });
+});

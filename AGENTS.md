@@ -2,18 +2,18 @@
 
 ## Preserve the existing app
 
-- Keep Nunito, the user-requested neutral white/black palette, Vietnamese learner flows and responsive layout unless the user requests a redesign.
+- Keep Inter (matching the user-selected Margin Finance reference), the neutral white/black palette, Vietnamese learner flows and responsive layout unless the user requests a redesign.
 - Preserve practice sessions, drafts, results, review history, AI routes and server-side answer/key privacy.
-- ReUI is installed as development tooling. Existing components are not automatically ReUI components: read their actual API before changing them. The current Button does not expose ReUI size/spacing props.
+- ReUI is installed as development tooling. Existing components are not automatically ReUI components: read their actual API before changing them. The installed Button uses the Radix Vega size/variant API.
 - Prefer incremental, requested UI changes. Do not replace the app shell, run shadcn init, overwrite components, or inject a new global theme merely to install tooling.
 - Compatibility rules above take priority over vendor defaults below when preserving existing code. User requirements take priority over both.
 
 ## ReUI integration
 
 - Read `.agents/skills/reui/SKILL.md` for relevant UI work. The official bundle is pinned in its SOURCE.json.
-- Stock shadcn retains `new-york`; the @reui registry URL pins **Radix Vega** separately. ReUI MCP uses the same style query. Read Radix APIs, not Base UI APIs.
+- Stock shadcn and the @reui registry both use **Radix Vega**. ReUI MCP uses the same style query. Read Radix APIs, not Base UI APIs.
 - Use free components/examples unless the user explicitly authorizes premium assets. Never commit a license/token or put one in a VITE variable.
-- The project has custom CSS rather than a complete shadcn semantic-token theme. Map tokens to the neutral palette as part of a scoped component adoption; do not assume theme tokens or CSS-animation helpers are already installed.
+- Use the central semantic tokens in src/index.css. Do not reintroduce legacy CSS, a Nunito font override, or per-component height/padding overrides. Practice surfaces use ReUI Frame; the floating Sidebar and inset content shell match Margin Finance.
 - MCP configuration is project-scoped in `.codex/config.toml`; authentication/restart is separate. Installing or updating the skill must not modify global Codex or unrelated agent configurations without an explicit request.
 
 <!-- BEGIN:reui-agent-rules -->

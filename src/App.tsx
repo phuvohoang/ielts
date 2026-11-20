@@ -1,11 +1,34 @@
+import { Input } from "./components/ui/input";
+import { Skeleton } from "./components/ui/skeleton";
+import { Alert, AlertDescription } from "./components/reui/alert";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "./components/ui/card";
-import { Badge } from "./components/reui/badge";
+  Sidebar,
+  SidebarProvider,
+  SidebarHeader,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+  SidebarSeparator,
+  SidebarTrigger,
+  SidebarInset,
+  useSidebar,
+} from "./components/ui/sidebar";
+import { TooltipProvider } from "./components/ui/tooltip";
+import { Separator } from "./components/ui/separator";
+import {
+  Frame,
+  FrameHeader,
+  FrameTitle,
+  FrameDescription,
+  FramePanel,
+  FrameFooter,
+} from "./components/reui/frame";
+import { PracticePanel } from "./components/practice/PracticePanel";
 import { useEffect, useState } from "react";
 import {
   BrowserRouter,
@@ -15,14 +38,17 @@ import {
   Routes,
   Link,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import {
   Headphones,
   BookOpen,
   PencilLine,
   Languages,
-  Menu,
-  X,
+  LayoutDashboard,
+  GraduationCap,
+  ChevronRight,
+  Check,
   ArrowUpRight,
   History as HistoryIcon,
   Settings as SettingsIcon,
@@ -73,64 +99,177 @@ const skills = [
 const AppRouter =
   import.meta.env.VITE_ROUTER_MODE === "hash" ? HashRouter : BrowserRouter;
 function App() {
-  const [open, setOpen] = useState(false);
   return (
     <AppRouter>
-      <div className="app practice-app">
-        <aside className={open ? "sidebar open" : "sidebar"}>
-          <Link className="brand" to="/" onClick={() => setOpen(false)}>
-            <span className="brand-mark">i.</span>
-            <span>
-              ielts<span className="brand-light">practice</span>
-              <small>IELTS GENERAL TRAINING</small>
-            </span>
-          </Link>
-          <p className="nav-caption">CHỌN KỸ NĂNG</p>
-          <nav aria-label="Kỹ năng luyện tập">
-            {skills.map((s) => (
-              <NavLink to={s.path} key={s.path} onClick={() => setOpen(false)}>
-                <s.icon size={19} />
-                {s.title}
-                <span className="nav-skill-en">{s.subtitle}</span>
-              </NavLink>
-            ))}
-          </nav>
-          <div className="sidebar-note">
-            <span className="eyebrow">LÀM BÀI. NHẬN PHẢN HỒI. TIẾN BỘ.</span>
-            <p>
-              Một bài luyện
-              <br />
-              mỗi ngày.
-            </p>
-            <span>IELTS General · Mục tiêu 6.5</span>
+      <TooltipProvider>
+        <SidebarProvider className="margin-app">
+          <PracticeShell />
+        </SidebarProvider>
+      </TooltipProvider>
+    </AppRouter>
+  );
+}
+const routeNames: Record<string, string> = {
+  "/": "Tổng quan",
+  "/listening": "Luyện nghe",
+  "/reading": "Luyện đọc",
+  "/writing": "Luyện viết",
+  "/grammar": "Ngữ pháp",
+  "/history": "Lịch sử bài làm",
+  "/settings": "Cài đặt",
+};
+function PracticeShell() {
+  const { pathname } = useLocation();
+  const { setOpenMobile, state, isMobile } = useSidebar();
+  const compact = state === "collapsed" && !isMobile;
+  const current = routeNames[pathname] ?? "Luyện tập";
+  const closeMobile = () => setOpenMobile(false);
+  return (
+    <>
+      <a
+        className="skip-link"
+        href="#practice-content"
+        onClick={(event) => {
+          event.preventDefault();
+          document.getElementById("practice-content")?.focus();
+        }}
+      >
+        Đến nội dung chính
+      </a>
+      <Sidebar variant="floating" collapsible="icon">
+        <SidebarHeader>
+          <div className="workspace-brand-row">
+            <Link to="/" className="workspace-brand" onClick={closeMobile}>
+              <span className="workspace-mark" aria-hidden="true">
+                i.
+              </span>
+              <span className="group-data-[collapsible=icon]:hidden">
+                IELTS Practice
+              </span>
+            </Link>
+            <SidebarTrigger
+              aria-label="Thu gọn sidebar"
+              className="group-data-[collapsible=icon]:hidden"
+            />
           </div>
-          <nav aria-label="Dữ liệu cá nhân" className="utility-nav">
-            <NavLink to="/history" onClick={() => setOpen(false)}>
-              <HistoryIcon size={18} />
-              Lịch sử bài làm
-            </NavLink>
-            <NavLink to="/settings" onClick={() => setOpen(false)}>
-              <SettingsIcon size={18} />
-              Sao lưu & cài đặt
-            </NavLink>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === "/"}
+                  tooltip={compact ? "Tổng quan" : undefined}
+                >
+                  <NavLink to="/" onClick={closeMobile}>
+                    <LayoutDashboard aria-hidden="true" />
+                    <span>Tổng quan</span>
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+          <SidebarSeparator />
+          <SidebarGroup>
+            <SidebarGroupLabel>Luyện tập</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {skills.map((skill) => (
+                  <SidebarMenuItem key={skill.path}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === skill.path}
+                      tooltip={compact ? skill.title : undefined}
+                    >
+                      <NavLink to={skill.path} onClick={closeMobile}>
+                        <skill.icon aria-hidden="true" />
+                        <span>{skill.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarSeparator />
+          <SidebarGroup>
+            <SidebarGroupLabel>Bài làm của bạn</SidebarGroupLabel>
+            <SidebarMenu>
+              {[
+                {
+                  path: "/history",
+                  label: "Lịch sử bài làm",
+                  icon: HistoryIcon,
+                },
+                {
+                  path: "/settings",
+                  label: "Sao lưu & cài đặt",
+                  icon: SettingsIcon,
+                },
+              ].map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === item.path}
+                    tooltip={compact ? item.label : undefined}
+                  >
+                    <NavLink to={item.path} onClick={closeMobile}>
+                      <item.icon aria-hidden="true" />
+                      <span>{item.label}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                size="lg"
+                tooltip={compact ? "Mục tiêu IELTS 6.5" : undefined}
+              >
+                <Link to="/settings" onClick={closeMobile}>
+                  <GraduationCap aria-hidden="true" />
+                  <span className="workspace-profile">
+                    <strong>IELTS General</strong>
+                    <small>Mục tiêu Overall 6.5</small>
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset className="workspace-inset">
+        <header className="workspace-header">
+          <SidebarTrigger
+            aria-label="Toggle navigation"
+            className={state === "expanded" ? "md:hidden" : undefined}
+          />
+          <Separator
+            orientation="vertical"
+            className={state === "expanded" ? "hidden" : "h-4"}
+          />
+          <nav aria-label="breadcrumb" className="workspace-breadcrumb">
+            <Link to="/">Workspace</Link>
+            <ChevronRight size={14} aria-hidden="true" />
+            <span aria-current="page">{current}</span>
           </nav>
-        </aside>
-        <main>
-          <header className="topbar">
-            <button
-              type="button"
-              aria-label="Toggle navigation"
-              className="mobile-menu"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <X /> : <Menu />}
-            </button>
-            <Link to="/">YOUR PRACTICE SPACE</Link>
-            <div title="Bài làm tự động lưu trên thiết bị này">
-              <span className="status-dot" /> Tự động lưu
-            </div>
-          </header>
-          <div className="page">
+          <span className="workspace-save">
+            <Check size={14} aria-hidden="true" /> Tự động lưu
+          </span>
+        </header>
+        <div className="workspace-scroll">
+          <div
+            id="practice-content"
+            className="workspace-content"
+            tabIndex={-1}
+          >
             <Routes>
               <Route path="/" element={<Home />} />
               <Route
@@ -184,18 +323,19 @@ function App() {
               />
             </Routes>
           </div>
-          <footer>
-            IELTS GENERAL PRACTICE
+          <footer className="workspace-footer">
+            <span>IELTS General Practice</span>
             <span>
               Nội dung và phản hồi do AI tạo · Điểm luyện tập không phải kết quả
               thi chính thức.
             </span>
           </footer>
-        </main>
-      </div>
-    </AppRouter>
+        </div>
+      </SidebarInset>
+    </>
   );
 }
+
 function Heading({
   tag,
   title,
@@ -220,30 +360,47 @@ function Home() {
         Chọn một kỹ năng. Tạo bài mới bằng AI. Làm bài và nhận phản hồi.
       </Heading>
       <div className="practice-home-grid">
-        {skills.map((s, i) => (
-          <Card key={s.path} className="home-skill-card">
-            <Link to={s.path} className="home-skill-link">
-              <CardHeader>
-                <div className="practice-card-top">
-                  <span className="skill-number">0{i + 1}</span>
-                  <s.icon size={22} aria-hidden="true" />
+        {skills.map((s) => (
+          <Frame
+            key={s.path}
+            spacing="default"
+            dense
+            className="skill-frame [--frame-radius:var(--radius-lg)]"
+          >
+            <FrameHeader>
+              <div className="skill-frame-heading">
+                <s.icon size={16} aria-hidden="true" />
+                <div>
+                  <FrameTitle>{s.title}</FrameTitle>
+                  <FrameDescription>{s.subtitle}</FrameDescription>
                 </div>
-                <CardTitle role="heading" aria-level={2}>
-                  {s.title}
-                </CardTitle>
-                <span className="eyebrow">{s.subtitle}</span>
-                <CardDescription>{s.description}</CardDescription>
-              </CardHeader>
-              <CardFooter className="justify-between gap-4">
-                <Badge variant="outline">{s.meta}</Badge>
-                <span className="home-skill-action">
-                  Bắt đầu <ArrowUpRight size={16} aria-hidden="true" />
+              </div>
+            </FrameHeader>
+            <FramePanel>
+              <Link to={s.path} className="home-skill-link">
+                <span className="skill-frame-metric">
+                  {s.title === "Viết"
+                    ? "Task 1 / 2"
+                    : s.title === "Ngữ pháp"
+                      ? "10–50 câu"
+                      : "5 câu"}
                 </span>
-              </CardFooter>
-            </Link>
-          </Card>
+                <p>{s.description}</p>
+                <span className="home-skill-action">
+                  Bắt đầu luyện <ArrowUpRight size={16} aria-hidden="true" />
+                </span>
+              </Link>
+            </FramePanel>
+            <FrameFooter>
+              <div className="skill-frame-footer">
+                <span>{s.meta}</span>
+                <span>AI Practice</span>
+              </div>
+            </FrameFooter>
+          </Frame>
         ))}
       </div>
+      <HomeActivity />
       <div className="practice-home-note">
         <span className="status-dot" />
         <p>
@@ -255,6 +412,129 @@ function Home() {
     </>
   );
 }
+function HomeActivity() {
+  const [data, setData] = useState<{
+    runs: PracticeRecord[];
+    grammarCount: number;
+    completedGrammar: number;
+  }>();
+  const [error, setError] = useState("");
+  async function load() {
+    setError("");
+    try {
+      const [runs, grammar] = await Promise.all([
+        db.practiceRuns.orderBy("updatedAt").reverse().toArray(),
+        db.practiceSessions.toArray(),
+      ]);
+      setData({
+        runs,
+        grammarCount: grammar.length,
+        completedGrammar: grammar.filter((s) => s.status === "completed")
+          .length,
+      });
+    } catch {
+      setError("Không đọc được bài làm đã lưu.");
+    }
+  }
+  useEffect(() => {
+    void load();
+  }, []);
+  return (
+    <div className="home-activity-grid">
+      <PracticePanel
+        title="Bài luyện gần đây"
+        description="Bài nghe, đọc và viết trên thiết bị này"
+      >
+        {error ? (
+          <Alert variant="destructive">
+            <AlertDescription>
+              {error}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => void load()}
+              >
+                Thử lại
+              </Button>
+            </AlertDescription>
+          </Alert>
+        ) : !data ? (
+          <div
+            role="status"
+            aria-label="Đang đọc bài làm"
+            className="loading-question"
+          >
+            <Skeleton className="h-4 w-full motion-reduce:animate-none" />
+            <Skeleton className="h-4 w-2/3 motion-reduce:animate-none" />
+          </div>
+        ) : data.runs.length ? (
+          <div className="practice-history-list">
+            {data.runs.slice(0, 5).map((run) => (
+              <Link
+                key={run.id}
+                to={`/${run.exercise.settings.skill}?id=${run.id}`}
+              >
+                <span>{run.exercise.title}</span>
+                <small>
+                  {skillNames[run.exercise.settings.skill]} ·{" "}
+                  {new Date(run.date).toLocaleDateString("vi-VN")} ·{" "}
+                  {run.result ? "Đã chấm" : "Tiếp tục làm"}
+                </small>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="home-empty">
+            <BookOpen size={24} aria-hidden="true" />
+            <h2>Chưa có bài luyện đã lưu</h2>
+            <p>Tạo bài đầu tiên để bắt đầu lưu tiến độ tại đây.</p>
+            <Button asChild variant="outline">
+              <Link to="/listening">Tạo bài nghe</Link>
+            </Button>
+          </div>
+        )}
+        <Button asChild variant="ghost">
+          <Link to="/history">
+            Xem lịch sử bài làm <ArrowUpRight aria-hidden="true" />
+          </Link>
+        </Button>
+      </PracticePanel>
+      <PracticePanel
+        title="Không gian học tập"
+        description="IELTS General Training"
+      >
+        {data ? (
+          <dl className="workspace-metrics">
+            <div>
+              <dt>Bài luyện đã tạo</dt>
+              <dd>{data.runs.length + data.grammarCount}</dd>
+            </div>
+            <div>
+              <dt>Bài đã hoàn thành</dt>
+              <dd>
+                {data.runs.filter((r) => r.result).length +
+                  data.completedGrammar}
+              </dd>
+            </div>
+          </dl>
+        ) : (
+          <p className="muted">
+            {error ? "Chưa đọc được dữ liệu" : "Đang đọc tiến độ…"}
+          </p>
+        )}
+        <div className="workspace-goal">
+          <span>Mục tiêu Overall</span>
+          <strong>6.5</strong>
+          <p>Nghe 7.0 · Đọc 7.0 · Viết 6.0+</p>
+        </div>
+        <Button asChild variant="outline">
+          <Link to="/settings">Sao lưu & cài đặt</Link>
+        </Button>
+      </PracticePanel>
+    </div>
+  );
+}
+
 function PracticeHistory() {
   const [runs, setRuns] = useState<PracticeRecord[]>([]),
     [legacy, setLegacy] = useState<
@@ -301,8 +581,7 @@ function PracticeHistory() {
         Bài đã tạo, bài đang làm và phản hồi của bạn.
       </Heading>
       {error && <p role="alert">{error}</p>}
-      <section className="panel">
-        <h2>Bài luyện AI</h2>
+      <PracticePanel title="Bài luyện AI">
         {runs.length ? (
           <div className="practice-history-list">
             {runs.map((r) => (
@@ -325,20 +604,22 @@ function PracticeHistory() {
         <p>
           <Link to="/grammar">Mở bài ngữ pháp và các bài đã lưu →</Link>
         </p>
-      </section>
-      <details className="panel practice-history">
-        <summary>Lịch sử cũ ({legacy.length} bài làm)</summary>
-        <p>
-          Dữ liệu trước khi đổi giao diện vẫn được giữ. Bạn có thể xuất toàn bộ
-          trong phần sao lưu.
-        </p>
-        {legacy.map((x) => (
-          <div className="answer-feedback" key={x.id}>
-            <p>{x.text}</p>
-            <p>{x.feedback}</p>
-          </div>
-        ))}
-      </details>
+      </PracticePanel>
+      <PracticePanel>
+        <details className="practice-history">
+          <summary>Lịch sử cũ ({legacy.length} bài làm)</summary>
+          <p>
+            Dữ liệu trước khi đổi giao diện vẫn được giữ. Bạn có thể xuất toàn
+            bộ trong phần sao lưu.
+          </p>
+          {legacy.map((x) => (
+            <div className="answer-feedback" key={x.id}>
+              <p>{x.text}</p>
+              <p>{x.feedback}</p>
+            </div>
+          ))}
+        </details>
+      </PracticePanel>
     </>
   );
 }
@@ -367,8 +648,7 @@ function Settings() {
       <Heading tag="YOUR SPACE, YOUR DATA" title="Settings.">
         Your learning history is stored locally in this browser.
       </Heading>
-      <section className="panel">
-        <h2>Learning profile</h2>
+      <PracticePanel title="Learning profile">
         <p>
           IELTS General Training · Current estimate 5.0–5.5 · Overall target 6.5
         </p>
@@ -382,7 +662,7 @@ function Settings() {
         <Button onClick={() => void backup()}>Export backup</Button>
         <label className="field import">
           Restore backup (replaces local progress)
-          <input
+          <Input
             type="file"
             accept="application/json"
             onChange={async (e) => {
@@ -416,7 +696,7 @@ function Settings() {
           Âm thanh đã tải được lưu trên thiết bị này; bản sao lưu JSON chứa bài
           làm và kết quả, không kèm file âm thanh.
         </p>
-      </section>
+      </PracticePanel>
     </>
   );
 }

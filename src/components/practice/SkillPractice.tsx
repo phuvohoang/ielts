@@ -1,3 +1,4 @@
+import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
 // Date.now() below preserves existing saved-run timestamps and server expiry checks.
 // These C4 exceptions are data lifecycle logic, not render keys or animation.
@@ -121,7 +122,12 @@ export function SkillPractice({ skill }: { skill: Skill }) {
   }, [record?.id]);
   useEffect(() => {
     if (record)
-      work.current?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+      work.current?.scrollIntoView({
+        block: "start",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
   }, [record?.id]);
   async function create() {
     if (lock.current) return;
@@ -234,15 +240,12 @@ export function SkillPractice({ skill }: { skill: Skill }) {
       </div>
       {!loaded && <PracticeLoading title="Đang đọc bài làm đã lưu…" />}
       {loaded && !record && (
-        <PracticePanel className="practice-setup">
-          <div className="builder-heading">
-            <div>
-              <span className="eyebrow">BẮT ĐẦU TẠI ĐÂY</span>
-              <h2>Tạo bài luyện</h2>
-              <p>Một đề mới, phù hợp với mục tiêu của bạn.</p>
-            </div>
-            <Badge variant="outline">{skillNames[skill]} · AI</Badge>
-          </div>
+        <PracticePanel
+          className="practice-setup"
+          title="Tạo bài luyện"
+          description="Một đề mới, phù hợp với mục tiêu của bạn."
+          accessory={<Badge variant="outline">{skillNames[skill]} · AI</Badge>}
+        >
           <div className="builder-controls">
             <label>
               Độ khó
@@ -328,11 +331,10 @@ export function SkillPractice({ skill }: { skill: Skill }) {
             className={`skill-workspace ${skill === "writing" ? "writing-workspace" : ""}`}
             aria-label="Bài tập hiện tại"
           >
-            <PracticePanel className="skill-source">
+            <PracticePanel className="skill-source" title={exercise.title}>
               <Badge variant="outline">
                 {skillNames[skill]} · {exercise.settings.level}
               </Badge>
-              <h2>{exercise.title}</h2>
               <p>{exercise.instructionsVi}</p>
               {skill === "reading" && (
                 <div className="reading-passage">
@@ -394,7 +396,12 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                 </details>
               )}
             </PracticePanel>
-            <PracticePanel className="skill-answers">
+            <PracticePanel
+              className="skill-answers"
+              title={
+                skill === "writing" ? "Bài viết của bạn" : "Câu trả lời của bạn"
+              }
+            >
               <form
                 className="skill-answer-form"
                 onSubmit={(e) => {
@@ -402,15 +409,11 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                   void submit();
                 }}
               >
-                <h2>
-                  {skill === "writing"
-                    ? "Bài viết của bạn"
-                    : "Câu trả lời của bạn"}
-                </h2>
                 {skill === "writing" ? (
                   <>
                     <label htmlFor="writing-answer">Viết bằng tiếng Anh</label>
-                    <textarea
+                    <Textarea
+                      className="field-sizing-fixed"
                       id="writing-answer"
                       rows={18}
                       value={record.answers.writing ?? ""}
@@ -467,7 +470,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                           >
                             Không quá {q.wordLimit} từ
                           </label>
-                          <input
+                          <Input
                             id={`answer-${q.number}`}
                             aria-label={`Câu ${q.number}`}
                             autoComplete="off"
@@ -619,29 +622,35 @@ export function SkillPractice({ skill }: { skill: Skill }) {
         </>
       )}
       {history.length > 0 && (
-        <details className="panel practice-history">
-          <summary>
-            Bài {skillNames[skill].toLowerCase()} đã lưu ({history.length})
-          </summary>
-          <div className="practice-history-list">
-            {history.map((r) => (
-              <button
-                key={r.id}
-                disabled={!!busy}
-                onClick={() => {
-                  show(r);
-                  setError("");
-                }}
-              >
-                <span>{r.exercise.title}</span>
-                <small>
-                  {new Date(r.date).toLocaleDateString("vi-VN")} ·{" "}
-                  {r.result ? "Đã chấm" : r.submitted ? "Chờ chấm" : "Đang làm"}
-                </small>
-              </button>
-            ))}
-          </div>
-        </details>
+        <PracticePanel>
+          <details className="practice-history">
+            <summary>
+              Bài {skillNames[skill].toLowerCase()} đã lưu ({history.length})
+            </summary>
+            <div className="practice-history-list">
+              {history.map((r) => (
+                <button
+                  key={r.id}
+                  disabled={!!busy}
+                  onClick={() => {
+                    show(r);
+                    setError("");
+                  }}
+                >
+                  <span>{r.exercise.title}</span>
+                  <small>
+                    {new Date(r.date).toLocaleDateString("vi-VN")} ·{" "}
+                    {r.result
+                      ? "Đã chấm"
+                      : r.submitted
+                        ? "Chờ chấm"
+                        : "Đang làm"}
+                  </small>
+                </button>
+              ))}
+            </div>
+          </details>
+        </PracticePanel>
       )}
     </div>
   );

@@ -52,14 +52,13 @@ export function PracticeResults({
     </ul>
   );
   return (
-    <PracticePanel className="practice-results" aria-labelledby="results-title">
-      <div className="builder-heading">
-        <div>
-          <span className="eyebrow">NHÌN LẠI BÀI LUYỆN</span>
-          <h2 id="results-title">Practice Results</h2>
-        </div>
-        <Badge variant="outline">{session.settings.difficulty}</Badge>
-      </div>
+    <PracticePanel
+      className="practice-results"
+      title="Practice Results"
+      titleId="results-title"
+      accessory={<Badge variant="outline">{session.settings.difficulty}</Badge>}
+      aria-labelledby="results-title"
+    >
       <div className="results-overview">
         <div>
           <p>
