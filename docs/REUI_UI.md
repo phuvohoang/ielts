@@ -24,7 +24,7 @@ All components are free. The official Radix APIs and layout guidance were retrie
 
 Card and Skeleton use the project's existing shadcn new-york registry. Badge and Alert use pinned ReUI Radix Vega. Native Select is absent from the old new-york registry, so its official shadcn Radix Vega registry URL was used. No existing Button was overwritten or assigned unsupported props.
 
-`practice-ui.css` maps semantic tokens to the existing forest palette and scopes layouts to practice screens. Legacy select styling excludes the installed NativeSelect so component padding stays intact. Default border colors come from the semantic border token. The site retains its existing light theme; adding a user-selectable dark theme is outside this change.
+`practice-ui.css` maps semantic tokens to the neutral white/black palette and scopes layouts to practice screens. Legacy select styling excludes the installed NativeSelect so component padding stays intact. Default border colors come from the semantic border token. The site retains its existing light theme; adding a user-selectable dark theme is outside this change.
 
 ## Data and API preservation
 
@@ -42,3 +42,9 @@ No schema/database migration, reset or exercise content change is introduced. Ex
 - No new entrance motion. Existing smooth scrolling, skeleton pulse and button hover respect reduced-motion preferences.
 
 The app-specific composition adapts free primitives instead of installing a premium page template. Native HTML details, progress, checkbox and radio semantics remain; no custom modal or tab implementation was added. No raw result table remains on the changed results screen.
+
+## Neutral theme and aligned setup controls
+
+Follow-up: setup topic fields now use the official shadcn Radix Vega Input, matching NativeSelect's default 36px height. Legacy input geometry and focus outlines exclude installed component slots. Both controls retain their own registry styles. Input preview: https://reui.io/components/input?ref=mcp
+
+The user requested white/black rather than the previous forest palette. The shared neutral theme now paints both installed components and legacy shell surfaces through semantic tokens. Statuses still carry text/symbols, so answered, unanswered and errors remain identifiable without color. Nunito, data and API behavior are unchanged. Browser regression checks measure actual control heights/alignment across listening, reading and writing at desktop and mobile widths.
