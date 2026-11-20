@@ -14,5 +14,9 @@
     "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"
-  }
+  },
+  "registries": {
+    "@reui": "https://reui.io/r/radix-vega/{name}.json"
+  },
+  "iconLibrary": "lucide"
 }
