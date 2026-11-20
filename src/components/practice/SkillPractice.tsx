@@ -1,3 +1,4 @@
+import { Input } from "../ui/input";
 // Date.now() below preserves existing saved-run timestamps and server expiry checks.
 // These C4 exceptions are data lifecycle logic, not render keys or animation.
 import { NativeSelect } from "../ui/native-select";
@@ -272,7 +273,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
             )}
             <label>
               Chủ đề (tuỳ chọn)
-              <input
+              <Input
                 aria-label="Chủ đề"
                 value={focus}
                 maxLength={120}

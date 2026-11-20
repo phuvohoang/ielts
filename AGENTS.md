@@ -2,7 +2,7 @@
 
 ## Preserve the existing app
 
-- Keep Nunito, the current green palette, Vietnamese learner flows and responsive layout unless the user requests a redesign.
+- Keep Nunito, the user-requested neutral white/black palette, Vietnamese learner flows and responsive layout unless the user requests a redesign.
 - Preserve practice sessions, drafts, results, review history, AI routes and server-side answer/key privacy.
 - ReUI is installed as development tooling. Existing components are not automatically ReUI components: read their actual API before changing them. The current Button does not expose ReUI size/spacing props.
 - Prefer incremental, requested UI changes. Do not replace the app shell, run shadcn init, overwrite components, or inject a new global theme merely to install tooling.
@@ -13,7 +13,7 @@
 - Read `.agents/skills/reui/SKILL.md` for relevant UI work. The official bundle is pinned in its SOURCE.json.
 - Stock shadcn retains `new-york`; the @reui registry URL pins **Radix Vega** separately. ReUI MCP uses the same style query. Read Radix APIs, not Base UI APIs.
 - Use free components/examples unless the user explicitly authorizes premium assets. Never commit a license/token or put one in a VITE variable.
-- The project has custom CSS rather than a complete shadcn semantic-token theme. Map tokens to the existing palette as part of a scoped component adoption; do not assume theme tokens or CSS-animation helpers are already installed.
+- The project has custom CSS rather than a complete shadcn semantic-token theme. Map tokens to the neutral palette as part of a scoped component adoption; do not assume theme tokens or CSS-animation helpers are already installed.
 - MCP configuration is project-scoped in `.codex/config.toml`; authentication/restart is separate. Installing or updating the skill must not modify global Codex or unrelated agent configurations without an explicit request.
 
 <!-- BEGIN:reui-agent-rules -->

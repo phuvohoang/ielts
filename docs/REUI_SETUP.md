@@ -32,7 +32,7 @@ Complete ReUI OAuth in your own browser. Configuration alone does not establish 
 
 ## Use for UI work
 
-Example request: “Dùng ReUI cải thiện màn cấu hình và bảng kết quả IELTS, giữ Nunito, màu xanh và logic hiện tại.”
+Example request: “Dùng ReUI cải thiện màn cấu hình và bảng kết quả IELTS, giữ Nunito, tông trắng–đen và logic hiện tại.”
 
 Codex should read the installed skill, inspect existing components, discover matching Radix components and propose a scoped layout before editing UI. Use free assets unless premium use is explicitly authorized. Install only exact registry names verified through the documentation/MCP. Review a dry run before applying additions:
 
