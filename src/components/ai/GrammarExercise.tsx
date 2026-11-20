@@ -1,3 +1,8 @@
+// Date.now() below preserves existing saved-run timestamps and server expiry checks.
+// These C4 exceptions are data lifecycle logic, not render keys or animation.
+import { Alert, AlertTitle, AlertDescription } from "../reui/alert";
+import { Badge } from "../reui/badge";
+import { PracticePanel, PracticeLoading } from "../practice/PracticePanel";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { CorrectionDiff } from "./CorrectionDiff";
@@ -62,7 +67,7 @@ export function GrammarExercise() {
     examLock = useRef(false),
     navigationLock = useRef(false),
     generationRequests = useRef({ key: "", count: 0 }),
-    practiceRef = useRef<HTMLElement>(null);
+    practiceRef = useRef<HTMLDivElement>(null);
   function show(value: PracticeSession | undefined) {
     live.current = value;
     setSession(value);
@@ -348,11 +353,11 @@ export function GrammarExercise() {
     answer = q ? (session?.answers[q.id] ?? "") : "";
   useEffect(() => {
     if (!q) return;
-    practiceRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+    practiceRef.current?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
     practiceRef.current
-      ?.querySelector<
-        HTMLInputElement | HTMLTextAreaElement
-      >("input:not([disabled]),textarea:not([disabled])")
+      ?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+        "input:not([disabled]),textarea:not([disabled])",
+      )
       ?.focus({ preventScroll: true });
   }, [q?.id]);
   const visibleQuestions =
@@ -427,14 +432,11 @@ export function GrammarExercise() {
     }
   };
   return (
-    <>
+    <div className="practice-redesign">
       <div className="heading">
         <div className="eyebrow">IELTS GENERAL TRAINING · AI PRACTICE</div>
         <h1>IELTS Grammar Practice</h1>
-        <p>
-          Fresh questions. Focused practice. English you can produce
-          independently.
-        </p>
+        <p>Tự viết câu trả lời. Nhận góp ý cụ thể. Luyện lại chỗ chưa vững.</p>
       </div>
       {!session && (
         <SessionBuilder
@@ -453,24 +455,20 @@ export function GrammarExercise() {
           }}
         />
       )}
-      {!loaded && <p role="status">Loading saved progress…</p>}
+      {!loaded && <PracticeLoading title="Loading saved progress…" />}
       {(creating || (generating && !session?.generationComplete)) && (
-        <section className="panel practice-loading" role="status">
-          <div className="eyebrow">ĐANG CHUẨN BỊ BÀI TẬP</div>
-          <h2>Đang tạo bộ câu hỏi…</h2>
-          <p>
-            Đã tạo {session?.questions.length ?? 0}/
-            {session?.settings.questionCount ?? settings.questionCount} câu. Bộ
-            đề sẽ mở ngay khi tạo đủ.
-          </p>
-          <div className="practice-loading-line" />
-        </section>
+        <PracticeLoading title="Đang tạo bộ câu hỏi…">
+          Đã tạo {session?.questions.length ?? 0}/
+          {session?.settings.questionCount ?? settings.questionCount} câu. Bộ đề
+          sẽ mở ngay khi tạo đủ.
+        </PracticeLoading>
       )}
       {generationError && !session?.generationComplete && (
-        <section className="panel" role="alert">
+        <PracticePanel role="alert">
           <h2>Chưa có câu hỏi sẵn sàng</h2>
           <p>{generationError}</p>
           <Button
+            type="button"
             disabled={generating || expired}
             onClick={() => {
               generationRequests.current.count = 0;
@@ -479,12 +477,13 @@ export function GrammarExercise() {
           >
             Retry Generation
           </Button>
-        </section>
+        </PracticePanel>
       )}
       {error && (
-        <p className="practice-error" role="alert">
-          {error}
-        </p>
+        <Alert variant="destructive">
+          <AlertTitle>Chưa thể hoàn tất</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
       {session?.generationComplete && resultScreen && (
         <PracticeResults
@@ -522,16 +521,18 @@ export function GrammarExercise() {
         <>
           <div className="practice-toolbar" aria-label="Session progress">
             <div>
-              <strong>
-                {exam ? "Exam Mode" : "Instant Feedback"} ·{" "}
-                {session.settings.difficulty}
-              </strong>
+              <div className="practice-mode">
+                <Badge variant="outline">{session.settings.difficulty}</Badge>
+                <strong>{exam ? "Exam Mode" : "Instant Feedback"}</strong>
+                <Badge variant="success-light">Đã lưu</Badge>
+              </div>
               <span>
                 {answered}/{visibleQuestions.length} answered ·{" "}
                 {visibleQuestions.length} ready
               </span>
             </div>
             <Button
+              type="button"
               variant="outline"
               disabled={grading || moving}
               onClick={() => {
@@ -543,6 +544,7 @@ export function GrammarExercise() {
             </Button>
             {(reviewIds || session.retryIds) && (
               <Button
+                type="button"
                 variant="ghost"
                 disabled={grading || moving}
                 onClick={() => {
@@ -561,6 +563,7 @@ export function GrammarExercise() {
               </Button>
             )}
             <Button
+              type="button"
               variant="outline"
               disabled={grading || moving || generating || creating}
               onClick={() => {
@@ -582,9 +585,9 @@ export function GrammarExercise() {
           )}
           {q && (
             <div className="grammar-practice-layout">
-              <section
+              <PracticePanel
                 ref={practiceRef}
-                className="panel ai-card practice-workspace"
+                className="ai-card practice-workspace"
                 data-exercise-id={q.id}
                 aria-label="Bài tập hiện tại"
               >
@@ -812,6 +815,7 @@ export function GrammarExercise() {
                     )}
                     {!exam && (
                       <Button
+                        type="button"
                         variant="outline"
                         disabled={grading}
                         onClick={() => {
@@ -830,6 +834,7 @@ export function GrammarExercise() {
                 )}
                 <div className="practice-navigation">
                   <Button
+                    type="button"
                     variant="outline"
                     disabled={grading || moving || position === 0}
                     onClick={() => goToPosition(position - 1)}
@@ -838,6 +843,7 @@ export function GrammarExercise() {
                   </Button>
                   {position + 1 < visibleQuestions.length && (
                     <Button
+                      type="button"
                       disabled={grading || moving}
                       onClick={() => goToPosition(position + 1)}
                     >
@@ -845,22 +851,44 @@ export function GrammarExercise() {
                     </Button>
                   )}
                 </div>
-              </section>
-              <aside
-                className="panel question-navigator"
+              </PracticePanel>
+              <PracticePanel
+                role="complementary"
+                className="question-navigator"
                 aria-label="Điều hướng câu hỏi"
               >
                 <h2>Câu hỏi</h2>
                 <p>
                   {answered}/{visibleQuestions.length} đã trả lời
                 </p>
+                <progress
+                  aria-label="Tiến độ trả lời"
+                  value={answered}
+                  max={visibleQuestions.length}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={
+                    grading || moving || answered === visibleQuestions.length
+                  }
+                  onClick={() => {
+                    const next = visibleQuestions.find(
+                      (item) => !session.answers[item.id]?.trim(),
+                    );
+                    if (next)
+                      void move(
+                        session.questions.findIndex(
+                          (item) => item.id === next.id,
+                        ),
+                      );
+                  }}
+                >
+                  Câu chưa làm tiếp theo
+                </Button>
                 <div className="question-legend">
-                  <span>
-                    <span aria-hidden="true">✓</span> Đã trả lời
-                  </span>
-                  <span>
-                    <span aria-hidden="true">○</span> Chưa trả lời
-                  </span>
+                  <Badge variant="success-light">✓ Đã trả lời</Badge>
+                  <Badge variant="outline">○ Chưa trả lời</Badge>
                 </div>
                 <p className="question-current-hint">Viền đậm: câu đang mở</p>
                 <nav className="question-grid" aria-label="Chọn câu hỏi">
@@ -888,12 +916,13 @@ export function GrammarExercise() {
                     );
                   })}
                 </nav>
-              </aside>
+              </PracticePanel>
             </div>
           )}
           {exam && (
             <div className="practice-exam-submit">
               <Button
+                type="button"
                 disabled={
                   grading ||
                   expired ||
@@ -917,7 +946,7 @@ export function GrammarExercise() {
             </div>
           )}
           {session.status === "completed" && (
-            <section className="panel">
+            <PracticePanel>
               <h2>Kết quả bài luyện</h2>
               <h3>Session complete</h3>
               <p>
@@ -927,7 +956,7 @@ export function GrammarExercise() {
               <p>
                 Score {totals.score}/{totals.maxScore} graded.
               </p>
-            </section>
+            </PracticePanel>
           )}
           {session.questions.length > 0 && (
             <details className="practice-record">
@@ -957,6 +986,7 @@ export function GrammarExercise() {
           <div className="saved-sessions">
             {saved.map((s) => (
               <Button
+                type="button"
                 key={s.sessionId}
                 variant="outline"
                 disabled={grading || moving || generating || creating}
@@ -970,6 +1000,6 @@ export function GrammarExercise() {
           </div>
         )}
       </details>
-    </>
+    </div>
   );
 }

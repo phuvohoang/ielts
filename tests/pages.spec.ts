@@ -8,7 +8,7 @@ test("Pages serves the four-skill workspace and redirects old theory deep links"
   await expect(
     page.getByRole("heading", { name: "Hôm nay bạn muốn luyện gì?" }),
   ).toBeVisible();
-  await expect(page.locator(".practice-home-card")).toHaveCount(4);
+  await expect(page.locator(".home-skill-link")).toHaveCount(4);
   await page.goto("/ielts/#/learn/sentence-foundations-01");
   await expect(page).toHaveURL(/#\/grammar$/);
   await expect(

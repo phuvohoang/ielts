@@ -1,3 +1,9 @@
+// Date.now() below preserves existing saved-run timestamps and server expiry checks.
+// These C4 exceptions are data lifecycle logic, not render keys or animation.
+import { NativeSelect } from "../ui/native-select";
+import { Alert, AlertTitle, AlertDescription } from "../reui/alert";
+import { Badge } from "../reui/badge";
+import { PracticePanel, PracticeLoading } from "./PracticePanel";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "../ui/button";
@@ -114,7 +120,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
   }, [record?.id]);
   useEffect(() => {
     if (record)
-      work.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+      work.current?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   }, [record?.id]);
   async function create() {
     if (lock.current) return;
@@ -133,6 +139,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
         throw Error("Dịch vụ trả về sai kỹ năng.");
       const next = practiceRecordSchema.parse({
         id: exercise.id,
+        // Existing persistence timestamps identify saved runs; unrelated to UI rendering.
         date: Date.now(),
         updatedAt: Date.now(),
         exercise,
@@ -212,7 +219,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
     record?.answers.writing?.trim().split(/\s+/).filter(Boolean).length ?? 0;
   const expired = !!exercise && exercise.expiresAt <= Date.now();
   return (
-    <>
+    <div className="practice-redesign">
       <div className="heading">
         <div className="eyebrow">IELTS GENERAL TRAINING · AI PRACTICE</div>
         <h1>Luyện {skillNames[skill].toLowerCase()}</h1>
@@ -224,14 +231,21 @@ export function SkillPractice({ skill }: { skill: Skill }) {
               : "Viết theo đề mới và nhận góp ý cụ thể cho bài của bạn."}
         </p>
       </div>
-      {!loaded && <p role="status">Đang đọc bài làm đã lưu…</p>}
+      {!loaded && <PracticeLoading title="Đang đọc bài làm đã lưu…" />}
       {loaded && !record && (
-        <section className="panel practice-setup">
-          <h2>Tạo bài luyện</h2>
+        <PracticePanel className="practice-setup">
+          <div className="builder-heading">
+            <div>
+              <span className="eyebrow">BẮT ĐẦU TẠI ĐÂY</span>
+              <h2>Tạo bài luyện</h2>
+              <p>Một đề mới, phù hợp với mục tiêu của bạn.</p>
+            </div>
+            <Badge variant="outline">{skillNames[skill]} · AI</Badge>
+          </div>
           <div className="builder-controls">
             <label>
               Độ khó
-              <select
+              <NativeSelect
                 aria-label="Độ khó"
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
@@ -240,12 +254,12 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                 {["A2", "B1", "B2", "C1"].map((l) => (
                   <option key={l}>{l}</option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
             {skill === "writing" && (
               <label>
                 Dạng bài
-                <select
+                <NativeSelect
                   aria-label="Dạng bài"
                   value={task}
                   onChange={(e) => setTask(e.target.value)}
@@ -253,7 +267,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                 >
                   <option value="task1">Task 1 · Thư (150+ từ)</option>
                   <option value="task2">Task 2 · Bài luận (250+ từ)</option>
-                </select>
+                </NativeSelect>
               </label>
             )}
             <label>
@@ -268,24 +282,21 @@ export function SkillPractice({ skill }: { skill: Skill }) {
               />
             </label>
           </div>
-          <Button onClick={() => void create()} disabled={!!busy}>
+          <Button type="button" onClick={() => void create()} disabled={!!busy}>
             {busy ? "Đang tạo bài tập…" : "Tạo bài bằng AI"}
           </Button>
-        </section>
+        </PracticePanel>
       )}
       {busy === "generate" && (
-        <section className="panel practice-loading" role="status">
-          <h2>Đang chuẩn bị bài tập…</h2>
-          <p>
-            AI đang tạo nội dung và kiểm tra đáp án. Bài tập sẽ hiện tại đây.
-          </p>
-          <div className="practice-loading-line" />
-        </section>
+        <PracticeLoading title="Đang chuẩn bị bài tập…">
+          AI đang tạo nội dung. Bài tập sẽ hiện tại đây.
+        </PracticeLoading>
       )}
       {error && (
-        <p role="alert" className="practice-error">
-          {error}
-        </p>
+        <Alert variant="destructive">
+          <AlertTitle>Chưa thể hoàn tất</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
       {record && exercise && (
         <>
@@ -300,6 +311,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
               · Tự động lưu
             </span>
             <Button
+              type="button"
               variant="outline"
               disabled={!!busy}
               onClick={() => {
@@ -315,8 +327,10 @@ export function SkillPractice({ skill }: { skill: Skill }) {
             className={`skill-workspace ${skill === "writing" ? "writing-workspace" : ""}`}
             aria-label="Bài tập hiện tại"
           >
-            <div className="panel skill-source">
-              <div className="eyebrow">{skillNames[skill]}</div>
+            <PracticePanel className="skill-source">
+              <Badge variant="outline">
+                {skillNames[skill]} · {exercise.settings.level}
+              </Badge>
               <h2>{exercise.title}</h2>
               <p>{exercise.instructionsVi}</p>
               {skill === "reading" && (
@@ -357,6 +371,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                     <div role="alert">
                       <p>{audioError}</p>
                       <Button
+                        type="button"
                         disabled={audioLoading}
                         variant="outline"
                         onClick={() => void audio(record)}
@@ -377,126 +392,132 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                   <p>{result.transcript}</p>
                 </details>
               )}
-            </div>
-            <form
-              className="panel skill-answers"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void submit();
-              }}
-            >
-              <h2>
-                {skill === "writing"
-                  ? "Bài viết của bạn"
-                  : "Câu trả lời của bạn"}
-              </h2>
-              {skill === "writing" ? (
-                <>
-                  <label htmlFor="writing-answer">Viết bằng tiếng Anh</label>
-                  <textarea
-                    id="writing-answer"
-                    rows={18}
-                    value={record.answers.writing ?? ""}
-                    maxLength={8000}
-                    disabled={record.submitted || !!busy}
-                    onChange={(e) => answer("writing", e.target.value)}
-                    placeholder="Start writing here…"
-                  />
-                  <p aria-live="polite">
-                    {words} từ / tối thiểu {exercise.minWords}
-                  </p>
-                </>
-              ) : (
-                exercise.questions.map((q) => (
-                  <fieldset
-                    className="comprehension-question"
-                    key={q.number}
-                    disabled={record.submitted || !!busy}
-                  >
-                    <legend>
-                      {q.number}. {q.prompt}
-                    </legend>
-                    {q.type === "multiple_choice" ? (
-                      q.options.map((o) => (
-                        <label className="answer-choice" key={o.id}>
-                          <input
-                            type="radio"
-                            name={`question-${q.number}`}
-                            value={o.id}
-                            checked={record.answers[q.number] === o.id}
-                            onChange={() => answer(String(q.number), o.id)}
-                          />
-                          {o.text}
-                        </label>
-                      ))
-                    ) : q.type === "true_false_not_given" ? (
-                      <select
-                        aria-label={`Câu ${q.number}`}
-                        value={record.answers[q.number] ?? ""}
-                        onChange={(e) =>
-                          answer(String(q.number), e.target.value)
-                        }
-                      >
-                        <option value="">Chọn câu trả lời</option>
-                        {["TRUE", "FALSE", "NOT GIVEN"].map((v) => (
-                          <option key={v}>{v}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <>
-                        <label className="muted" htmlFor={`answer-${q.number}`}>
-                          Không quá {q.wordLimit} từ
-                        </label>
-                        <input
-                          id={`answer-${q.number}`}
+            </PracticePanel>
+            <PracticePanel className="skill-answers">
+              <form
+                className="skill-answer-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void submit();
+                }}
+              >
+                <h2>
+                  {skill === "writing"
+                    ? "Bài viết của bạn"
+                    : "Câu trả lời của bạn"}
+                </h2>
+                {skill === "writing" ? (
+                  <>
+                    <label htmlFor="writing-answer">Viết bằng tiếng Anh</label>
+                    <textarea
+                      id="writing-answer"
+                      rows={18}
+                      value={record.answers.writing ?? ""}
+                      maxLength={8000}
+                      disabled={record.submitted || !!busy}
+                      onChange={(e) => answer("writing", e.target.value)}
+                      placeholder="Start writing here…"
+                    />
+                    <p aria-live="polite">
+                      {words} từ / tối thiểu {exercise.minWords}
+                    </p>
+                  </>
+                ) : (
+                  exercise.questions.map((q) => (
+                    <fieldset
+                      className="comprehension-question"
+                      key={q.number}
+                      disabled={record.submitted || !!busy}
+                    >
+                      <legend>
+                        {q.number}. {q.prompt}
+                      </legend>
+                      {q.type === "multiple_choice" ? (
+                        q.options.map((o) => (
+                          <label className="answer-choice" key={o.id}>
+                            <input
+                              type="radio"
+                              name={`question-${q.number}`}
+                              value={o.id}
+                              checked={record.answers[q.number] === o.id}
+                              onChange={() => answer(String(q.number), o.id)}
+                            />
+                            {o.text}
+                          </label>
+                        ))
+                      ) : q.type === "true_false_not_given" ? (
+                        <NativeSelect
                           aria-label={`Câu ${q.number}`}
-                          autoComplete="off"
                           value={record.answers[q.number] ?? ""}
-                          maxLength={300}
                           onChange={(e) =>
                             answer(String(q.number), e.target.value)
                           }
-                        />
-                      </>
-                    )}
-                  </fieldset>
-                ))
-              )}
-              {!result && (
-                <Button
-                  type="submit"
-                  disabled={
-                    !!busy ||
-                    !allAnswered ||
-                    expired ||
-                    (skill === "listening" && !audioUrl)
-                  }
-                >
-                  {busy === "grade"
-                    ? "AI đang chấm…"
-                    : record.submitted
-                      ? "Thử chấm lại bài đã nộp"
-                      : "Nộp bài và chấm bằng AI"}
-                </Button>
-              )}
-              {expired && !result && (
-                <p role="alert">
-                  Bài đã hết thời hạn chấm. Nội dung và bài làm đã lưu vẫn được
-                  giữ.
-                </p>
-              )}
-              {busy === "grade" && (
-                <p role="status">
-                  Đang đối chiếu bài làm. Bạn không cần nhập lại câu trả lời.
-                </p>
-              )}
-            </form>
+                        >
+                          <option value="">Chọn câu trả lời</option>
+                          {["TRUE", "FALSE", "NOT GIVEN"].map((v) => (
+                            <option key={v}>{v}</option>
+                          ))}
+                        </NativeSelect>
+                      ) : (
+                        <>
+                          <label
+                            className="muted"
+                            htmlFor={`answer-${q.number}`}
+                          >
+                            Không quá {q.wordLimit} từ
+                          </label>
+                          <input
+                            id={`answer-${q.number}`}
+                            aria-label={`Câu ${q.number}`}
+                            autoComplete="off"
+                            value={record.answers[q.number] ?? ""}
+                            maxLength={300}
+                            onChange={(e) =>
+                              answer(String(q.number), e.target.value)
+                            }
+                          />
+                        </>
+                      )}
+                    </fieldset>
+                  ))
+                )}
+                {!result && (
+                  <Button
+                    type="submit"
+                    disabled={
+                      !!busy ||
+                      !allAnswered ||
+                      expired ||
+                      (skill === "listening" && !audioUrl)
+                    }
+                  >
+                    {busy === "grade"
+                      ? "AI đang chấm…"
+                      : record.submitted
+                        ? "Thử chấm lại bài đã nộp"
+                        : "Nộp bài và chấm bằng AI"}
+                  </Button>
+                )}
+                {expired && !result && (
+                  <p role="alert">
+                    Bài đã hết thời hạn chấm. Nội dung và bài làm đã lưu vẫn
+                    được giữ.
+                  </p>
+                )}
+                {busy === "grade" && (
+                  <p role="status">
+                    Đang đối chiếu bài làm. Bạn không cần nhập lại câu trả lời.
+                  </p>
+                )}
+              </form>
+            </PracticePanel>
           </section>
           {result && (
-            <section
-              className="panel skill-feedback"
+            <PracticePanel
+              className="skill-feedback"
               aria-label="Kết quả chấm AI"
             >
+              <Badge variant="success-light">Đã chấm bài</Badge>
               <div className="eyebrow">PHẢN HỒI SAU KHI NỘP</div>
               <h2>
                 {skill === "writing"
@@ -592,7 +613,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                   ))}
                 </>
               )}
-            </section>
+            </PracticePanel>
           )}
         </>
       )}
@@ -621,6 +642,6 @@ export function SkillPractice({ skill }: { skill: Skill }) {
           </div>
         </details>
       )}
-    </>
+    </div>
   );
 }

@@ -1,3 +1,11 @@
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "./components/ui/card";
+import { Badge } from "./components/reui/badge";
 import { useEffect, useState } from "react";
 import {
   BrowserRouter,
@@ -74,7 +82,7 @@ function App() {
             <span className="brand-mark">i.</span>
             <span>
               ielts<span className="brand-light">practice</span>
-              <small>GENERAL TRAINING · YOUR DAILY PRACTICE</small>
+              <small>IELTS GENERAL TRAINING</small>
             </span>
           </Link>
           <p className="nav-caption">CHỌN KỸ NĂNG</p>
@@ -110,6 +118,7 @@ function App() {
         <main>
           <header className="topbar">
             <button
+              type="button"
               aria-label="Toggle navigation"
               className="mobile-menu"
               onClick={() => setOpen(!open)}
@@ -117,8 +126,8 @@ function App() {
               {open ? <X /> : <Menu />}
             </button>
             <Link to="/">YOUR PRACTICE SPACE</Link>
-            <div>
-              <span className="status-dot" /> Tự động lưu trên thiết bị này
+            <div title="Bài làm tự động lưu trên thiết bị này">
+              <span className="status-dot" /> Tự động lưu
             </div>
           </header>
           <div className="page">
@@ -212,23 +221,27 @@ function Home() {
       </Heading>
       <div className="practice-home-grid">
         {skills.map((s, i) => (
-          <Link to={s.path} className="practice-home-card" key={s.path}>
-            <div className="practice-card-top">
-              <span className="skill-number">0{i + 1}</span>
-              <s.icon size={27} />
-            </div>
-            <div>
-              <span className="eyebrow">{s.subtitle}</span>
-              <h2>{s.title}</h2>
-              <p>{s.description}</p>
-            </div>
-            <div className="practice-card-bottom">
-              <small>{s.meta}</small>
-              <span>
-                Bắt đầu <ArrowUpRight size={18} />
-              </span>
-            </div>
-          </Link>
+          <Card key={s.path} className="home-skill-card">
+            <Link to={s.path} className="home-skill-link">
+              <CardHeader>
+                <div className="practice-card-top">
+                  <span className="skill-number">0{i + 1}</span>
+                  <s.icon size={22} aria-hidden="true" />
+                </div>
+                <CardTitle role="heading" aria-level={2}>
+                  {s.title}
+                </CardTitle>
+                <span className="eyebrow">{s.subtitle}</span>
+                <CardDescription>{s.description}</CardDescription>
+              </CardHeader>
+              <CardFooter className="justify-between gap-4">
+                <Badge variant="outline">{s.meta}</Badge>
+                <span className="home-skill-action">
+                  Bắt đầu <ArrowUpRight size={16} aria-hidden="true" />
+                </span>
+              </CardFooter>
+            </Link>
+          </Card>
         ))}
       </div>
       <div className="practice-home-note">

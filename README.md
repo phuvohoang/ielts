@@ -105,3 +105,5 @@ AI-powered Lesson 01.2 adds 25 advanced typed Word Formation / Sentence Transfor
 ## ReUI developer tooling
 
 See [ReUI setup and activation](docs/REUI_SETUP.md) for the installed project skill, component registry and optional authenticated MCP connection.
+
+The [ReUI practice interface](docs/REUI_UI.md) applies these components to home, exercise configuration, practice navigation and result reports.
