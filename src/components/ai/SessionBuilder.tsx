@@ -46,14 +46,14 @@ export function SessionBuilder({
     });
   const summary = `${all ? "All Grammar Types" : selected.map((t) => t.displayName).join(", ")} · ${ieltsTopics.find((t) => t.id === settings.ieltsTopic)?.label ?? "All Topics"} · ${settings.difficulty} · ${settings.questionCount} questions · ${formatLabels[settings.exerciseType]}`;
   return (
-    <PracticePanel className="session-builder" aria-labelledby="builder-title">
-      <div className="builder-heading">
-        <div>
-          <h2 id="builder-title">Configure Practice</h2>
-          <p>Chọn kỹ năng cần luyện. AI tạo đề và chấm bài cho bạn.</p>
-        </div>
-        <Badge variant="outline">Grammar · A2–C1</Badge>
-      </div>
+    <PracticePanel
+      className="session-builder"
+      title="Configure Practice"
+      titleId="builder-title"
+      description="Chọn kỹ năng cần luyện, AI tạo đề và chấm bài."
+      accessory={<Badge variant="outline">Grammar · A2–C1</Badge>}
+      aria-labelledby="builder-title"
+    >
       <div className="builder-layout">
         <div className="builder-topic-section">
           <fieldset disabled={creating}>

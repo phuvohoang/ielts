@@ -1,3 +1,5 @@
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 // Date.now() below preserves existing saved-run timestamps and server expiry checks.
 // These C4 exceptions are data lifecycle logic, not render keys or animation.
 import { Alert, AlertTitle, AlertDescription } from "../reui/alert";
@@ -10,7 +12,6 @@ import { db } from "../../lib/db";
 import { summary } from "../../lib/ai/schema";
 import {
   formatLabels,
-  topics,
   ieltsTopics,
   isChoiceFormat,
 } from "../../lib/ai/dynamic/topics";
@@ -353,7 +354,12 @@ export function GrammarExercise() {
     answer = q ? (session?.answers[q.id] ?? "") : "";
   useEffect(() => {
     if (!q) return;
-    practiceRef.current?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    practiceRef.current?.scrollIntoView({
+      block: "start",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+    });
     practiceRef.current
       ?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
         "input:not([disabled]),textarea:not([disabled])",
@@ -587,15 +593,11 @@ export function GrammarExercise() {
             <div className="grammar-practice-layout">
               <PracticePanel
                 ref={practiceRef}
+                title={`${formatLabels[q.exerciseType]} · Question ${position + 1}/${visibleQuestions.length}`}
                 className="ai-card practice-workspace"
                 data-exercise-id={q.id}
                 aria-label="Bài tập hiện tại"
               >
-                <p className="eyebrow">
-                  {topics.find((t) => t.topicId === q.topicId)?.displayName} ·{" "}
-                  {formatLabels[q.exerciseType]} · Question {position + 1}/
-                  {visibleQuestions.length}
-                </p>
                 <progress
                   aria-label="Question progress"
                   value={position + 1}
@@ -707,7 +709,7 @@ export function GrammarExercise() {
                       {["word_formation", "fill_blank"].includes(
                         q.exerciseType,
                       ) ? (
-                        <input
+                        <Input
                           id="dynamic-answer"
                           autoComplete="off"
                           value={answer}
@@ -723,7 +725,8 @@ export function GrammarExercise() {
                           }
                         />
                       ) : (
-                        <textarea
+                        <Textarea
+                          className="field-sizing-fixed"
                           id="dynamic-answer"
                           rows={3}
                           value={answer}
@@ -854,10 +857,10 @@ export function GrammarExercise() {
               </PracticePanel>
               <PracticePanel
                 role="complementary"
+                title="Câu hỏi"
                 className="question-navigator"
                 aria-label="Điều hướng câu hỏi"
               >
-                <h2>Câu hỏi</h2>
                 <p>
                   {answered}/{visibleQuestions.length} đã trả lời
                 </p>
@@ -973,33 +976,35 @@ export function GrammarExercise() {
           )}
         </>
       )}
-      <details className="panel practice-history">
-        <summary>Bài luyện đã lưu ({saved.length})</summary>
-        <h2>Lịch sử bài luyện</h2>
-        <p>
-          Bài làm tự động lưu trên trình duyệt này. Chọn một bài để tiếp tục;
-          lịch sử cũ luôn được giữ.
-        </p>
-        {saved.length === 0 ? (
-          <p>No generated sessions yet.</p>
-        ) : (
-          <div className="saved-sessions">
-            {saved.map((s) => (
-              <Button
-                type="button"
-                key={s.sessionId}
-                variant="outline"
-                disabled={grading || moving || generating || creating}
-                onClick={() => void resume(s.sessionId)}
-              >
-                {new Date(s.createdAt).toLocaleDateString()} ·{" "}
-                {s.settings.difficulty} · {s.settings.questionCount} questions ·{" "}
-                {Object.keys(s.results).length} evaluated
-              </Button>
-            ))}
-          </div>
-        )}
-      </details>
+      <PracticePanel>
+        <details className="practice-history">
+          <summary>Bài luyện đã lưu ({saved.length})</summary>
+          <h2>Lịch sử bài luyện</h2>
+          <p>
+            Bài làm tự động lưu trên trình duyệt này. Chọn một bài để tiếp tục;
+            lịch sử cũ luôn được giữ.
+          </p>
+          {saved.length === 0 ? (
+            <p>No generated sessions yet.</p>
+          ) : (
+            <div className="saved-sessions">
+              {saved.map((s) => (
+                <Button
+                  type="button"
+                  key={s.sessionId}
+                  variant="outline"
+                  disabled={grading || moving || generating || creating}
+                  onClick={() => void resume(s.sessionId)}
+                >
+                  {new Date(s.createdAt).toLocaleDateString()} ·{" "}
+                  {s.settings.difficulty} · {s.settings.questionCount} questions
+                  · {Object.keys(s.results).length} evaluated
+                </Button>
+              ))}
+            </div>
+          )}
+        </details>
+      </PracticePanel>
     </div>
   );
 }

@@ -9,6 +9,13 @@ test("Pages serves the four-skill workspace and redirects old theory deep links"
     page.getByRole("heading", { name: "Hôm nay bạn muốn luyện gì?" }),
   ).toBeVisible();
   await expect(page.locator(".home-skill-link")).toHaveCount(4);
+  const currentUrl = page.url();
+  await page
+    .getByRole("link", { name: "Đến nội dung chính", exact: true })
+    .focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(currentUrl);
+  await expect(page.locator("#practice-content")).toBeFocused();
   await page.goto("/ielts/#/learn/sentence-foundations-01");
   await expect(page).toHaveURL(/#\/grammar$/);
   await expect(
