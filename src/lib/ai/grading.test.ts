@@ -286,7 +286,7 @@ it("computes score with pending excluded, keeps retries and includes attempts in
     })),
   );
   const backup = await exportBackup();
-  expect(backup.version).toBe(5);
+  expect(backup.version).toBe(6);
   expect(backup.aiAttempts).toHaveLength(4);
   await importBackup(backup);
   expect(await db.aiAttempts.count()).toBe(4);

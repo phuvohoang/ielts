@@ -1,3 +1,4 @@
+import { saveAssessment } from "../writing/persistence";
 import {
   publicExerciseSchema,
   practiceResultSchema,
@@ -42,6 +43,17 @@ export async function gradePractice(record: PracticeRecord) {
     JSON.stringify(Object.entries(record.answers).sort())
   )
     throw Error("Phản hồi không khớp bài đã nộp.");
+  if (result.writingAssessment) {
+    const a = result.writingAssessment;
+    if (
+      a.id !== record.id ||
+      a.originalEssay !== record.answers.writing ||
+      a.prompt !== record.exercise.writingPrompt ||
+      a.task !== record.exercise.settings.task
+    )
+      throw Error("Assessment không khớp bài viết.");
+    await saveAssessment(a);
+  }
   return result;
 }
 export async function loadAudio(record: PracticeRecord) {

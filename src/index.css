@@ -1012,3 +1012,75 @@ progress::-moz-progress-bar {
     scroll-behavior: auto !important;
   }
 }
+.writing-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.writing-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.writing-criteria {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.writing-criteria section {
+  display: grid;
+  gap: 8px;
+}
+.writing-criteria strong {
+  font-size: 24px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.writing-criteria p {
+  color: var(--muted-foreground);
+}
+.writing-stack label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+.writing-issue {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  min-width: 0;
+}
+.essay-text {
+  font-family: inherit;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  margin: 0;
+}
+.writing-issue blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 12px;
+}
+.writing-tabs-scroll {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+.writing-review-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+@media (max-width: 600px) {
+  .writing-criteria {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

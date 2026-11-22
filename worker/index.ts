@@ -1,3 +1,8 @@
+import {
+  essayInputSchema,
+  exerciseRequestSchema,
+  reviewSubmissionSchema,
+} from "../src/lib/writing/schema";
 import { z } from "zod";
 import { batchSchema } from "../src/lib/ai/schema";
 import { exerciseById } from "../src/lib/ai/content";
@@ -45,6 +50,9 @@ export default {
         "/api/practice/generate",
         "/api/practice/grade",
         "/api/practice/audio",
+        "/api/writing/assess",
+        "/api/writing/exercise",
+        "/api/writing/grade",
       ].includes(path)
     )
       return send({ error: "Not found" }, 404);
@@ -63,7 +71,11 @@ export default {
         () =>
           readBody(
             request,
-            path === "/api/grammar/submit-exam" ? 640000 : 32000,
+            path === "/api/grammar/submit-exam"
+              ? 640000
+              : path.startsWith("/api/writing/")
+                ? 128000
+                : 32000,
           ),
         3000,
       );
@@ -72,6 +84,62 @@ export default {
         { error: "Invalid or oversized request" },
         e instanceof Error && e.message === "large" ? 413 : 400,
       );
+    }
+    if (path.startsWith("/api/writing/")) {
+      if (!env.SESSIONS || !env.GENERATE_LIMIT)
+        return send({ error: "Writing unavailable" }, 503);
+      try {
+        const op = path.split("/").at(-1)!;
+        const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+        if (
+          !(
+            await (
+              op === "exercise" ? env.GENERATE_LIMIT : env.GRADE_LIMIT
+            ).limit({ key: ip })
+          ).success ||
+          !(await env.GLOBAL_LIMIT.limit({ key: "ielts-grammar" })).success
+        )
+          return send(
+            { error: "Yêu cầu quá nhanh. Thử lại sau một phút." },
+            429,
+          );
+        const parsed = (
+          op === "assess"
+            ? essayInputSchema
+            : op === "exercise"
+              ? exerciseRequestSchema
+              : reviewSubmissionSchema
+        ).parse(raw);
+        const id =
+          "essayId" in parsed
+            ? parsed.essayId
+            : "id" in parsed
+              ? parsed.id
+              : crypto.randomUUID();
+        const response = await env.SESSIONS.get(
+          env.SESSIONS.idFromName(`writing:${id}`),
+        ).fetch(
+          new Request(`https://session/writing/${op}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Session-Id": id },
+            body: JSON.stringify(parsed),
+          }),
+        );
+        return new Response(response.body, {
+          status: response.status,
+          headers: { ...headers, "Content-Type": "application/json" },
+        });
+      } catch (e) {
+        return send(
+          {
+            error:
+              e instanceof z.ZodError
+                ? "Dữ liệu Writing không hợp lệ."
+                : "Writing chưa sẵn sàng. Bài làm vẫn được giữ.",
+          },
+          e instanceof z.ZodError ? 400 : 503,
+        );
+      }
     }
     if (path.startsWith("/api/practice/")) {
       if (!env.SESSIONS || !env.GENERATE_LIMIT)

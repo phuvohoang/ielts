@@ -19,6 +19,7 @@ export interface Env {
   AI_PROVIDER?: "cloudflare" | "gemini";
   GEMINI_API_KEY?: string;
   GEMINI_MODEL?: string;
+  GEMINI_WRITING_MODEL?: string;
   GEMINI_GENERATION_MODEL?: string;
   GEMINI_TTS_MODEL?: string;
   AI_PRACTICE_ONLY?: string;
