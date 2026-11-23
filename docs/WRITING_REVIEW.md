@@ -18,7 +18,7 @@ Task 1 uses Task Achievement; Task 2 uses Task Response. Both also estimate Cohe
 
 The original prompt and essay retain exact whitespace and wording. Issue quotes must match the original occurrence and position. Fabricated quotes, no-op corrections and originals explicitly listed as acceptable are quarantined. Style suggestions and missing task requirements are separate from genuine errors. Low-confidence issues cannot enter the learning bank. Learners may edit corrections/explanations or dismiss errors; original evidence is immutable.
 
-Patterns deduplicate by category plus canonical rule ID (including known aliases), not literal sentence. Explicit merging keeps source essays/evidence and conservatively resets mastery. This is not embedding-based semantic deduplication: unfamiliar synonymous IDs may require manual merging. AI can miss errors or misclassify acceptable English; review before accepting. The structured response permits up to 80 issues, not a guarantee of exhaustive detection.
+Patterns deduplicate by category plus canonical rule ID (including known aliases), not literal sentence. Explicit merging keeps source essays/evidence and conservatively resets mastery. Future accepted errors for a merged rule follow its destination (including later merges), so they add evidence to the active pattern and reopen mastery when needed. Self-merges and broken/cyclic merge links are rejected without changing evidence. This is not embedding-based semantic deduplication: unfamiliar synonymous IDs may require manual merging. AI can miss errors or misclassify acceptable English; review before accepting. The structured response permits up to 80 issues, not a guarantee of exhaustive detection.
 
 ## Review schedule
 

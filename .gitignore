@@ -31,3 +31,11 @@ dist-ssr
 .wrangler/
 .dev.vars
 .dev.vars.*
+
+# Local source documents, renders and extraction work (never ship textbooks)
+/tmp/
+/reference-books/
+*.pdf
+playwright.local.config.ts
+__pycache__/
+*.pyc

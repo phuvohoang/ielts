@@ -166,7 +166,7 @@ it("merges source evidence conservatively and preserves all review tables in bac
   expect((await db.writingPatterns.get(q.id))?.evidenceIds).toHaveLength(2);
   expect((await db.writingPatterns.get(p.id))?.status).toBe("merged");
   const backup = await exportBackup();
-  expect(backup.version).toBe(6);
+  expect(backup.version).toBe(7);
   await db.writingPatterns.clear();
   await importBackup(backup);
   expect(await db.writingPatterns.count()).toBe(2);
@@ -182,4 +182,51 @@ it("keeps clean essays compatible with existing Writing results without inventin
   const a = parseAssessment(input(), raw, now);
   expect(a.issues).toHaveLength(0);
   expect(writingGradeSchema.safeParse({taskResponse: 7, coherence: 7, vocabulary: 7, grammar: 7, feedbackVi: a.summaryVi, strengthsVi: [], improvementsVi: [], corrections: [], confidence: .9}).success).toBe(true);
+});
+
+
+it("routes recurring merged rules through later merges without recreating source patterns", async () => {
+  const essays = [assessment(), assessment(), assessment()];
+  essays.forEach((a, i) => { a.issues[0].ruleId = `merge_rule_${i}`; });
+  for (const a of essays) {
+    await saveAssessment(a);
+    await decideIssue(a.id, a.issues[0].id, "accepted", undefined, now);
+  }
+  const [source, middle, target] = await db.writingPatterns.orderBy("key").toArray();
+  await expect(mergePatterns(source.id, source.id, now)).rejects.toThrow();
+  expect((await db.writingPatterns.get(source.id))?.status).toBe("learning");
+  await mergePatterns(source.id, middle.id, now);
+  await mergePatterns(middle.id, target.id, now);
+  await db.writingPatterns.update(target.id, {
+    status: "mastered", streak: 5, freeWritingPassed: true,
+    successfulContexts: ["a", "b", "c"], successfulDays: ["2026-01-01", "2026-01-02"],
+  });
+  const recurring = assessment();
+  recurring.issues[0].ruleId = source.ruleId;
+  await saveAssessment(recurring);
+  await decideIssue(recurring.id, recurring.issues[0].id, "accepted", undefined, now + day);
+  expect(await db.writingPatterns.count()).toBe(3);
+  expect((await db.writingPatterns.get(source.id))?.status).toBe("merged");
+  const result = (await db.writingPatterns.get(target.id))!;
+  expect(result.evidenceIds).toHaveLength(4);
+  expect(result.essayIds).toHaveLength(4);
+  expect(result.status).toBe("learning");
+  expect(result.freeWritingPassed).toBe(false);
+  expect(result.dueAt).toBe(now + 2 * day);
+  expect((await db.writingAssessments.get(recurring.id))?.issues[0].patternId).toBe(target.id);
+});
+
+it("rolls back acceptance when a merged destination is missing or cyclic", async () => {
+  const a = assessment();
+  await saveAssessment(a);
+  await decideIssue(a.id, a.issues[0].id, "accepted", undefined, now);
+  const p = (await db.writingPatterns.toArray())[0];
+  const b = assessment();
+  await saveAssessment(b);
+  for (const mergedInto of ["missing-pattern", p.id]) {
+    await db.writingPatterns.update(p.id, { status: "merged", mergedInto });
+    await expect(decideIssue(b.id, b.issues[0].id, "accepted", undefined, now)).rejects.toThrow();
+    expect((await db.writingAssessments.get(b.id))?.issues[0].status).toBe("pending");
+    expect((await db.writingPatterns.get(p.id))?.evidenceIds).toEqual([a.issues[0].id]);
+  }
 });

@@ -1,4 +1,8 @@
 import {
+  generateRequestSchema,
+  submissionSchema as curriculumSubmissionSchema,
+} from "../src/lib/curriculum/schema";
+import {
   essayInputSchema,
   exerciseRequestSchema,
   reviewSubmissionSchema,
@@ -53,6 +57,8 @@ export default {
         "/api/writing/assess",
         "/api/writing/exercise",
         "/api/writing/grade",
+        "/api/curriculum/generate",
+        "/api/curriculum/grade",
       ].includes(path)
     )
       return send({ error: "Not found" }, 404);
@@ -84,6 +90,48 @@ export default {
         { error: "Invalid or oversized request" },
         e instanceof Error && e.message === "large" ? 413 : 400,
       );
+    }
+    if (path.startsWith("/api/curriculum/")) {
+      if (!env.SESSIONS || !env.GENERATE_LIMIT)
+        return send({ error: "Curriculum unavailable" }, 503);
+      try {
+        const op = path.split("/").at(-1)!;
+        const parsed = (
+          op === "generate" ? generateRequestSchema : curriculumSubmissionSchema
+        ).parse(raw);
+        const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+        if (
+          !(
+            await (
+              op === "generate" ? env.GENERATE_LIMIT : env.GRADE_LIMIT
+            ).limit({ key: ip })
+          ).success ||
+          !(await env.GLOBAL_LIMIT.limit({ key: "ielts-grammar" })).success
+        )
+          return send(
+            { error: "Yêu cầu quá nhanh. Thử lại sau một phút." },
+            429,
+          );
+        const id = "id" in parsed ? parsed.id : crypto.randomUUID();
+        const response = await env.SESSIONS.get(
+          env.SESSIONS.idFromName(`curriculum:${id}`),
+        ).fetch(
+          new Request(`https://session/curriculum/${op}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Session-Id": id },
+            body: JSON.stringify(parsed),
+          }),
+        );
+        return new Response(response.body, {
+          status: response.status,
+          headers: { ...headers, "Content-Type": "application/json" },
+        });
+      } catch (e) {
+        return send(
+          { error: "Dữ liệu hoặc dịch vụ bài học chưa sẵn sàng." },
+          e instanceof z.ZodError ? 400 : 503,
+        );
+      }
     }
     if (path.startsWith("/api/writing/")) {
       if (!env.SESSIONS || !env.GENERATE_LIMIT)

@@ -66,11 +66,16 @@ export async function decideIssue(
         )
           throw Error("Cách diễn đạt gốc đã hợp lệ; hãy bỏ qua đề xuất này.");
         const key = patternKey(next.category, next.ruleId);
-        const old = await db.writingPatterns
-          .where("key")
-          .equals(key)
-          .filter((p) => p.status !== "merged")
-          .first();
+        let old = await db.writingPatterns.where("key").equals(key).first();
+        // A merged rule remains an alias of its destination, including later merges.
+        const visited = new Set<string>();
+        while (old?.status === "merged") {
+          if (visited.has(old.id) || !old.mergedInto)
+            throw Error("Liên kết mẫu đã gộp không hợp lệ.");
+          visited.add(old.id);
+          old = await db.writingPatterns.get(old.mergedInto);
+          if (!old) throw Error("Không tìm thấy mẫu đích đã gộp.");
+        }
         const recurring = old?.status === "mastered";
         const pattern: Pattern = old
           ? {

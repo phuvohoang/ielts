@@ -1,3 +1,4 @@
+import { handleCurriculum } from "./curriculum";
 import { handleWriting } from "./writing";
 import { isChoiceFormat } from "../src/lib/ai/dynamic/topics";
 import { generateBatch } from "./generation";
@@ -152,6 +153,13 @@ export class GrammarSessions {
     await this.storage.deleteAll();
   }
   async fetch(request: Request): Promise<Response> {
+    if (new URL(request.url).pathname.startsWith("/curriculum/")) {
+      const work = this.queue.then(() =>
+        handleCurriculum(request, this.env, this.storage),
+      );
+      this.queue = work.catch(() => undefined);
+      return work;
+    }
     if (new URL(request.url).pathname.startsWith("/writing/")) {
       const work = this.queue.then(() =>
         handleWriting(request, this.env, this.storage),
