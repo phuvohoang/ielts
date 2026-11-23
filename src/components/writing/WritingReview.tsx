@@ -1,4 +1,3 @@
-import { knowledge } from "../../lib/curriculum/catalog";
 // Clock reads below are for due-date/expiry decisions and persisted review timestamps.
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -215,8 +214,7 @@ export function WritingReview() {
                       <p>
                         Lịch ôn theo chuỗi 1, 3, 7, 14, 30, 60 ngày. Trả lời sai
                         quay lại 1 ngày; phản hồi chưa chắc chắn không thay đổi
-                        mức học. Luyện trước hạn được lưu nhưng không tăng lịch
-                        ôn hay mastery.
+                        mức học. Luyện trước hạn được lưu nhưng không tăng lịch ôn hay mastery.
                       </p>
                     </PracticePanel>
                   ) : (
@@ -248,9 +246,7 @@ export function WritingReview() {
                             all={patterns}
                             busy={busy}
                             selectedLevel={selectedLevels.current[pattern.id]}
-                            onLevelChange={(level) => {
-                              selectedLevels.current[pattern.id] = level;
-                            }}
+                            onLevelChange={(level) => { selectedLevels.current[pattern.id] = level; }}
                             onStart={start}
                             onRefresh={load}
                           />
@@ -313,9 +309,7 @@ function PatternCard({
   onStart: (p: Pattern, level: number) => Promise<void>;
   onRefresh: () => Promise<void>;
 }) {
-  const [level, setLevel] = useState(
-      selectedLevel ?? Math.min(pattern.streak + 1, 4),
-    ),
+  const [level, setLevel] = useState(selectedLevel ?? Math.min(pattern.streak + 1, 4)),
     [merge, setMerge] = useState(""),
     [error, setError] = useState("");
   return (
@@ -336,17 +330,6 @@ function PatternCard({
         </span>
       </div>
       <p>{pattern.explanationVi}</p>
-      {knowledge
-        .filter(
-          (k) => k.kind === "grammar" && k.ruleIds.includes(pattern.ruleId),
-        )
-        .map((k) => (
-          <p key={k.id}>
-            <Link to={`/curriculum?pattern=${k.id}`}>
-              Học mẫu đã đối chiếu: {k.title}
-            </Link>
-          </p>
-        ))}
       <details>
         <summary>
           {pattern.evidenceIds.length} ví dụ gốc · {pattern.essayIds.length} bài
@@ -371,11 +354,7 @@ function PatternCard({
           aria-label={`Cấp độ ${pattern.id}`}
           value={level}
           disabled={busy}
-          onChange={(e) => {
-            const next = Number(e.target.value);
-            setLevel(next);
-            onLevelChange(next);
-          }}
+          onChange={(e) => { const next = Number(e.target.value); setLevel(next); onLevelChange(next); }}
         >
           {levels.map((name, i) => (
             <option key={name} value={i + 1}>

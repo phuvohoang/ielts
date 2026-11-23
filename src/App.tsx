@@ -1,4 +1,3 @@
-import { Curriculum } from "./components/curriculum/Curriculum";
 import { WritingAssessment } from "./components/writing/WritingAssessment";
 import { WritingReview } from "./components/writing/WritingReview";
 import { Input } from "./components/ui/input";
@@ -119,7 +118,6 @@ const routeNames: Record<string, string> = {
   "/writing": "Luyện viết",
   "/writing-assessment": "Writing Assessment",
   "/writing-review": "Writing Review",
-  "/curriculum": "Books & Curriculum",
   "/grammar": "Ngữ pháp",
   "/history": "Lịch sử bài làm",
   "/settings": "Cài đặt",
@@ -204,11 +202,6 @@ function PracticeShell() {
             <SidebarGroupLabel>Bài làm của bạn</SidebarGroupLabel>
             <SidebarMenu>
               {[
-                {
-                  path: "/curriculum",
-                  label: "Books & Curriculum",
-                  icon: BookOpen,
-                },
                 {
                   path: "/writing-review",
                   label: "Writing Review",
@@ -304,7 +297,6 @@ function PracticeShell() {
                 path="/writing-assessment"
                 element={<WritingAssessment />}
               />
-              <Route path="/curriculum" element={<Curriculum />} />
               <Route path="/writing-review" element={<WritingReview />} />
               <Route path="/grammar" element={<GrammarExercise />} />
               <Route path="/history" element={<PracticeHistory />} />
@@ -711,8 +703,8 @@ function Settings() {
         </label>
         <p role="status">{message}</p>
         <p>
-          Luyện Nghe, Đọc, Viết và Ngữ pháp; Books & Curriculum có các bài học
-          đã đối chiếu nguồn.
+          Bốn kỹ năng: Nghe, Đọc, Viết và Ngữ pháp. Không có bài học lý thuyết
+          hay điều kiện mở khoá.
         </p>
         <p>
           Âm thanh đã tải được lưu trên thiết bị này; bản sao lưu JSON chứa bài

@@ -1,8 +1,4 @@
 import {
-  curriculumRunSchema,
-  curriculumProgressSchema,
-} from "./curriculum/schema";
-import {
   assessmentSchema,
   patternSchema,
   reviewExerciseSchema,
@@ -78,8 +74,6 @@ class LearningDB extends Dexie {
   writingExercises!: Table<ReviewExercise, string>;
   writingOutcomes!: Table<ReviewOutcome, string>;
   writingDrafts!: Table<z.infer<typeof writingDraftSchema>, string>;
-  curriculumRuns!: Table<z.infer<typeof curriculumRunSchema>, string>;
-  curriculumProgress!: Table<z.infer<typeof curriculumProgressSchema>, string>;
   constructor() {
     super("ielts-grammar-mastery");
     this.version(1).stores({
@@ -99,10 +93,6 @@ class LearningDB extends Dexie {
       writingExercises: "id,patternId,level,createdAt",
       writingOutcomes: "id,patternId,exerciseId,date",
       writingDrafts: "id,updatedAt",
-    });
-    this.version(7).stores({
-      curriculumRuns: "id,unitId,updatedAt",
-      curriculumProgress: "id,dueAt",
     });
     this.version(5).stores({
       practiceRuns: "id,updatedAt,date",
@@ -140,10 +130,7 @@ export const backupSchema = z.union([
         z.literal(4),
         z.literal(5),
         z.literal(6),
-        z.literal(7),
       ]),
-      curriculumRuns: z.array(curriculumRunSchema).optional(),
-      curriculumProgress: z.array(curriculumProgressSchema).optional(),
       writingAssessments: z.array(assessmentSchema).optional(),
       writingPatterns: z.array(patternSchema).optional(),
       writingExercises: z.array(reviewExerciseSchema).optional(),
@@ -160,7 +147,7 @@ export const backupSchema = z.union([
     })
     .refine(
       (b) =>
-        b.version < 6 ||
+        b.version !== 6 ||
         [
           b.writingAssessments,
           b.writingPatterns,
@@ -171,28 +158,18 @@ export const backupSchema = z.union([
       "Version 6 requires writing review tables",
     )
     .refine(
-      (b) =>
-        b.version !== 7 ||
-        (b.curriculumRuns !== undefined && b.curriculumProgress !== undefined),
-      "Version 7 requires curriculum tables",
-    )
-    .refine(
       (b) => b.version === 2 || b.aiAttempts !== undefined,
       "Version 3 and later require AI attempts",
     )
     .refine(
       (b) =>
-        (b.version !== 4 &&
-          b.version !== 5 &&
-          b.version !== 6 &&
-          b.version !== 7) ||
+        (b.version !== 4 && b.version !== 5 && b.version !== 6) ||
         b.practiceSessions !== undefined,
       "Version 4 requires generated sessions",
     )
     .refine(
       (b) =>
-        (b.version !== 5 && b.version !== 6 && b.version !== 7) ||
-        b.practiceRuns !== undefined,
+        (b.version !== 5 && b.version !== 6) || b.practiceRuns !== undefined,
       "Version 5 requires AI skill practice",
     )
     .refine(
@@ -228,13 +205,9 @@ export async function exportBackup() {
       db.writingExercises,
       db.writingOutcomes,
       db.writingDrafts,
-      db.curriculumRuns,
-      db.curriculumProgress,
     ],
     async () => ({
-      version: 7 as const,
-      curriculumRuns: await db.curriculumRuns.toArray(),
-      curriculumProgress: await db.curriculumProgress.toArray(),
+      version: 6 as const,
       writingAssessments: await db.writingAssessments.toArray(),
       writingPatterns: await db.writingPatterns.toArray(),
       writingExercises: await db.writingExercises.toArray(),
@@ -269,17 +242,9 @@ export async function importBackup(input: unknown) {
       db.writingExercises,
       db.writingOutcomes,
       db.writingDrafts,
-      db.curriculumRuns,
-      db.curriculumProgress,
     ],
     async () => {
-      if (b.version === 7) {
-        await db.curriculumRuns.clear();
-        await db.curriculumProgress.clear();
-        await db.curriculumRuns.bulkAdd(b.curriculumRuns ?? []);
-        await db.curriculumProgress.bulkAdd(b.curriculumProgress ?? []);
-      }
-      if (b.version === 6 || b.version === 7) {
+      if (b.version === 6) {
         await Promise.all([
           db.writingAssessments.clear(),
           db.writingPatterns.clear(),
@@ -307,8 +272,7 @@ export async function importBackup(input: unknown) {
         b.version === 3 ||
         b.version === 4 ||
         b.version === 5 ||
-        b.version === 6 ||
-        b.version === 7
+        b.version === 6
       ) {
         await db.lessons.clear();
         await db.checks.clear();
@@ -318,21 +282,15 @@ export async function importBackup(input: unknown) {
           b.version === 3 ||
           b.version === 4 ||
           b.version === 5 ||
-          b.version === 6 ||
-          b.version === 7
+          b.version === 6
         ) {
           await db.aiAttempts.clear();
           await db.aiAttempts.bulkAdd(b.aiAttempts ?? []);
         }
-        if (
-          b.version === 4 ||
-          b.version === 5 ||
-          b.version === 6 ||
-          b.version === 7
-        ) {
+        if (b.version === 4 || b.version === 5 || b.version === 6) {
           await db.practiceSessions.clear();
           await db.practiceSessions.bulkAdd(b.practiceSessions ?? []);
-          if (b.version === 5 || b.version === 6 || b.version === 7) {
+          if (b.version === 5 || b.version === 6) {
             await db.practiceRuns.clear();
             await db.practiceRuns.bulkAdd(b.practiceRuns ?? []);
           }

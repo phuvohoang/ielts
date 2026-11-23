@@ -166,7 +166,7 @@ it("merges source evidence conservatively and preserves all review tables in bac
   expect((await db.writingPatterns.get(q.id))?.evidenceIds).toHaveLength(2);
   expect((await db.writingPatterns.get(p.id))?.status).toBe("merged");
   const backup = await exportBackup();
-  expect(backup.version).toBe(7);
+  expect(backup.version).toBe(6);
   await db.writingPatterns.clear();
   await importBackup(backup);
   expect(await db.writingPatterns.count()).toBe(2);
