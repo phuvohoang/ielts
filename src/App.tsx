@@ -1,3 +1,4 @@
+import { PresentTensesLesson } from "./components/lessons/PresentTensesLesson";
 import { WritingAssessment } from "./components/writing/WritingAssessment";
 import { WritingReview } from "./components/writing/WritingReview";
 import { Input } from "./components/ui/input";
@@ -119,6 +120,7 @@ const routeNames: Record<string, string> = {
   "/writing-assessment": "Writing Assessment",
   "/writing-review": "Writing Review",
   "/grammar": "Ngữ pháp",
+  "/grammar/lessons/present-tenses": "G01 · Thói quen và thay đổi hiện tại",
   "/history": "Lịch sử bài làm",
   "/settings": "Cài đặt",
 };
@@ -299,6 +301,7 @@ function PracticeShell() {
               />
               <Route path="/writing-review" element={<WritingReview />} />
               <Route path="/grammar" element={<GrammarExercise />} />
+              <Route path="/grammar/lessons/present-tenses" element={<PresentTensesLesson />} />
               <Route path="/history" element={<PracticeHistory />} />
               <Route path="/settings" element={<Settings />} />
               {[

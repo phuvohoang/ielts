@@ -1,3 +1,5 @@
+// Clock reads persist session timestamps and check expiry; never used for render keys or animation.
+import { Link, useSearchParams } from "react-router-dom";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 // Date.now() below preserves existing saved-run timestamps and server expiry checks.
@@ -48,9 +50,10 @@ const labels = {
   needs_review: "Needs review",
 };
 export function GrammarExercise() {
+  const [params] = useSearchParams();
   const [resultScreen, setResultScreen] = useState(false);
   const [reviewIds, setReviewIds] = useState<string[] | undefined>();
-  const [settings, setSettings] = useState<Settings>(initial),
+  const [settings, setSettings] = useState<Settings>(() => params.get("lesson") === "g01-present-tenses" ? { ...initial, lessonId: "g01-present-tenses", topics: ["verb-tenses"], subtopics: { "verb-tenses": "Present simple and continuous" }, questionCount: 10, difficulty: "B1", exerciseType: "error_correction" } : initial),
     [loaded, setLoaded] = useState(false);
   const [session, setSession] = useState<PracticeSession>(),
     [saved, setSaved] = useState<PracticeSession[]>([]),
@@ -444,7 +447,9 @@ export function GrammarExercise() {
         <h1>IELTS Grammar Practice</h1>
         <p>Tự viết câu trả lời. Nhận góp ý cụ thể. Luyện lại chỗ chưa vững.</p>
       </div>
-      {!session && (
+      <p><Link to="/grammar/lessons/present-tenses">Học G01 · Thói quen và thay đổi hiện tại — 25 bài tập có giải thích</Link></p>
+      {!session && settings.lessonId && <PracticePanel title="Luyện bổ sung G01" description="10 câu sửa lỗi, bám sát bài đã học."><p>Thói quen, hoàn cảnh tạm thời và động từ trạng thái; chỉ sinh câu từ các quy tắc đã biên soạn của G01.</p><Button type="button" disabled={!loaded || creating || generating} onClick={() => void start()}>Tạo 10 câu theo G01</Button><Button asChild variant="outline"><Link to="/grammar/lessons/present-tenses">Về bài học</Link></Button></PracticePanel>}
+      {!session && !settings.lessonId && (
         <SessionBuilder
           settings={settings}
           setSettings={setSettings}

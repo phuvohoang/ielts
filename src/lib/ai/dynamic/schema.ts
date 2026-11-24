@@ -11,6 +11,7 @@ import {
 const text = z.string().trim().min(1).max(1200);
 export const settingsSchema = z
   .object({
+    lessonId: z.literal("g01-present-tenses").optional(),
     topics: z
       .array(z.string().max(80))
       .min(1)
@@ -41,6 +42,18 @@ export function validateSettings(
     !ieltsTopics.some((t) => t.id === value.ieltsTopic)
   )
     throw new UnsupportedSettingsError("Unsupported IELTS topic");
+  if (
+    value.lessonId &&
+    (value.topics.length !== 1 ||
+      value.topics[0] !== "verb-tenses" ||
+      value.subtopics?.["verb-tenses"] !== "Present simple and continuous" ||
+      value.questionCount !== 10 ||
+      value.difficulty !== "B1" ||
+      value.exerciseType !== "error_correction")
+  )
+    throw new UnsupportedSettingsError(
+      "Lesson practice must match G01 objectives and format",
+    );
   const selected = value.topics.includes("all")
     ? registry
         .filter(

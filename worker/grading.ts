@@ -161,7 +161,8 @@ function parseReport(
       ...feedback,
       status,
       feedbackVi:
-        (q.lessonId.startsWith("dynamic:") &&
+        ((q.lessonId.startsWith("dynamic:") ||
+          q.lessonId === "g01-present-tenses") &&
         status !== "correct" &&
         status !== "needs_review"
           ? feedback.feedbackVi
@@ -175,7 +176,8 @@ function parseReport(
                 .map((key) => notes[key])
                 .join(" ")),
       explanationVi:
-        (q.lessonId.startsWith("dynamic:") &&
+        ((q.lessonId.startsWith("dynamic:") ||
+          q.lessonId === "g01-present-tenses") &&
         (feedback.explanationVi?.length ?? 0) >= 20
           ? feedback.explanationVi
           : undefined) || q.explanation,
@@ -245,7 +247,7 @@ export async function infer(
                       : system) +
                     reviewInstructions +
                     (env.AI_CRITERIA_GRADING === "true"
-                      ? " Return criterion assessments and corrections, not a status, feedback or explanation. Use uncertain for any unresolved criterion."
+                      ? " Return criterion assessments, corrections, feedbackVi and explanationVi; do not return a status or score. Use uncertain for any unresolved criterion."
                       : ""),
               },
               {
