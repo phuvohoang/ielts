@@ -1,3 +1,4 @@
+import { assessmentSchema } from "../writing/schema";
 import { z } from "zod";
 export const skillSchema = z.enum(["listening", "reading", "writing"]);
 export type Skill = z.infer<typeof skillSchema>;
@@ -63,7 +64,7 @@ export type PublicExercise = z.infer<typeof publicExerciseSchema>;
 export const practiceSubmissionSchema = practiceIdentitySchema
   .pick({ id: true, token: true })
   .extend({
-    answers: z.record(z.string(), z.string().trim().max(8000)),
+    answers: z.record(z.string(), z.string().max(8000)),
   })
   .strict();
 export const itemGradeSchema = z
@@ -81,8 +82,8 @@ export const writingGradeSchema = z
     vocabulary: z.number().min(0).max(9),
     grammar: z.number().min(0).max(9),
     feedbackVi: text.max(2400),
-    strengthsVi: z.array(text.max(500)).min(1).max(4),
-    improvementsVi: z.array(text.max(600)).min(1).max(5),
+    strengthsVi: z.array(text.max(500)).max(4),
+    improvementsVi: z.array(text.max(600)).max(5),
     corrections: z
       .array(
         z
@@ -102,6 +103,7 @@ export const practiceResultSchema = z.object({
   score: z.number().nullable(),
   maxScore: z.number(),
   writing: writingGradeSchema.nullable(),
+  writingAssessment: assessmentSchema.optional(),
   bandEstimate: z.number().nullable(),
   transcript: z.string().max(3500),
   reveals: z.array(privateItemSchema).max(5),

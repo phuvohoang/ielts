@@ -1,3 +1,4 @@
+import { handleWriting } from "./writing";
 import { isChoiceFormat } from "../src/lib/ai/dynamic/topics";
 import { generateBatch } from "./generation";
 import { handlePractice } from "./practice";
@@ -151,6 +152,13 @@ export class GrammarSessions {
     await this.storage.deleteAll();
   }
   async fetch(request: Request): Promise<Response> {
+    if (new URL(request.url).pathname.startsWith("/writing/")) {
+      const work = this.queue.then(() =>
+        handleWriting(request, this.env, this.storage),
+      );
+      this.queue = work.catch(() => undefined);
+      return work;
+    }
     if (new URL(request.url).pathname.startsWith("/skills/")) {
       const work = this.queue.then(() =>
         handlePractice(request, this.env, this.storage),

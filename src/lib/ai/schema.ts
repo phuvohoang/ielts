@@ -107,6 +107,8 @@ export function knownResult(
   q: Exercise,
   answer: string,
 ): GradeResult | undefined {
+  // Authored writing examples are illustrations, not proof of independent production.
+  if (q.lessonId === "g01-present-tenses" && q.type === "guided_writing") return;
   if (
     ![...q.referenceAnswers, ...q.acceptedVariants].some(
       (a) => normalizeAnswer(a) === normalizeAnswer(answer),

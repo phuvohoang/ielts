@@ -1,3 +1,6 @@
+import { PresentTensesLesson } from "./components/lessons/PresentTensesLesson";
+import { WritingAssessment } from "./components/writing/WritingAssessment";
+import { WritingReview } from "./components/writing/WritingReview";
 import { Input } from "./components/ui/input";
 import { Skeleton } from "./components/ui/skeleton";
 import { Alert, AlertDescription } from "./components/reui/alert";
@@ -114,7 +117,10 @@ const routeNames: Record<string, string> = {
   "/listening": "Luyện nghe",
   "/reading": "Luyện đọc",
   "/writing": "Luyện viết",
+  "/writing-assessment": "Writing Assessment",
+  "/writing-review": "Writing Review",
   "/grammar": "Ngữ pháp",
+  "/grammar/lessons/present-tenses": "G01 · Thói quen và thay đổi hiện tại",
   "/history": "Lịch sử bài làm",
   "/settings": "Cài đặt",
 };
@@ -198,6 +204,11 @@ function PracticeShell() {
             <SidebarGroupLabel>Bài làm của bạn</SidebarGroupLabel>
             <SidebarMenu>
               {[
+                {
+                  path: "/writing-review",
+                  label: "Writing Review",
+                  icon: PencilLine,
+                },
                 {
                   path: "/history",
                   label: "Lịch sử bài làm",
@@ -284,7 +295,13 @@ function PracticeShell() {
                 path="/writing"
                 element={<SkillPractice key="writing" skill="writing" />}
               />
+              <Route
+                path="/writing-assessment"
+                element={<WritingAssessment />}
+              />
+              <Route path="/writing-review" element={<WritingReview />} />
               <Route path="/grammar" element={<GrammarExercise />} />
+              <Route path="/grammar/lessons/present-tenses" element={<PresentTensesLesson />} />
               <Route path="/history" element={<PracticeHistory />} />
               <Route path="/settings" element={<Settings />} />
               {[

@@ -1,3 +1,5 @@
+import { AssessmentReport } from "../writing/AssessmentReport";
+import { Link } from "react-router-dom";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
 // Date.now() below preserves existing saved-run timestamps and server expiry checks.
@@ -189,7 +191,10 @@ export function SkillPractice({ skill }: { skill: Skill }) {
     const current = {
       ...live.current,
       answers: Object.fromEntries(
-        Object.entries(live.current.answers).map(([k, v]) => [k, v.trim()]),
+        Object.entries(live.current.answers).map(([k, v]) => [
+          k,
+          k === "writing" ? v : v.trim(),
+        ]),
       ),
       submitted: true,
       updatedAt: Date.now(),
@@ -238,6 +243,16 @@ export function SkillPractice({ skill }: { skill: Skill }) {
               : "Viết theo đề mới và nhận góp ý cụ thể cho bài của bạn."}
         </p>
       </div>
+      {skill === "writing" && (
+        <div className="writing-row">
+          <Button asChild variant="outline">
+            <Link to="/writing-assessment">Chấm bài viết có sẵn</Link>
+          </Button>
+          <Button asChild variant="ghost">
+            <Link to="/writing-review">Writing Review</Link>
+          </Button>
+        </div>
+      )}
       {!loaded && <PracticeLoading title="Đang đọc bài làm đã lưu…" />}
       {loaded && !record && (
         <PracticePanel
@@ -516,7 +531,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
               </form>
             </PracticePanel>
           </section>
-          {result && (
+          {result && !result.writingAssessment && (
             <PracticePanel
               className="skill-feedback"
               aria-label="Kết quả chấm AI"
@@ -620,6 +635,9 @@ export function SkillPractice({ skill }: { skill: Skill }) {
             </PracticePanel>
           )}
         </>
+      )}
+      {result?.writingAssessment && (
+        <AssessmentReport assessment={result.writingAssessment} />
       )}
       {history.length > 0 && (
         <PracticePanel>

@@ -1,3 +1,14 @@
+import {
+  assessmentSchema,
+  patternSchema,
+  reviewExerciseSchema,
+  outcomeSchema,
+  writingDraftSchema,
+  type Assessment,
+  type Pattern,
+  type ReviewExercise,
+  type ReviewOutcome,
+} from "./writing/schema";
 import { practiceRecordSchema, type PracticeRecord } from "./practice/schema";
 import { localSessionSchema, type PracticeSession } from "./ai/dynamic/schema";
 import {
@@ -58,6 +69,11 @@ class LearningDB extends Dexie {
   practiceSessions!: Table<PracticeSession, string>;
   practiceRuns!: Table<PracticeRecord, string>;
   practiceAudio!: Table<{ id: string; blob: Blob }, string>;
+  writingAssessments!: Table<Assessment, string>;
+  writingPatterns!: Table<Pattern, string>;
+  writingExercises!: Table<ReviewExercise, string>;
+  writingOutcomes!: Table<ReviewOutcome, string>;
+  writingDrafts!: Table<z.infer<typeof writingDraftSchema>, string>;
   constructor() {
     super("ielts-grammar-mastery");
     this.version(1).stores({
@@ -71,6 +87,13 @@ class LearningDB extends Dexie {
     });
     this.version(3).stores({ aiAttempts: "id,sessionId,exerciseId,date" });
     this.version(4).stores({ practiceSessions: "sessionId,updatedAt,status" });
+    this.version(6).stores({
+      writingAssessments: "id,createdAt",
+      writingPatterns: "id,key,status,dueAt,category",
+      writingExercises: "id,patternId,level,createdAt",
+      writingOutcomes: "id,patternId,exerciseId,date",
+      writingDrafts: "id,updatedAt",
+    });
     this.version(5).stores({
       practiceRuns: "id,updatedAt,date",
       practiceAudio: "id",
@@ -106,7 +129,13 @@ export const backupSchema = z.union([
         z.literal(3),
         z.literal(4),
         z.literal(5),
+        z.literal(6),
       ]),
+      writingAssessments: z.array(assessmentSchema).optional(),
+      writingPatterns: z.array(patternSchema).optional(),
+      writingExercises: z.array(reviewExerciseSchema).optional(),
+      writingOutcomes: z.array(outcomeSchema).optional(),
+      writingDrafts: z.array(writingDraftSchema).optional(),
       practiceSessions: z.array(localSessionSchema).optional(),
       practiceRuns: z.array(practiceRecordSchema).optional(),
       aiAttempts: z.array(aiAttemptSchema).optional(),
@@ -117,17 +146,30 @@ export const backupSchema = z.union([
       checks: z.array(checkSchema),
     })
     .refine(
+      (b) =>
+        b.version !== 6 ||
+        [
+          b.writingAssessments,
+          b.writingPatterns,
+          b.writingExercises,
+          b.writingOutcomes,
+          b.writingDrafts,
+        ].every((v) => v !== undefined),
+      "Version 6 requires writing review tables",
+    )
+    .refine(
       (b) => b.version === 2 || b.aiAttempts !== undefined,
       "Version 3 and later require AI attempts",
     )
     .refine(
       (b) =>
-        (b.version !== 4 && b.version !== 5) ||
+        (b.version !== 4 && b.version !== 5 && b.version !== 6) ||
         b.practiceSessions !== undefined,
       "Version 4 requires generated sessions",
     )
     .refine(
-      (b) => b.version !== 5 || b.practiceRuns !== undefined,
+      (b) =>
+        (b.version !== 5 && b.version !== 6) || b.practiceRuns !== undefined,
       "Version 5 requires AI skill practice",
     )
     .refine(
@@ -158,9 +200,19 @@ export async function exportBackup() {
       db.aiAttempts,
       db.practiceSessions,
       db.practiceRuns,
+      db.writingAssessments,
+      db.writingPatterns,
+      db.writingExercises,
+      db.writingOutcomes,
+      db.writingDrafts,
     ],
     async () => ({
-      version: 5 as const,
+      version: 6 as const,
+      writingAssessments: await db.writingAssessments.toArray(),
+      writingPatterns: await db.writingPatterns.toArray(),
+      writingExercises: await db.writingExercises.toArray(),
+      writingOutcomes: await db.writingOutcomes.toArray(),
+      writingDrafts: await db.writingDrafts.toArray(),
       practiceRuns: await db.practiceRuns.toArray(),
       practiceSessions: await db.practiceSessions.toArray(),
       aiAttempts: await db.aiAttempts.toArray(),
@@ -185,8 +237,27 @@ export async function importBackup(input: unknown) {
       db.aiAttempts,
       db.practiceSessions,
       db.practiceRuns,
+      db.writingAssessments,
+      db.writingPatterns,
+      db.writingExercises,
+      db.writingOutcomes,
+      db.writingDrafts,
     ],
     async () => {
+      if (b.version === 6) {
+        await Promise.all([
+          db.writingAssessments.clear(),
+          db.writingPatterns.clear(),
+          db.writingExercises.clear(),
+          db.writingOutcomes.clear(),
+          db.writingDrafts.clear(),
+        ]);
+        await db.writingAssessments.bulkAdd(b.writingAssessments ?? []);
+        await db.writingPatterns.bulkAdd(b.writingPatterns ?? []);
+        await db.writingExercises.bulkAdd(b.writingExercises ?? []);
+        await db.writingOutcomes.bulkAdd(b.writingOutcomes ?? []);
+        await db.writingDrafts.bulkAdd(b.writingDrafts ?? []);
+      }
       await Promise.all([
         db.attempts.clear(),
         db.progress.clear(),
@@ -200,20 +271,26 @@ export async function importBackup(input: unknown) {
         b.version === 2 ||
         b.version === 3 ||
         b.version === 4 ||
-        b.version === 5
+        b.version === 5 ||
+        b.version === 6
       ) {
         await db.lessons.clear();
         await db.checks.clear();
         await db.lessons.bulkAdd(b.lessons);
         await db.checks.bulkAdd(b.checks);
-        if (b.version === 3 || b.version === 4 || b.version === 5) {
+        if (
+          b.version === 3 ||
+          b.version === 4 ||
+          b.version === 5 ||
+          b.version === 6
+        ) {
           await db.aiAttempts.clear();
           await db.aiAttempts.bulkAdd(b.aiAttempts ?? []);
         }
-        if (b.version === 4 || b.version === 5) {
+        if (b.version === 4 || b.version === 5 || b.version === 6) {
           await db.practiceSessions.clear();
           await db.practiceSessions.bulkAdd(b.practiceSessions ?? []);
-          if (b.version === 5) {
+          if (b.version === 5 || b.version === 6) {
             await db.practiceRuns.clear();
             await db.practiceRuns.bulkAdd(b.practiceRuns ?? []);
           }

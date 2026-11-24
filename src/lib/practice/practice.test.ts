@@ -1,3 +1,4 @@
+import { assessmentFixture } from "../writing/test-support";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "fake-indexeddb/auto";
 import worker from "../../../worker/index";
@@ -12,7 +13,7 @@ import {
   authoringContentSchema,
 } from "../../../worker/practice";
 import { publicExerciseSchema, practiceRecordSchema } from "./schema";
-import { contentFixture, writingFixture, wavFixture } from "./test-support";
+import { contentFixture, wavFixture } from "./test-support";
 import { db, exportBackup, importBackup } from "../db";
 import { questionFixture } from "../ai/dynamic/test-support";
 class Storage {
@@ -43,8 +44,8 @@ function setup() {
           return { response: contentFixture(data.settings.skill) };
         case "skill_audit":
           return { response: { valid: true, reasons: [] } };
-        case "writing_grade":
-          return { response: writingFixture };
+        case "writing_assessment":
+          return { response: assessmentFixture() };
         case "comprehension_grade":
           return {
             response: {
@@ -240,7 +241,7 @@ describe("AI skill practice server and data", () => {
     });
     await db.practiceRuns.put(row);
     const backup = await exportBackup();
-    expect(backup.version).toBe(5);
+    expect(backup.version).toBe(6);
     expect(backup.practiceRuns[0].answers[1]).toBe("my draft");
     await importBackup({ ...backup, version: 4, practiceRuns: undefined });
     expect(await db.practiceRuns.count()).toBe(1);

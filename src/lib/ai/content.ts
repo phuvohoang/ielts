@@ -1,8 +1,9 @@
+import { guidedExercises } from "../guided-lesson";
 import raw from "../../data/grammar-b2.json";
 import { exerciseSchema } from "./schema";
 import { z } from "zod";
 export const b2Exercises = z.array(exerciseSchema).parse(raw);
-export const exerciseById = new Map(b2Exercises.map((q) => [q.id, q]));
+export const exerciseById = new Map([...b2Exercises, ...guidedExercises].map((q) => [q.id, q]));
 
 // Interleave family contrasts, sentence transformations and context forms.
 export const mixedB2Exercises = Array.from({ length: 10 }, (_, i) => [
