@@ -326,7 +326,7 @@ export function SkillPractice({ skill }: { skill: Skill }) {
                 ? exercise.settings.task === "task1"
                   ? "Task 1 · Thư"
                   : "Task 2 · Bài luận"
-                : "5 câu hỏi"}{" "}
+                : `${exercise.questions.length} câu hỏi`}{" "}
               · Tự động lưu
             </span>
             <Button

@@ -69,7 +69,7 @@ const skills = [
     icon: Headphones,
     description:
       "Audio mới, câu hỏi rõ ràng. Nghe và trả lời theo cách của bạn.",
-    meta: "5 câu · Audio AI",
+    meta: "10 câu · Audio AI",
   },
   {
     path: "/reading",
@@ -78,7 +78,7 @@ const skills = [
     icon: BookOpen,
     description:
       "Đọc tình huống đời sống và công việc. Đối chiếu dẫn chứng sau khi nộp.",
-    meta: "5 câu · Đoạn đọc mới",
+    meta: "10 câu · Đoạn đọc mới",
   },
   {
     path: "/writing",
@@ -400,7 +400,7 @@ function Home() {
                     ? "Task 1 / 2"
                     : s.title === "Ngữ pháp"
                       ? "10–50 câu"
-                      : "5 câu"}
+                      : "10 câu"}
                 </span>
                 <p>{s.description}</p>
                 <span className="home-skill-action">

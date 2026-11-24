@@ -14,7 +14,7 @@ export const practiceSettingsSchema = z
 const text = z.string().trim().min(1);
 export const privateItemSchema = z
   .object({
-    number: z.number().int().min(1).max(5),
+    number: z.number().int().min(1).max(10),
     type: z.enum(["short_answer", "multiple_choice", "true_false_not_given"]),
     prompt: text.max(500),
     options: z
@@ -37,7 +37,7 @@ export const exerciseContentSchema = z
     passage: z.string().max(6500),
     transcript: z.string().max(3500),
     writingPrompt: z.string().max(1800),
-    questions: z.array(privateItemSchema).max(5),
+    questions: z.array(privateItemSchema).max(10),
   })
   .strict();
 export type PrivateContent = z.infer<typeof exerciseContentSchema>;
@@ -57,7 +57,7 @@ export const publicExerciseSchema = practiceIdentitySchema.extend({
   instructionsVi: text.max(800),
   passage: z.string().max(6500),
   writingPrompt: z.string().max(1800),
-  questions: z.array(publicItemSchema).max(5),
+  questions: z.array(publicItemSchema).max(10),
   minWords: z.number(),
 });
 export type PublicExercise = z.infer<typeof publicExerciseSchema>;
@@ -69,7 +69,7 @@ export const practiceSubmissionSchema = practiceIdentitySchema
   .strict();
 export const itemGradeSchema = z
   .object({
-    number: z.number().int().min(1).max(5),
+    number: z.number().int().min(1).max(10),
     status: z.enum(["correct", "incorrect", "needs_review"]),
     feedbackVi: text.max(1200),
     confidence: z.number().min(0).max(1),
@@ -99,14 +99,14 @@ export const writingGradeSchema = z
   })
   .strict();
 export const practiceResultSchema = z.object({
-  items: z.array(itemGradeSchema).max(5),
+  items: z.array(itemGradeSchema).max(10),
   score: z.number().nullable(),
   maxScore: z.number(),
   writing: writingGradeSchema.nullable(),
   writingAssessment: assessmentSchema.optional(),
   bandEstimate: z.number().nullable(),
   transcript: z.string().max(3500),
-  reveals: z.array(privateItemSchema).max(5),
+  reveals: z.array(privateItemSchema).max(10),
   submittedAnswers: z.record(z.string(), z.string()),
 });
 export type PracticeResult = z.infer<typeof practiceResultSchema>;

@@ -6,7 +6,7 @@ export function contentFixture(skill = "reading"): PrivateContent {
     .trim();
   return {
     title: "Community centre information",
-    instructionsVi: "Trả lời năm câu dựa trên nội dung bài.",
+    instructionsVi: "Trả lời mười câu dựa trên nội dung bài.",
     passage: skill === "reading" ? source : "",
     transcript: skill === "listening" ? source : "",
     writingPrompt:
@@ -16,7 +16,7 @@ export function contentFixture(skill = "reading"): PrivateContent {
     questions:
       skill === "writing"
         ? []
-        : Array.from({ length: 5 }, (_, i) => ({
+        : Array.from({ length: 10 }, (_, i) => ({
             number: i + 1,
             type: "short_answer" as const,
             prompt: "What time does the centre open?",
@@ -52,14 +52,14 @@ export function resultFixture(
   return {
     items: writing
       ? []
-      : Array.from({ length: 5 }, (_, i) => ({
+      : Array.from({ length: 10 }, (_, i) => ({
           number: i + 1,
           status: "correct",
           feedbackVi: "Câu trả lời phù hợp với thông tin trong bài.",
           confidence: 0.95,
         })),
-    score: writing ? null : 5,
-    maxScore: writing ? 0 : 5,
+    score: writing ? null : 10,
+    maxScore: writing ? 0 : 10,
     writing: writing ? writingFixture : null,
     bandEstimate: writing ? 6 : null,
     transcript: "",

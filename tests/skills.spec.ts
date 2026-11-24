@@ -106,7 +106,7 @@ async function fillAnswers(page: Page, listening = false) {
   if (listening) await page.getByLabel("Câu 3", { exact: true }).fill("nine");
   else await page.getByLabel("Câu 3", { exact: true }).selectOption("TRUE");
   await page.getByLabel("Câu 4", { exact: true }).fill("nine");
-  await page.getByLabel("Câu 5", { exact: true }).fill("nine");
+  for (let n = 5; n <= 10; n++) await page.getByLabel(`Câu ${n}`, { exact: true }).fill("nine");
 }
 test("reading generates a source and mixed questions, preserves drafts, grades after submission and restores feedback", async ({
   page,
@@ -132,14 +132,14 @@ test("reading generates a source and mixed questions, preserves drafts, grades a
     .getByRole("button", { name: "Nộp bài và chấm bằng AI", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Kết quả: 5/5", exact: true }),
+    page.getByRole("heading", { name: "Kết quả: 10/10", exact: true }),
   ).toBeVisible();
   await expect(
     page.getByText("Đáp án tham khảo:", { exact: true }),
-  ).toHaveCount(5);
+  ).toHaveCount(10);
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Kết quả: 5/5", exact: true }),
+    page.getByRole("heading", { name: "Kết quả: 10/10", exact: true }),
   ).toBeVisible();
   expect(m.generated).toBe(1);
   expect(m.graded).toBe(1);
@@ -181,7 +181,7 @@ test("listening plays API audio, hides transcript until submission and reuses sa
     .getByRole("button", { name: "Nộp bài và chấm bằng AI", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Kết quả: 5/5", exact: true }),
+    page.getByRole("heading", { name: "Kết quả: 10/10", exact: true }),
   ).toBeVisible();
   await page.getByText("Transcript và đối chiếu", { exact: true }).click();
   await expect(page.locator(".transcript p")).toContainText("opens at nine");

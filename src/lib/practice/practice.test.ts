@@ -49,7 +49,7 @@ function setup() {
         case "comprehension_grade":
           return {
             response: {
-              items: Array.from({ length: 5 }, (_, i) => ({
+              items: Array.from({ length: data.content.questions.length }, (_, i) => ({
                 number: i + 1,
                 status: "correct",
                 feedbackVi:
@@ -119,7 +119,7 @@ describe("AI skill practice server and data", () => {
     const created = await post("generate", settings());
     expect(created.status).toBe(200);
     const s = publicExerciseSchema.parse(await created.json());
-    expect(s.questions).toHaveLength(5);
+    expect(s.questions).toHaveLength(10);
     expect(s.passage.length).toBeGreaterThan(200);
     expect(JSON.stringify(s)).not.toMatch(
       /answers|explanationVi|evidence|transcript/,
@@ -130,7 +130,7 @@ describe("AI skill practice server and data", () => {
     const response = await post("grade", { id: s.id, token: s.token, answers });
     expect(response.status).toBe(200);
     const result = await response.json();
-    expect(result.score).toBe(5);
+    expect(result.score).toBe(10);
     expect(result.reveals[0].explanationVi).toContain("chín");
     expect(AI.run).toHaveBeenCalledTimes(2);
     expect(
@@ -371,3 +371,21 @@ it("deduplicates aliases for one choice without collapsing different choices", (
     ["a", "b"],
   );
 });
+
+ it("still grades stored five-question sessions after the ten-question rollout", async () => {
+   const { post, stores } = setup();
+   const exercise = await (await post("generate", settings())).json();
+   const storage = [...stores.values()][0];
+   const stored = await storage.get<{content: ReturnType<typeof contentFixture>}>("skill");
+   stored!.content.questions = stored!.content.questions.slice(0, 5);
+   await storage.put("skill", stored);
+   const response = await post("grade", {id: exercise.id, token: exercise.token, answers: Object.fromEntries(stored!.content.questions.map(q => [q.number,"nine"]))});
+   expect(response.status).toBe(200);
+   const result = await response.json();
+   expect(result.items).toHaveLength(5); expect(result.score).toBe(5);
+ });
+ it("rejects incomplete new five-question generations", async () => {
+   const { post, AI } = setup(); const short = contentFixture(); short.questions = short.questions.slice(0,5);
+   AI.run.mockResolvedValue({response:short} as never);
+   expect((await post("generate", settings())).status).not.toBe(200);
+ });
