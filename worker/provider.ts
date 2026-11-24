@@ -8,10 +8,35 @@ type ModelInput = {
 };
 
 // Gemini does not support JSON Schema multipleOf. Keep it in the server Zod
-// validator; omit only this unsupported generation hint from the provider schema.
-export function geminiSchema(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(geminiSchema);
-  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).filter(([key]) => key !== "multipleOf").map(([key, child]) => [key, geminiSchema(child)]));
+// validator. Large Writing schemas also omit range/length hints to fit Gemini
+// constraint-state limits; all original bounds remain enforced by server-side Zod.
+export function geminiSchema(value: unknown, compact = false): unknown {
+  if (Array.isArray(value))
+    return value.map((child) => geminiSchema(child, compact));
+  if (value && typeof value === "object")
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(
+          ([key]) =>
+            key !== "multipleOf" &&
+            !(
+              compact &&
+              [
+                "minimum",
+                "maximum",
+                "exclusiveMinimum",
+                "exclusiveMaximum",
+                "minLength",
+                "maxLength",
+                "minItems",
+                "maxItems",
+                "pattern",
+                "format",
+              ].includes(key)
+            ),
+        )
+        .map(([key, child]) => [key, geminiSchema(child, compact)]),
+    );
   return value;
 }
 
@@ -35,13 +60,14 @@ export async function runModel(
   }
   if (!env.GEMINI_API_KEY || !env.GEMINI_MODEL)
     throw Error("Gemini provider not configured");
-  const selected = model === (env.AI_GENERATION_MODEL || env.AI_MODEL)
-    ? env.GEMINI_GENERATION_MODEL || env.GEMINI_MODEL
-    : env.GEMINI_MODEL;
+  const selected =
+    model === (env.AI_GENERATION_MODEL || env.AI_MODEL)
+      ? env.GEMINI_GENERATION_MODEL || env.GEMINI_MODEL
+      : env.GEMINI_MODEL;
   if (!/^gemini-[a-z0-9.-]+$/.test(selected))
     throw Error("Invalid Gemini model configuration");
   const wrapped = input.response_format?.json_schema as
-    | { schema?: unknown }
+    | { schema?: unknown; name?: string }
     | undefined;
   const schema = wrapped?.schema ?? wrapped;
   const response = await fetch(
@@ -55,32 +81,54 @@ export async function runModel(
       signal: options.signal,
       body: JSON.stringify({
         systemInstruction: {
-          parts: input.messages.filter(m => m.role === "system").map(m => ({ text: m.content })),
+          parts: input.messages
+            .filter((m) => m.role === "system")
+            .map((m) => ({ text: m.content })),
         },
-        contents: input.messages.filter(m => m.role !== "system").map(m => ({
-          role: m.role === "assistant" ? "model" : "user",
-          parts: [{ text: m.content }],
-        })),
+        contents: input.messages
+          .filter((m) => m.role !== "system")
+          .map((m) => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }],
+          })),
         generationConfig: {
           temperature: input.temperature ?? 0.1,
           maxOutputTokens: input.max_tokens ?? 1600,
           responseMimeType: "application/json",
-          ...(selected.startsWith("gemini-3") ? { thinkingConfig: { thinkingLevel: "minimal" } } : {}),
-          ...(schema ? { responseJsonSchema: geminiSchema(schema) } : {}),
+          ...(selected.startsWith("gemini-3")
+            ? { thinkingConfig: { thinkingLevel: "minimal" } }
+            : {}),
+          ...(schema
+            ? {
+                responseJsonSchema: geminiSchema(
+                  schema,
+                  wrapped?.name?.startsWith("writing_"),
+                ),
+              }
+            : {}),
         },
       }),
     },
   );
   if (!response.ok) {
     // Keep status available for existing safe quota/configuration categorization.
-    throw Error(`Gemini ${response.status}: ${response.status === 429 ? "rate limit" : response.status === 400 ? "invalid input" : response.status === 401 || response.status === 403 ? "permission denied" : response.status === 404 ? "model not found" : "provider unavailable"}`);
+    throw Error(
+      `Gemini ${response.status}: ${response.status === 429 ? "rate limit" : response.status === 400 ? "invalid input" : response.status === 401 || response.status === 403 ? "permission denied" : response.status === 404 ? "model not found" : "provider unavailable"}`,
+    );
   }
-  const body = await response.json() as {
-    candidates?: { finishReason?: string; content?: { parts?: { text?: string; thought?: boolean }[] } }[];
+  const body = (await response.json()) as {
+    candidates?: {
+      finishReason?: string;
+      content?: { parts?: { text?: string; thought?: boolean }[] };
+    }[];
   };
   const candidate = body.candidates?.[0];
-  if (candidate?.finishReason !== "STOP") throw Error("Gemini response incomplete or blocked");
-  const text = candidate.content?.parts?.filter(p => !p.thought).map(p => p.text ?? "").join("");
+  if (candidate?.finishReason !== "STOP")
+    throw Error("Gemini response incomplete or blocked");
+  const text = candidate.content?.parts
+    ?.filter((p) => !p.thought)
+    .map((p) => p.text ?? "")
+    .join("");
   if (!text) throw Error("Gemini response empty");
   return { response: text };
 }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { callStructured } from "./generation";
+import { callStructured, providerProblem } from "./generation";
 import { withTimeout, type Env } from "./grading";
 import type { PracticeStorage } from "./practice";
 import {
@@ -254,6 +254,13 @@ Grade the actual student answer semantically, NOT by reference-string equality. 
     }
     return Response.json({ error: "Not found" }, { status: 404 });
   } catch (e) {
+    console.warn(
+      "Writing request failed",
+      providerProblem(e),
+      e instanceof z.ZodError
+        ? e.issues.map((issue) => issue.path.join(".")).slice(0, 5)
+        : "",
+    );
     return Response.json(
       {
         error:

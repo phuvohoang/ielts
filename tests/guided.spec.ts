@@ -37,7 +37,7 @@ test("G01 supports persisted practice, original answer keys and letter writing",
     ),
   ).toBe(true);
   await page.screenshot({
-    path: `/private/tmp/ielts-g01-${test.info().project.name}.png`,
+    path: test.info().outputPath("g01.png"),
     fullPage: true,
   });
 });
