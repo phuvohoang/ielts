@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { runModel, providerConfigured } from "../../../worker/provider";
+import { runModel, providerConfigured, geminiSchema } from "../../../worker/provider";
 import type { Env } from "../../../worker/grading";
 
 const env = {
@@ -44,4 +44,8 @@ describe("server-side Gemini adapter", () => {
     expect(await runModel({ ...env, AI_PROVIDER: "cloudflare", AI }, "grader", input, options)).toEqual({ response: "{}" });
     expect(AI.run).toHaveBeenCalledWith("grader", input, options);
   });
+});
+
+it("omits unsupported Gemini multipleOf hints while retaining bounds", () => {
+  expect(geminiSchema({type:"object",properties:{band:{type:"number",minimum:0,maximum:9,multipleOf:0.5}}})).toEqual({type:"object",properties:{band:{type:"number",minimum:0,maximum:9}}});
 });

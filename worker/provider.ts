@@ -7,6 +7,14 @@ type ModelInput = {
   response_format?: { type: string; json_schema?: unknown };
 };
 
+// Gemini does not support JSON Schema multipleOf. Keep it in the server Zod
+// validator; omit only this unsupported generation hint from the provider schema.
+export function geminiSchema(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(geminiSchema);
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).filter(([key]) => key !== "multipleOf").map(([key, child]) => [key, geminiSchema(child)]));
+  return value;
+}
+
 export function providerConfigured(env: Env) {
   return env.AI_PROVIDER === "gemini"
     ? !!env.GEMINI_API_KEY && !!env.GEMINI_MODEL
@@ -58,7 +66,7 @@ export async function runModel(
           maxOutputTokens: input.max_tokens ?? 1600,
           responseMimeType: "application/json",
           ...(selected.startsWith("gemini-3") ? { thinkingConfig: { thinkingLevel: "minimal" } } : {}),
-          ...(schema ? { responseJsonSchema: schema } : {}),
+          ...(schema ? { responseJsonSchema: geminiSchema(schema) } : {}),
         },
       }),
     },

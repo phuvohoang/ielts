@@ -1,3 +1,4 @@
+import { guidedAgreementCorrection } from "../src/lib/ai/guided-guard";
 import { lessonGrounding } from "../src/lib/guided-lesson";
 import { z } from "zod";
 import {
@@ -304,7 +305,7 @@ export async function generateBatch(
           const annotatedPrompt =
             taskPrompt +
             (settings.lessonId
-              ? "\nLESSON CONTRACT: Use only the supplied authored lesson objectives/rules. Do not introduce other tenses or grammar beyond G01. For correction, introduce exactly one genuine form error, keep every other word and preserve all meaning in every accepted answer. A natural alternative is not an error. Do not copy any authored lesson example. Never force a positive statement into its negative or replace a time relation with a different relation while claiming equivalence."
+              ? "\nLESSON CONTRACT: Use only the supplied authored lesson objectives/rules. Do not introduce other tenses or grammar beyond G01. For correction, introduce exactly one genuine form error, keep every other word and preserve all meaning in every accepted answer. For this supplement practise ONLY be-agreement in present continuous. Begin every source with exactly I/You/We/They/He/She followed by ONE WRONG am/is/are and an action verb ending in ing. Use a single short clause and a temporary activity context. References change ONLY that wrong be form; every other character stays identical. Never supply a grammatical source or collective-noun subject. No habits, stative verbs or aspect transformations. A natural alternative is not an error. Do not copy any authored lesson example. Never force a positive statement into its negative or replace a time relation with a different relation while claiming equivalence."
               : "") +
             "\nFORMAT REQUIREMENTS: " +
             (item.topicId === "word-formation"
@@ -391,6 +392,16 @@ export async function generateBatch(
           const malformed = draftIssues(question);
           if (malformed.length) throw new RewriteFailure(malformed.join("; "));
           if (settings.lessonId) {
+            const correction = guidedAgreementCorrection(question.questionText);
+            if (!correction || [...question.referenceAnswers, ...question.acceptedVariants].some(answer => answer !== correction))
+              throw new RewriteFailure("G01 requires a real be-agreement error with an explicit pronoun and an exact single-token correction.");
+            question.instruction = "Correct the one be-agreement error. Keep all other words unchanged.";
+            question.underlinedText = null;
+            question.grammarRules = [lessonGrounding.rules[1]];
+            question.explanationVi = "Hiện tại tiếp diễn có dạng chủ ngữ + am/is/are + V-ing. Dùng am với I, is với he/she và are với you/we/they. Chỉ sửa dạng be sai, giữ nguyên hành động và thông tin còn lại.";
+            question.grammarRules = [lessonGrounding.rules[1]];
+            question.instruction = "Correct the single be-agreement error. Keep every other word unchanged.";
+            question.explanationVi = "Với I dùng am; với he/she dùng is; với you/we/they dùng are. Chỉ sửa dạng be sai, giữ nguyên hành động, thời gian và thông tin còn lại.";
             const auditSchema = z
               .object({
                 correctedGrammar: z.boolean(),
