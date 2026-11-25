@@ -1,3 +1,4 @@
+import { WordFamilies } from "./components/word-families/WordFamilies";
 import { PresentTensesLesson } from "./components/lessons/PresentTensesLesson";
 import { WritingAssessment } from "./components/writing/WritingAssessment";
 import { WritingReview } from "./components/writing/WritingReview";
@@ -119,6 +120,7 @@ const routeNames: Record<string, string> = {
   "/writing": "Luyện viết",
   "/writing-assessment": "Writing Assessment",
   "/writing-review": "Writing Review",
+  "/word-families": "Word Families",
   "/grammar": "Ngữ pháp",
   "/grammar/lessons/present-tenses": "G01 · Thói quen và thay đổi hiện tại",
   "/history": "Lịch sử bài làm",
@@ -196,6 +198,7 @@ function PracticeShell() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+                <SidebarMenuItem><SidebarMenuButton asChild isActive={pathname === "/word-families"} tooltip={compact ? "Word Families" : undefined}><NavLink to="/word-families" onClick={closeMobile}><Languages aria-hidden="true"/><span>Word Families</span></NavLink></SidebarMenuButton></SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -299,6 +302,7 @@ function PracticeShell() {
                 path="/writing-assessment"
                 element={<WritingAssessment />}
               />
+              <Route path="/word-families" element={<WordFamilies />} />
               <Route path="/writing-review" element={<WritingReview />} />
               <Route path="/grammar" element={<GrammarExercise />} />
               <Route path="/grammar/lessons/present-tenses" element={<PresentTensesLesson />} />
@@ -343,8 +347,7 @@ function PracticeShell() {
           <footer className="workspace-footer">
             <span>IELTS General Practice</span>
             <span>
-              Nội dung và phản hồi do AI tạo · Điểm luyện tập không phải kết quả
-              thi chính thức.
+              {pathname === "/word-families" ? "Thư viện bạn nhập · Chấm trực tiếp trên thiết bị" : "Nội dung và phản hồi do AI tạo · Điểm luyện tập không phải kết quả thi chính thức."}
             </span>
           </footer>
         </div>
