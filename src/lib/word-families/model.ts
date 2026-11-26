@@ -78,7 +78,7 @@ export const runSchema = z
       z.literal(50),
       z.literal("all"),
     ]),
-    pool: z.enum(["all", "incorrect"]),
+    pool: z.enum(["all", "selected", "incorrect"]),
     questions: z.array(questionSchema).min(1),
     index: z.number().int().min(0),
     completed: z.boolean(),
@@ -206,4 +206,28 @@ export function duplicateIndex(existing: FamilyInput[]) {
       words.add(englishKey(data));
     },
   };
+}
+
+export const selectionSchema = z
+  .object({ familyId: z.string().uuid() })
+  .strict();
+export type Selection = z.infer<typeof selectionSchema>;
+export function selectedFamilies(families: Family[], selections: Selection[]) {
+  const ids = new Set(selections.map((s) => s.familyId));
+  return families.filter((f) => ids.has(f.id));
+}
+export function practiceFamilies(
+  families: Family[],
+  pool: Run["pool"],
+  selections: Selection[],
+  incorrectIds: Set<string>,
+  ids?: Set<string>,
+) {
+  const available =
+    pool === "selected"
+      ? selectedFamilies(families, selections)
+      : ids || pool === "all"
+        ? families
+        : families.filter((f) => incorrectIds.has(f.id));
+  return ids ? available.filter((f) => ids.has(f.id)) : available;
 }

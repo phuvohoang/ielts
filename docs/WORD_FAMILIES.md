@@ -18,10 +18,21 @@ Weaknesses track the latest checked state per family/form. Correct subsequent at
 
 ## Storage and compatibility
 
-Existing Dexie database, additive version 7: `wordFamilies`, `wordFamilyRuns`, `wordFamilyWeaknesses`. Shared backup export v7 includes all three tables. Restoring older backups preserves these new tables; legacy v1–6 application data remains supported. Storage is local to the browser/origin, consistent with existing app data. Existing PDF sources are untouched.
+Existing Dexie database, additive versions 7/8: `wordFamilies`, `wordFamilyRuns`, `wordFamilyWeaknesses`. Version 8 adds `wordFamilySelections`, keyed by stable family ID, without changing family records or CSV/JSON library formats. Shared backup export v8 includes selection records. Restoring older backups preserves these new tables; legacy v1–7 application data remains supported. Storage is local to the browser/origin, consistent with existing app data. Existing PDF sources are untouched.
 
 ## UI and verification
 
 Uses existing Frame, Tabs, Button, Input, NativeSelect, Badge and Alert. Added stock Radix/shadcn [Table](https://ui.shadcn.com/docs/components/table), [AlertDialog](https://ui.shadcn.com/docs/components/alert-dialog), [Progress](https://ui.shadcn.com/docs/components/progress). ReUI MCP is not available in this session; a stock Table with contained horizontal scrolling is used instead of DataGrid to avoid adding another table engine for five fixed columns. No theme or unrelated screen changes. Progress forwards its value to Radix for accessible numeric progress.
 
 Unit coverage includes CSV/JSON validation and roundtrip, duplicates, CRUD, randomness, alternatives and spelling, missing forms, scoring, drafts, weaknesses, changed/deleted keys, backup restore, and actual v6→v7 upgrade. Browser coverage runs desktop/mobile import preview, CRUD/export, bad imports, CSV alternatives, shuffled field entry, no early answers, missing fields, tab/reload persistence, keyboard focus/Enter, results and retries. Tests abort any `/api/` request and assert zero calls from this feature. Whole-app regression and production-build checks are also run.
+
+
+## Persistent selection and targeted practice
+
+Row checkboxes and the header checkbox operate on family IDs. Header selection applies to every currently searched/filtered row across pagination; unrelated selections remain intact. Search, selection filter and paging never clear choices. Clear selection is explicit. UI checkboxes respond immediately while an atomic Dexie write persists the change; failures revert to the stored state and show an error.
+
+New and imported rows have no selection record, so default to unselected. Editing a family leaves selection untouched. Deletion removes its selection in the same transaction. Completing/checking a run never changes selection. v7→v8 creates only an empty selection table and preserves vocabulary/history. v8 backups roundtrip selection; older library backups retain choices for surviving IDs and remove orphaned choices.
+
+Practice source options show counts for All words, Selected words and Previously incorrect words. The library shortcut switches to the Practice tab and Selected words configuration, preserving any earlier draft in history. Selected generation rereads current selection and family records transactionally, then applies existing sampling without replacement and field-order shuffling. Oversized requests use the available subset with a notice; an empty selection disables starting. Existing sessions retain their original snapshots; changes to the selection apply to new/retry sessions. Selected-session repeat/retry also intersects with current selected IDs. Grading is unchanged and remains entirely local.
+
+Selection-specific coverage includes filtered bulk selection across 32 rows/two pages, independent row ordering, search/filter/tab persistence, page reload, browser storage-state restart, edit/delete/default-import semantics, candidate isolation and count capping, selection retention after completion, v7 upgrade, and v8/legacy backup restore. No dependencies or backend services were added.

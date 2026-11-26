@@ -11,6 +11,7 @@ export function WordFamilies() {
   const [tab, setTab] = useState("library"),
     [data, setData] = useState<Data>(),
     [error, setError] = useState("");
+  const [selectedPracticeRequest, setSelectedPracticeRequest] = useState(0);
   async function reload() {
     try {
       const next = await loadWordFamilies();
@@ -65,7 +66,15 @@ export function WordFamilies() {
             forceMount
             className="data-[state=inactive]:hidden"
           >
-            <WordLibrary families={data.families} reload={reload} />
+            <WordLibrary
+              families={data.families}
+              selections={data.selections}
+              reload={reload}
+              practiceSelected={() => {
+                setSelectedPracticeRequest((n) => n + 1);
+                setTab("practice");
+              }}
+            />
           </TabsContent>
           <TabsContent
             value="practice"
@@ -74,6 +83,7 @@ export function WordFamilies() {
           >
             <FamilyPractice
               {...data}
+              selectedPracticeRequest={selectedPracticeRequest}
               reload={reload}
               openLibrary={() => setTab("library")}
             />

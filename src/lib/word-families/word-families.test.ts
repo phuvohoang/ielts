@@ -202,11 +202,11 @@ describe("local practice and persistence", () => {
     await checkRun(createRun([family], 10, "all"));
     expect(await db.wordFamilyWeaknesses.count()).toBe(0);
   });
-  it("includes all new tables in v7 backups and preserves them when restoring a legacy v6 backup", async () => {
+  it("includes all new tables in current backups and preserves them when restoring a legacy v6 backup", async () => {
     const family = await saveFamily(sample);
     await checkRun(createRun([family], 10, "all"));
     const backup = await exportBackup();
-    expect(backup.version).toBe(7);
+    expect(backup.version).toBe(8);
     await db.wordFamilies.clear();
     await db.wordFamilyRuns.clear();
     await db.wordFamilyWeaknesses.clear();

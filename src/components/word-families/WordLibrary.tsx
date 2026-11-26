@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PracticePanel } from "../practice/PracticePanel";
 import { Button } from "../ui/button";
+import { NativeSelect } from "../ui/native-select";
 import { Input } from "../ui/input";
 import {
   Table,
@@ -27,6 +28,8 @@ import {
   labels,
   familyInputSchema,
   type Family,
+  type Selection,
+  selectedFamilies,
 } from "../../lib/word-families/model";
 import {
   parseImport,
@@ -38,6 +41,8 @@ import {
   saveFamily,
   deleteFamily,
   importFamilies,
+  setFamilySelection,
+  clearFamilySelection,
 } from "../../lib/word-families/storage";
 const empty = { meaning_vi: "", noun: "", adjective: "", adverb: "", verb: "" };
 function download(name: string, text: string, type: string) {
@@ -55,9 +60,13 @@ const fold = (text: string) =>
     .toLowerCase();
 export function WordLibrary({
   families,
+  selections,
+  practiceSelected,
   reload,
 }: {
   families: Family[];
+  selections: Selection[];
+  practiceSelected: () => void;
   reload: () => Promise<void>;
 }) {
   const [search, setSearch] = useState(""),
@@ -78,11 +87,28 @@ export function WordLibrary({
         : [],
     [rows, families],
   );
-  const filtered = families.filter((f) =>
-    fold(
-      [f.data.meaning_vi, ...parts.flatMap((p) => f.data[p])].join(" "),
-    ).includes(fold(search.trim())),
+  const [selectionFilter, setSelectionFilter] = useState("all");
+  const [pendingSelection, setPendingSelection] = useState<Set<string>>();
+  const selectedIds =
+    pendingSelection ??
+    new Set(selectedFamilies(families, selections).map((f) => f.id));
+  const selectAll = useRef<HTMLInputElement>(null);
+  const filtered = families.filter(
+    (f) =>
+      (selectionFilter === "all" ||
+        (selectionFilter === "selected"
+          ? selectedIds.has(f.id)
+          : !selectedIds.has(f.id))) &&
+      fold(
+        [f.data.meaning_vi, ...parts.flatMap((p) => f.data[p])].join(" "),
+      ).includes(fold(search.trim())),
   );
+  const filteredSelected = filtered.filter((f) => selectedIds.has(f.id)).length;
+  useEffect(() => {
+    if (selectAll.current)
+      selectAll.current.indeterminate =
+        filteredSelected > 0 && filteredSelected < filtered.length;
+  }, [filteredSelected, filtered.length]);
   const pages = Math.max(1, Math.ceil(filtered.length / 25)),
     currentPage = Math.min(page, pages - 1);
   async function action(work: () => Promise<void>) {
@@ -96,6 +122,29 @@ export function WordLibrary({
       setError(e instanceof Error ? e.message : "Chưa lưu được. Hãy thử lại.");
     } finally {
       setBusy(false);
+    }
+  }
+  async function selectWords(ids: string[], selected: boolean) {
+    if (busy) return;
+    const next = new Set(selectedIds);
+    for (const id of ids) {
+      if (selected) next.add(id);
+      else next.delete(id);
+    }
+    setPendingSelection(next);
+    try {
+      await action(() => setFamilySelection(ids, selected));
+    } finally {
+      setPendingSelection(undefined);
+    }
+  }
+  async function clearSelection() {
+    if (busy) return;
+    setPendingSelection(new Set());
+    try {
+      await action(clearFamilySelection);
+    } finally {
+      setPendingSelection(undefined);
     }
   }
   async function readFile(file?: File) {
@@ -333,6 +382,42 @@ export function WordLibrary({
             }}
           />
         </label>
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="flex flex-col gap-2">
+            Hiển thị
+            <NativeSelect
+              aria-label="Library selection filter"
+              size="sm"
+              value={selectionFilter}
+              onChange={(e) => {
+                setSelectionFilter(e.target.value);
+                setPage(0);
+              }}
+            >
+              <option value="all">All words</option>
+              <option value="selected">Selected words</option>
+              <option value="unselected">Unselected words</option>
+            </NativeSelect>
+          </label>
+          <p role="status">{selectedIds.size} word families đã chọn</p>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={busy || !selectedIds.size}
+            onClick={() => void clearSelection()}
+          >
+            Clear selection
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            disabled={busy || !selectedIds.size}
+            onClick={practiceSelected}
+          >
+            Practice selected words ({selectedIds.size})
+          </Button>
+        </div>
         {!families.length ? (
           <div>
             <p>
@@ -354,7 +439,10 @@ export function WordLibrary({
               type="button"
               size="sm"
               variant="outline"
-              onClick={() => setSearch("")}
+              onClick={() => {
+                setSearch("");
+                setSelectionFilter("all");
+              }}
             >
               Xóa tìm kiếm
             </Button>
@@ -364,6 +452,33 @@ export function WordLibrary({
             <Table aria-label="Word Library">
               <TableHeader>
                 <TableRow>
+                  <TableHead>
+                    <input
+                      ref={selectAll}
+                      type="checkbox"
+                      className="accent-primary"
+                      aria-label="Select all filtered words"
+                      aria-checked={
+                        filteredSelected > 0 &&
+                        filteredSelected < filtered.length
+                          ? "mixed"
+                          : filtered.length > 0 &&
+                            filteredSelected === filtered.length
+                      }
+                      checked={
+                        filtered.length > 0 &&
+                        filteredSelected === filtered.length
+                      }
+                      disabled={busy || !filtered.length}
+                      onChange={(e) => {
+                        const checked = e.currentTarget.checked;
+                        void selectWords(
+                          filtered.map((f) => f.id),
+                          checked,
+                        );
+                      }}
+                    />
+                  </TableHead>
                   <TableHead>Nghĩa tiếng Việt</TableHead>
                   {parts.map((p) => (
                     <TableHead key={p}>{labels[p]}</TableHead>
@@ -375,7 +490,25 @@ export function WordLibrary({
                 {filtered
                   .slice(currentPage * 25, currentPage * 25 + 25)
                   .map((f) => (
-                    <TableRow key={f.id}>
+                    <TableRow
+                      key={f.id}
+                      data-state={
+                        selectedIds.has(f.id) ? "selected" : undefined
+                      }
+                    >
+                      <TableCell>
+                        <input
+                          type="checkbox"
+                          className="accent-primary"
+                          aria-label={`Select ${f.data.meaning_vi}`}
+                          checked={selectedIds.has(f.id)}
+                          disabled={busy}
+                          onChange={(e) => {
+                            const checked = e.currentTarget.checked;
+                            void selectWords([f.id], checked);
+                          }}
+                        />
+                      </TableCell>
                       <TableCell className="whitespace-normal break-words">
                         {f.data.meaning_vi}
                       </TableCell>
