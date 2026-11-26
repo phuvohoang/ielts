@@ -20,6 +20,7 @@ async function upload(
   rows: unknown = data,
   name = "families.json",
 ) {
+  await expect(page.getByLabel("Nhập JSON hoặc CSV")).toBeEnabled();
   await page.getByLabel("Nhập JSON hoặc CSV").setInputFiles({
     name,
     mimeType: "application/json",
@@ -70,7 +71,7 @@ test("imports only on confirmation, handles duplicates and persists edited/delet
   ).toBeVisible();
   await upload(page, [...data, data[0]]);
   await expect(
-    page.getByText("2 mục mới · 1 mục trùng · 0 dòng lỗi.", { exact: false }),
+    page.getByText("2 mục mới · 1 lượt ghi đè · 0 dòng lỗi.", { exact: false }),
   ).toBeVisible();
   await expect(
     page.getByRole("table", { name: "Word Library", exact: true }),
@@ -126,6 +127,7 @@ test("CSV preview, local grading, missing forms, persisted drafts, results and r
   await page.goto("/word-families");
   const csv =
     "meaning_vi,noun,adjective,adverb,verb\r\nSự phân tích,analysis,analytical|analytic,analytically,analyse|analyze\r\nHiệu suất,efficiency,efficient,efficiently,";
+  await expect(page.getByLabel("Nhập JSON hoặc CSV")).toBeEnabled();
   await page.getByLabel("Nhập JSON hoặc CSV").setInputFiles({
     name: "families.csv",
     mimeType: "text/csv",
@@ -212,4 +214,24 @@ test("CSV preview, local grading, missing forms, persisted drafts, results and r
     path: test.info().outputPath("word-families.png"),
     fullPage: true,
   });
+});
+
+test("overwrites matching import rows only after confirmation and retains selections", async ({ page }) => {
+  await page.goto("/word-families");
+  await upload(page);
+  await page.getByRole("button", { name: "Xác nhận nhập", exact: true }).click();
+  const table = page.getByRole("table", { name: "Word Library", exact: true });
+  const row = table.getByRole("row").filter({ hasText: "Sự phân tích" });
+  await row.getByRole("checkbox").check();
+  await upload(page, [{ ...data[0], noun: ["replacement"], verb: [] }]);
+  await expect(page.getByText("0 mục mới · 1 lượt ghi đè · 0 dòng lỗi.", { exact: false })).toBeVisible();
+  await expect(row.getByText("analysis", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Xác nhận nhập", exact: true }).click();
+  await expect(row.getByText("replacement", { exact: true })).toBeVisible();
+  await expect(row.getByRole("checkbox")).toBeChecked();
+  await expect(table.getByRole("row")).toHaveCount(3);
+  await page.reload();
+  await expect(row.getByText("replacement", { exact: true })).toBeVisible();
+  await expect(row.getByRole("checkbox")).toBeChecked();
+  await page.screenshot({ path: test.info().outputPath("import-updated.png"), fullPage: true });
 });

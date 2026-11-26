@@ -382,7 +382,8 @@ export function WordLibrary({
         <p className="text-muted-foreground">
           CSV dùng năm cột meaning_vi, noun, adjective, adverb, verb; các đáp án
           trong một ô ngăn bằng |. Các mục trùng nghĩa hoặc trùng toàn bộ dạng
-          từ sẽ được bỏ qua sau khi bạn duyệt bản xem trước.
+          từ sẽ được ghi đè sau khi bạn duyệt bản xem trước. Các mục khác vẫn
+          được giữ.
         </p>
         <label className="flex flex-col gap-2">
           Tìm từ hoặc nghĩa tiếng Việt
@@ -604,11 +605,13 @@ export function WordLibrary({
       {rows && (
         <PracticePanel
           title="Xem trước dữ liệu nhập"
-          description={`${preview.filter((r) => r.data && !r.duplicate).length} mục mới · ${preview.filter((r) => r.duplicate).length} mục trùng · ${preview.filter((r) => r.error).length} dòng lỗi. Chưa có dữ liệu nào được lưu.`}
+          description={`${preview.filter((r) => r.data && !r.duplicate).length} mục mới · ${preview.filter((r) => r.duplicate).length} lượt ghi đè · ${preview.filter((r) => r.error).length} dòng lỗi. Chưa có dữ liệu nào được lưu.`}
         >
           <p>
-            Chỉ xác nhận khi file không còn dòng lỗi. Dòng trùng được bỏ qua;
-            mục hiện có không bị thay thế.
+            Chỉ xác nhận khi file không còn dòng lỗi. Mục trùng được thay toàn
+            bộ nghĩa và dạng từ, giữ ID và lựa chọn. Nếu file có nhiều dòng
+            trùng, dòng sau ghi đè dòng trước. Các mục khác và lịch sử luyện giữ
+            nguyên.
           </p>
           <Table aria-label="Xem trước nhập">
             <TableHeader>
@@ -640,7 +643,7 @@ export function WordLibrary({
                           row.duplicate ? "warning-light" : "success-light"
                         }
                       >
-                        {row.duplicate ? "Trùng — bỏ qua" : "Hợp lệ"}
+                        {row.duplicate ? "Ghi đè" : "Hợp lệ"}
                       </Badge>
                     )}
                   </TableCell>
@@ -661,17 +664,15 @@ export function WordLibrary({
               disabled={
                 busy ||
                 preview.some((r) => r.error) ||
-                !preview.some((r) => r.data && !r.duplicate)
+                !preview.some((r) => r.data)
               }
               onClick={() =>
                 void action(async () => {
                   const result = await importFamilies(
-                    preview.flatMap((r) =>
-                      r.data && !r.duplicate ? [r.data] : [],
-                    ),
+                    preview.flatMap((r) => (r.data ? [r.data] : [])),
                   );
                   setNotice(
-                    `Đã nhập ${result.added} word families; ${preview.filter((r) => r.duplicate).length + result.skipped} mục trùng được bỏ qua.`,
+                    `Đã thêm ${result.added} mục mới; ${result.updated} lượt ghi đè. Các mục khác được giữ nguyên.`,
                   );
                   setRows(undefined);
                 })

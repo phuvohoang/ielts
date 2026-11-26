@@ -1,4 +1,4 @@
-import { familyInputSchema, duplicateIndex, type FamilyInput } from "./model";
+import { familyInputSchema, duplicate, type FamilyInput } from "./model";
 export const columns = [
   "meaning_vi",
   "noun",
@@ -106,11 +106,21 @@ export function parseImport(text: string, format: "json" | "csv") {
 }
 export type ImportRows = ReturnType<typeof parseImport>;
 export function previewImport(rows: ImportRows, current: FamilyInput[]) {
-  const seen = duplicateIndex(current);
+  const pending = [...current];
   return rows.map((row) => {
-    const repeated = !!row.data && seen.has(row.data);
-    if (row.data && !repeated) seen.add(row.data);
-    return { ...row, duplicate: repeated };
+    const matches = row.data
+      ? pending.flatMap((data, index) =>
+          duplicate(row.data!, [data]) ? [index] : [],
+        )
+      : [];
+    const error =
+      row.error ||
+      (matches.length > 1
+        ? "Dòng khớp nhiều mục khác nhau. Sửa nghĩa hoặc dạng từ trước khi nhập."
+        : "");
+    const target = matches[0] ?? pending.length;
+    if (row.data && !error) pending[target] = row.data;
+    return { ...row, error, target, duplicate: matches.length > 0 };
   });
 }
 export function toCsv(rows: FamilyInput[]) {

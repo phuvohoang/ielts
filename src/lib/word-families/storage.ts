@@ -1,10 +1,10 @@
+import { previewImport } from "./import";
 import { db } from "../db";
 import {
   selectionSchema,
   resumeRun,
   hasPracticeForms,
   duplicate,
-  duplicateIndex,
   familyInputSchema,
   familySchema,
   runSchema,
@@ -42,21 +42,28 @@ export async function saveFamily(data: FamilyInput, id?: string) {
 export async function importFamilies(values: FamilyInput[]) {
   const valid = values.map((v) => familyInputSchema.parse(v));
   return db.transaction("rw", db.wordFamilies, async () => {
-    const current = duplicateIndex(
-      (await db.wordFamilies.toArray()).map((f) => f.data),
+    const current = await db.wordFamilies.toArray();
+    const plan = previewImport(
+      valid.map((data, i) => ({ row: i + 1, data, error: "" })),
+      current.map((f) => f.data),
     );
-    const added: Family[] = [];
-    let skipped = 0;
-    for (const data of valid) {
-      if (current.has(data)) {
-        skipped++;
-        continue;
-      }
-      current.add(data);
-      added.push({ id: crypto.randomUUID(), data, updatedAt: Date.now() });
+    const conflict = plan.find((row) => row.error);
+    if (conflict) throw Error(`Dòng ${conflict.row}: ${conflict.error}`);
+    const writes = new Map<number, Family>();
+    let added = 0,
+      updated = 0;
+    for (const row of plan) {
+      if (row.duplicate) updated++;
+      else added++;
+      const previous = writes.get(row.target) ?? current[row.target];
+      writes.set(row.target, {
+        id: previous?.id ?? crypto.randomUUID(),
+        data: row.data!,
+        updatedAt: Date.now(),
+      });
     }
-    await db.wordFamilies.bulkAdd(added);
-    return { added: added.length, skipped };
+    await db.wordFamilies.bulkPut([...writes.values()]);
+    return { added, updated };
   });
 }
 export async function deleteFamily(id: string) {
