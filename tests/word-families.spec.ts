@@ -30,7 +30,20 @@ async function upload(
     page.getByRole("heading", { name: "Xem trước dữ liệu nhập", exact: true }),
   ).toBeVisible();
 }
+async function expectFixedFields(page: Page) {
+  const inputs = page
+    .getByRole("tabpanel", { name: "Practice", exact: true })
+    .locator("form input");
+  await expect
+    .poll(() =>
+      inputs.evaluateAll((nodes) =>
+        nodes.map((node) => node.getAttribute("aria-label")),
+      ),
+    )
+    .toEqual(["Noun", "Adjective", "Adverb"]);
+}
 async function fillCorrect(page: Page, wrong = false) {
+  await expectFixedFields(page);
   if (await page.getByRole("heading", { name: /^Sự phân tích ·/ }).count()) {
     await page
       .getByLabel("Noun", { exact: true })
@@ -160,15 +173,44 @@ test("CSV preview, local grading, missing forms, persisted drafts, results and r
   await page.getByRole("tab", { name: "Word Library", exact: true }).click();
   await page.getByRole("tab", { name: "Practice", exact: true }).click();
   await expect(page.getByLabel("Noun", { exact: true })).toHaveValue(draft);
+  await expectFixedFields(page);
+  // Simulate an existing draft that stored the former random field order.
+  await page.evaluate(async () => {
+    const database = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open("ielts-grammar-mastery");
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise<void>((resolve, reject) => {
+      const tx = database.transaction("wordFamilyRuns", "readwrite");
+      const store = tx.objectStore("wordFamilyRuns");
+      const request = store.openCursor();
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (!cursor) return;
+        const run = cursor.value;
+        run.questions.forEach((q: { order: string[] }) => {
+          q.order = ["adverb", "verb", "noun", "adjective"];
+        });
+        cursor.update(run);
+        cursor.continue();
+      };
+      tx.oncomplete = () => resolve();
+      tx.onabort = () => reject(tx.error);
+    });
+    database.close();
+  });
   await page.reload();
   await page.getByRole("tab", { name: "Practice", exact: true }).click();
   await expect(page.getByLabel("Noun", { exact: true })).toHaveValue(draft);
+  await expectFixedFields(page);
   await page
     .getByRole("button", { name: "Check Answers", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Next Question", exact: true }),
   ).toBeFocused();
+  await expectFixedFields(page);
   await page
     .getByRole("button", { name: "Next Question", exact: true })
     .click();
@@ -216,22 +258,33 @@ test("CSV preview, local grading, missing forms, persisted drafts, results and r
   });
 });
 
-test("overwrites matching import rows only after confirmation and retains selections", async ({ page }) => {
+test("overwrites matching import rows only after confirmation and retains selections", async ({
+  page,
+}) => {
   await page.goto("/word-families");
   await upload(page);
-  await page.getByRole("button", { name: "Xác nhận nhập", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Xác nhận nhập", exact: true })
+    .click();
   const table = page.getByRole("table", { name: "Word Library", exact: true });
   const row = table.getByRole("row").filter({ hasText: "Sự phân tích" });
   await row.getByRole("checkbox").check();
   await upload(page, [{ ...data[0], noun: ["replacement"], verb: [] }]);
-  await expect(page.getByText("0 mục mới · 1 lượt ghi đè · 0 dòng lỗi.", { exact: false })).toBeVisible();
+  await expect(
+    page.getByText("0 mục mới · 1 lượt ghi đè · 0 dòng lỗi.", { exact: false }),
+  ).toBeVisible();
   await expect(row.getByText("analysis", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Xác nhận nhập", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Xác nhận nhập", exact: true })
+    .click();
   await expect(row.getByText("replacement", { exact: true })).toBeVisible();
   await expect(row.getByRole("checkbox")).toBeChecked();
   await expect(table.getByRole("row")).toHaveCount(3);
   await page.reload();
   await expect(row.getByText("replacement", { exact: true })).toBeVisible();
   await expect(row.getByRole("checkbox")).toBeChecked();
-  await page.screenshot({ path: test.info().outputPath("import-updated.png"), fullPage: true });
+  await page.screenshot({
+    path: test.info().outputPath("import-updated.png"),
+    fullPage: true,
+  });
 });

@@ -190,7 +190,7 @@ export function createRun(
     questions: selected.map((family) => ({
       family,
       verbGiven: true,
-      order: shuffle(parts, random),
+      order: [...parts],
       answers: {},
       checked: false,
     })),

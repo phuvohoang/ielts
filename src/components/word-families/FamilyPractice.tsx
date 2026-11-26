@@ -367,7 +367,7 @@ export function FamilyPractice({
             }}
           >
             <div className="grid gap-4 sm:grid-cols-2">
-              {q.order
+              {parts
                 .filter(
                   (p) =>
                     q.family.data[p].length && !(q.verbGiven && p === "verb"),

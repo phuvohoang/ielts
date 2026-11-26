@@ -144,7 +144,7 @@ describe("Word Families import and CRUD", () => {
   });
 });
 describe("local practice and persistence", () => {
-  it("samples without duplicates, caps to available rows, supports All, shuffles each field order", async () => {
+  it("samples without duplicates, caps to available rows, supports All, fixes each field order", async () => {
     const families = await Promise.all(
       Array.from({ length: 12 }, (_, i) =>
         saveFamily({
@@ -162,16 +162,7 @@ describe("local practice and persistence", () => {
     const run = createRun(families, 10, "all", random);
     expect(run.questions).toHaveLength(10);
     expect(new Set(run.questions.map((q) => q.family.id)).size).toBe(10);
-    expect(
-      run.questions.every(
-        (q) =>
-          new Set(q.order).size === 4 &&
-          parts.every((p) => q.order.includes(p)),
-      ),
-    ).toBe(true);
-    expect(
-      new Set(run.questions.map((q) => q.order.join(","))).size,
-    ).toBeGreaterThan(1);
+    for (const question of run.questions) expect(question.order).toEqual(parts);
     expect(createRun(families, 50, "all").questions).toHaveLength(12);
     expect(createRun(families, "all", "all").questions).toHaveLength(12);
     expect(shuffle(families, () => 0).map((x) => x.id)).not.toEqual(
