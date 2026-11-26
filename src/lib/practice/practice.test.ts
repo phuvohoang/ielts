@@ -241,7 +241,7 @@ describe("AI skill practice server and data", () => {
     });
     await db.practiceRuns.put(row);
     const backup = await exportBackup();
-    expect(backup.version).toBe(8);
+    expect(backup.version).toBe(9);
     expect(backup.practiceRuns[0].answers[1]).toBe("my draft");
     await importBackup({ ...backup, version: 4, practiceRuns: undefined });
     expect(await db.practiceRuns.count()).toBe(1);

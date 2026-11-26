@@ -640,7 +640,7 @@ describe("exam gating and additive persistence", () => {
     expect(await db.aiAttempts.count()).toBe(1);
     expect(await db.practiceSessions.count()).toBe(2);
     const backup = await exportBackup();
-    expect(backup.version).toBe(8);
+    expect(backup.version).toBe(9);
     await importBackup(backup);
     expect(await db.practiceSessions.count()).toBe(2);
     const old = { ...backup, version: 3, practiceSessions: undefined };

@@ -122,7 +122,7 @@ it("roundtrips selections in v8 backup and preserves valid selections when resto
   const family = await saveFamily(data("Một", "one"));
   await setFamilySelection([family.id], true);
   const backup = await exportBackup();
-  expect(backup.version).toBe(8);
+  expect(backup.version).toBe(9);
   expect(backup.wordFamilySelections).toEqual([{ familyId: family.id }]);
   await clearFamilySelection();
   await importBackup(backup);

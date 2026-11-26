@@ -1,4 +1,10 @@
 import {
+  contextRunSchema,
+  cachedContextSchema,
+  type ContextRun,
+  type CachedContext,
+} from "./word-families/context-model";
+import {
   familySchema,
   selectionSchema,
   type Selection,
@@ -84,6 +90,8 @@ class LearningDB extends Dexie {
   writingExercises!: Table<ReviewExercise, string>;
   writingOutcomes!: Table<ReviewOutcome, string>;
   writingDrafts!: Table<z.infer<typeof writingDraftSchema>, string>;
+  wordContextRuns!: Table<ContextRun, string>;
+  wordContextCache!: Table<CachedContext, string>;
   wordFamilySelections!: Table<Selection, string>;
   wordFamilies!: Table<Family, string>;
   wordFamilyRuns!: Table<Run, string>;
@@ -107,6 +115,10 @@ class LearningDB extends Dexie {
       writingExercises: "id,patternId,level,createdAt",
       writingOutcomes: "id,patternId,exerciseId,date",
       writingDrafts: "id,updatedAt",
+    });
+    this.version(9).stores({
+      wordContextRuns: "id,updatedAt,createdAt",
+      wordContextCache: "id,createdAt",
     });
     this.version(8).stores({ wordFamilySelections: "familyId" });
     this.version(7).stores({
@@ -152,7 +164,10 @@ export const backupSchema = z.union([
         z.literal(6),
         z.literal(7),
         z.literal(8),
+        z.literal(9),
       ]),
+      wordContextRuns: z.array(contextRunSchema).optional(),
+      wordContextCache: z.array(cachedContextSchema).optional(),
       wordFamilySelections: z.array(selectionSchema).optional(),
       wordFamilies: z.array(familySchema).optional(),
       wordFamilyRuns: z.array(runSchema).optional(),
@@ -173,7 +188,10 @@ export const backupSchema = z.union([
     })
     .refine(
       (b) =>
-        (b.version !== 6 && b.version !== 7 && b.version !== 8) ||
+        (b.version !== 6 &&
+          b.version !== 7 &&
+          b.version !== 8 &&
+          b.version !== 9) ||
         [
           b.writingAssessments,
           b.writingPatterns,
@@ -185,15 +203,23 @@ export const backupSchema = z.union([
     )
     .refine(
       (b) =>
-        (b.version !== 7 && b.version !== 8) ||
+        (b.version !== 7 && b.version !== 8 && b.version !== 9) ||
         [b.wordFamilies, b.wordFamilyRuns, b.wordFamilyWeaknesses].every(
           (v) => v !== undefined,
         ),
       "Version 7 requires word family tables",
     )
     .refine(
-      (b) => b.version !== 8 || b.wordFamilySelections !== undefined,
+      (b) =>
+        (b.version !== 8 && b.version !== 9) ||
+        b.wordFamilySelections !== undefined,
       "Version 8 requires word selections",
+    )
+    .refine(
+      (b) =>
+        b.version !== 9 ||
+        (b.wordContextRuns !== undefined && b.wordContextCache !== undefined),
+      "Version 9 requires context practice tables",
     )
     .refine(
       (b) => b.version === 2 || b.aiAttempts !== undefined,
@@ -205,7 +231,8 @@ export const backupSchema = z.union([
           b.version !== 5 &&
           b.version !== 6 &&
           b.version !== 7 &&
-          b.version !== 8) ||
+          b.version !== 8 &&
+          b.version !== 9) ||
         b.practiceSessions !== undefined,
       "Version 4 requires generated sessions",
     )
@@ -214,7 +241,8 @@ export const backupSchema = z.union([
         (b.version !== 5 &&
           b.version !== 6 &&
           b.version !== 7 &&
-          b.version !== 8) ||
+          b.version !== 8 &&
+          b.version !== 9) ||
         b.practiceRuns !== undefined,
       "Version 5 requires AI skill practice",
     )
@@ -251,13 +279,17 @@ export async function exportBackup() {
       db.writingExercises,
       db.writingOutcomes,
       db.writingDrafts,
+      db.wordContextRuns,
+      db.wordContextCache,
       db.wordFamilySelections,
       db.wordFamilies,
       db.wordFamilyRuns,
       db.wordFamilyWeaknesses,
     ],
     async () => ({
-      version: 8 as const,
+      version: 9 as const,
+      wordContextRuns: await db.wordContextRuns.toArray(),
+      wordContextCache: await db.wordContextCache.toArray(),
       wordFamilySelections: await db.wordFamilySelections.toArray(),
       wordFamilies: await db.wordFamilies.toArray(),
       wordFamilyRuns: await db.wordFamilyRuns.toArray(),
@@ -296,17 +328,25 @@ export async function importBackup(input: unknown) {
       db.writingExercises,
       db.writingOutcomes,
       db.writingDrafts,
+      db.wordContextRuns,
+      db.wordContextCache,
       db.wordFamilySelections,
       db.wordFamilies,
       db.wordFamilyRuns,
       db.wordFamilyWeaknesses,
     ],
     async () => {
-      if (b.version === 8) {
+      if (b.version === 9) {
+        await db.wordContextRuns.clear();
+        await db.wordContextCache.clear();
+        await db.wordContextRuns.bulkAdd(b.wordContextRuns ?? []);
+        await db.wordContextCache.bulkAdd(b.wordContextCache ?? []);
+      }
+      if (b.version === 8 || b.version === 9) {
         await db.wordFamilySelections.clear();
         await db.wordFamilySelections.bulkAdd(b.wordFamilySelections ?? []);
       }
-      if (b.version === 7 || b.version === 8) {
+      if (b.version === 7 || b.version === 8 || b.version === 9) {
         await Promise.all([
           db.wordFamilies.clear(),
           db.wordFamilyRuns.clear(),
@@ -320,7 +360,12 @@ export async function importBackup(input: unknown) {
           .filter((s) => !validIds.has(s.familyId))
           .delete();
       }
-      if (b.version === 6 || b.version === 7 || b.version === 8) {
+      if (
+        b.version === 6 ||
+        b.version === 7 ||
+        b.version === 8 ||
+        b.version === 9
+      ) {
         await Promise.all([
           db.writingAssessments.clear(),
           db.writingPatterns.clear(),
@@ -350,7 +395,8 @@ export async function importBackup(input: unknown) {
         b.version === 5 ||
         b.version === 6 ||
         b.version === 7 ||
-        b.version === 8
+        b.version === 8 ||
+        b.version === 9
       ) {
         await db.lessons.clear();
         await db.checks.clear();
@@ -362,7 +408,8 @@ export async function importBackup(input: unknown) {
           b.version === 5 ||
           b.version === 6 ||
           b.version === 7 ||
-          b.version === 8
+          b.version === 8 ||
+          b.version === 9
         ) {
           await db.aiAttempts.clear();
           await db.aiAttempts.bulkAdd(b.aiAttempts ?? []);
@@ -372,7 +419,8 @@ export async function importBackup(input: unknown) {
           b.version === 5 ||
           b.version === 6 ||
           b.version === 7 ||
-          b.version === 8
+          b.version === 8 ||
+          b.version === 9
         ) {
           await db.practiceSessions.clear();
           await db.practiceSessions.bulkAdd(b.practiceSessions ?? []);
@@ -380,7 +428,8 @@ export async function importBackup(input: unknown) {
             b.version === 5 ||
             b.version === 6 ||
             b.version === 7 ||
-            b.version === 8
+            b.version === 8 ||
+            b.version === 9
           ) {
             await db.practiceRuns.clear();
             await db.practiceRuns.bulkAdd(b.practiceRuns ?? []);

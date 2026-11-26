@@ -237,7 +237,7 @@ describe("local practice and persistence", () => {
     const family = await saveFamily(sample);
     await checkRun(createRun([family], 10, "all"));
     const backup = await exportBackup();
-    expect(backup.version).toBe(8);
+    expect(backup.version).toBe(9);
     await db.wordFamilies.clear();
     await db.wordFamilyRuns.clear();
     await db.wordFamilyWeaknesses.clear();
