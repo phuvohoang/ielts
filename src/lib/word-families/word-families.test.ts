@@ -85,9 +85,47 @@ describe("Word Families import and CRUD", () => {
     ]);
     expect(
       await importFamilies(rows.flatMap((r) => (r.data ? [r.data] : []))),
-    ).toEqual({ added: 1, skipped: 1 });
-    expect(await importFamilies([sample])).toEqual({ added: 0, skipped: 1 });
+    ).toEqual({ added: 1, updated: 1 });
+    expect(await importFamilies([sample])).toEqual({ added: 0, updated: 1 });
     expect(await db.wordFamilies.count()).toBe(1);
+  });
+  it("upserts matching entries atomically, preserving IDs, selections and historical snapshots", async () => {
+    const original = await saveFamily(sample);
+    const other = await saveFamily({
+      ...sample,
+      meaning_vi: "Khác",
+      noun: ["difference"],
+    });
+    await db.wordFamilySelections.put({ familyId: original.id });
+    const run = createRun([original], 10, "all");
+    await saveRun(run);
+    const replacement = { ...sample, noun: ["new noun"], verb: [] };
+    expect(await importFamilies([replacement])).toEqual({
+      added: 0,
+      updated: 1,
+    });
+    expect(await db.wordFamilies.get(original.id)).toMatchObject({
+      data: replacement,
+    });
+    expect(await db.wordFamilies.get(other.id)).toEqual(other);
+    expect(await db.wordFamilySelections.get(original.id)).toBeDefined();
+    expect((await loadRun(run.id)).questions[0].family.data).toEqual(sample);
+    await importFamilies([{ ...replacement, meaning_vi: "Đổi nghĩa" }]);
+    expect((await db.wordFamilies.get(original.id))?.data.meaning_vi).toBe(
+      "Đổi nghĩa",
+    );
+    const before = await db.wordFamilies.toArray();
+    await expect(
+      importFamilies([
+        { ...replacement, meaning_vi: "Mới", noun: ["fresh"] },
+        { ...replacement, meaning_vi: "Khác" },
+      ]),
+    ).rejects.toThrow("khớp nhiều mục");
+    expect(await db.wordFamilies.toArray()).toEqual(before);
+    await expect(
+      importFamilies([replacement, { ...sample, noun: [""] }]),
+    ).rejects.toThrow();
+    expect(await db.wordFamilies.toArray()).toEqual(before);
   });
   it("adds, edits, rejects duplicates and deletes without rewriting historical questions", async () => {
     const family = await saveFamily(sample);
