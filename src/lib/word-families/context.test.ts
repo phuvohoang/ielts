@@ -152,6 +152,28 @@ describe("context vocabulary and deterministic validation", () => {
     ).toThrow();
   });
 });
+it("rejects incorrect quoted adjacency claims while preserving legacy snapshots", () => {
+  const task = planContext([family], settings)[0];
+  const q = {
+    ...question(task),
+    sentence:
+      "The manager coordinated the team so _____ that all deadlines were met.",
+    explanation_vi:
+      "Chỗ trống đứng ngay sau động từ 'coordinated', nên cần một trạng từ để mô tả cách thức thực hiện.",
+  };
+  expect(() => validateContextQuestion(q, task)).toThrow("vị trí");
+  expect(() =>
+    validateContextQuestion(
+      {
+        ...q,
+        explanation_vi:
+          "Chỗ trống nằm ngay sau trạng từ mức độ 'so' trong cấu trúc so ... that và cần một trạng từ chỉ cách thức.",
+      },
+      task,
+    ),
+  ).not.toThrow();
+  expect(() => validateContextQuestion(q, task, [], false)).not.toThrow();
+});
 describe("context generation, cache, local scoring and persistence", () => {
   it("batches, restricts sources, caches, grades locally and resumes answers without grading calls", async () => {
     const fetch = mockGeneration((tasks) =>
