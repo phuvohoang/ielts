@@ -30,18 +30,23 @@ async function upload(
   ).toBeVisible();
 }
 async function fillCorrect(page: Page, wrong = false) {
-  if (
-    await page
-      .getByRole("heading", { name: "Sự phân tích", exact: true })
-      .count()
-  ) {
+  if (await page.getByRole("heading", { name: /^Sự phân tích ·/ }).count()) {
     await page
       .getByLabel("Noun", { exact: true })
       .fill(wrong ? "analysys" : "  ANALYSIS  ");
     await page.getByLabel("Adjective", { exact: true }).fill("analytic");
     await page.getByLabel("Adverb", { exact: true }).fill("analytically");
-    await page.getByLabel("Verb", { exact: true }).fill("analyze");
+    await expect(page.getByLabel("Verb", { exact: true })).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", {
+        name: "Sự phân tích · analyse / analyze",
+        exact: true,
+      }),
+    ).toBeVisible();
   } else {
+    await expect(
+      page.getByRole("heading", { name: "Hiệu suất · —", exact: true }),
+    ).toBeVisible();
     await expect(page.getByLabel("Verb", { exact: true })).toHaveCount(0);
     await page.getByLabel("Noun", { exact: true }).fill("efficiency");
     await page.getByLabel("Adjective", { exact: true }).fill("efficient");
@@ -177,7 +182,7 @@ test("CSV preview, local grading, missing forms, persisted drafts, results and r
     page.getByRole("heading", { name: "Kết quả Word Families", exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByText("6/7 điểm", { exact: false }).first(),
+    page.getByText("5/6 điểm", { exact: false }).first(),
   ).toBeVisible();
   await expect(page.getByText("analysys", { exact: true })).toBeVisible();
   await page
@@ -187,10 +192,10 @@ test("CSV preview, local grading, missing forms, persisted drafts, results and r
     page.getByRole("heading", { name: "Câu 1/1", exact: true }),
   ).toBeVisible();
   await fillCorrect(page);
-  await page.getByLabel("Verb", { exact: true }).press("Enter");
+  await page.getByLabel("Noun", { exact: true }).press("Enter");
   await page.getByRole("button", { name: "Xem kết quả", exact: true }).click();
   await expect(
-    page.getByText("4/4 điểm", { exact: false }).first(),
+    page.getByText("3/3 điểm", { exact: false }).first(),
   ).toBeVisible();
   await page.getByRole("button", { name: "Về thiết lập", exact: true }).click();
   await page.getByLabel("Nguồn luyện").selectOption("incorrect");

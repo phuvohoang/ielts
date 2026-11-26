@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { db, exportBackup, importBackup } from "../db";
 import {
   createRun,
+  resumeRun,
+  practiceFamilies,
   familyInputSchema,
   grade,
   summarize,
@@ -149,15 +151,15 @@ describe("local practice and persistence", () => {
       verb: "analyze",
     };
     expect(grade(q).every((x) => x.correct)).toBe(true);
-    expect(grade(q)).toHaveLength(3);
+    expect(grade(q)).toHaveLength(2);
     q.answers.noun = "analysys";
     expect(grade(q).find((x) => x.part === "noun")?.correct).toBe(false);
     q.answers.verb = "ANALYZE";
     q.checked = true;
     const stats = summarize(run);
-    expect(stats.score).toBe(2);
-    expect(stats.total).toBe(3);
-    expect(stats.accuracy).toBe(67);
+    expect(stats.score).toBe(1);
+    expect(stats.total).toBe(2);
+    expect(stats.accuracy).toBe(50);
     expect(stats.fullyCorrect).toBe(0);
     expect(stats.byPart.find((p) => p.part === "adverb")?.total).toBe(0);
   });
@@ -247,5 +249,61 @@ it("upgrades an existing v6 database without losing prior attempts", async () =>
     1,
   );
   await saveFamily(sample);
+  expect(await db.wordFamilies.count()).toBe(1);
+});
+
+it("uses the verb as a clue without scoring it, while preserving completed legacy scores", async () => {
+  const family = await saveFamily(sample),
+    run = createRun([family], 10, "all");
+  const answers = {
+    noun: "analysis",
+    adjective: "analytic",
+    adverb: "analytically",
+    verb: "wrong",
+  };
+  run.questions[0].answers = answers;
+  run.questions[0].checked = true;
+  run.completed = true;
+  expect(run.questions[0].verbGiven).toBe(true);
+  expect(grade(run.questions[0]).map((x) => x.part)).toEqual([
+    "noun",
+    "adjective",
+    "adverb",
+  ]);
+  expect(summarize(run)).toMatchObject({
+    score: 3,
+    total: 3,
+    accuracy: 100,
+    fullyCorrect: 1,
+  });
+  expect(summarize(run).byPart.some((x) => x.part === "verb")).toBe(false);
+  const legacy = {
+    ...run,
+    questions: run.questions.map((q) => ({ ...q, verbGiven: undefined })),
+  };
+  expect(resumeRun(legacy)).toBe(legacy);
+  await saveRun(legacy);
+  expect(summarize(await loadRun(legacy.id))).toMatchObject({
+    score: 3,
+    total: 4,
+    accuracy: 75,
+  });
+  const draft = { ...legacy, completed: false };
+  await saveRun(draft);
+  const resumed = await loadRun(draft.id);
+  expect(resumed.questions[0].verbGiven).toBe(true);
+  expect(resumed.questions[0].answers.verb).toBe("wrong");
+  expect(summarize(resumed).total).toBe(3);
+});
+it("keeps verb-only entries in the library but excludes them from new practice pools", async () => {
+  const only = await saveFamily({
+    meaning_vi: "Chỉ có động từ",
+    noun: [],
+    adjective: [],
+    adverb: [],
+    verb: ["exist"],
+  });
+  expect(practiceFamilies([only], "all", [], new Set())).toEqual([]);
+  expect(() => createRun([only], 10, "all")).toThrow();
   expect(await db.wordFamilies.count()).toBe(1);
 });

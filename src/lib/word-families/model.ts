@@ -64,6 +64,7 @@ export const questionSchema = z.object({
     .refine((v) => new Set(v).size === 4),
   answers: answerSchema,
   checked: z.boolean(),
+  verbGiven: z.boolean().optional(),
 });
 export type Question = z.infer<typeof questionSchema>;
 export const runSchema = z
@@ -103,7 +104,10 @@ export const weaknessSchema = z.object({
 export type Weakness = z.infer<typeof weaknessSchema>;
 export function grade(question: Question) {
   return parts
-    .filter((p) => question.family.data[p].length)
+    .filter(
+      (p) =>
+        question.family.data[p].length && !(question.verbGiven && p === "verb"),
+    )
     .map((part) => ({
       part,
       answer: question.answers[part] ?? "",
@@ -128,16 +132,19 @@ export function summarize(run: Run) {
     score,
     total,
     accuracy: total ? Math.round((score / total) * 100) : 0,
-    fullyCorrect: checked.filter((q) => grade(q).every((x) => x.correct))
-      .length,
-    byPart: parts.map((part) => {
-      const rows = graded.filter((x) => x.part === part);
-      return {
-        part,
-        score: rows.filter((x) => x.correct).length,
-        total: rows.length,
-      };
-    }),
+    fullyCorrect: checked.filter(
+      (q) => grade(q).length > 0 && grade(q).every((x) => x.correct),
+    ).length,
+    byPart: parts
+      .filter((p) => p !== "verb" || checked.some((q) => !q.verbGiven))
+      .map((part) => {
+        const rows = graded.filter((x) => x.part === part);
+        return {
+          part,
+          score: rows.filter((x) => x.correct).length,
+          total: rows.length,
+        };
+      }),
     incorrect: graded.filter((x) => !x.correct),
   };
 }
@@ -160,7 +167,11 @@ export function createRun(
   pool: Run["pool"],
   random = unitRandom,
 ): Run {
-  const unique = [...new Map(families.map((f) => [f.id, f])).values()];
+  const unique = [
+    ...new Map(
+      families.filter(hasPracticeForms).map((f) => [f.id, f]),
+    ).values(),
+  ];
   if (!unique.length) throw Error("Chưa có word family phù hợp để luyện.");
   const selected = shuffle(unique, random).slice(
     0,
@@ -178,6 +189,7 @@ export function createRun(
     completed: false,
     questions: selected.map((family) => ({
       family,
+      verbGiven: true,
       order: shuffle(parts, random),
       answers: {},
       checked: false,
@@ -229,5 +241,19 @@ export function practiceFamilies(
       : ids || pool === "all"
         ? families
         : families.filter((f) => incorrectIds.has(f.id));
-  return ids ? available.filter((f) => ids.has(f.id)) : available;
+  return available.filter(
+    (f) => hasPracticeForms(f) && (!ids || ids.has(f.id)),
+  );
+}
+
+export function hasPracticeForms(family: Family) {
+  return parts.some((p) => p !== "verb" && family.data[p].length);
+}
+export function resumeRun(run: Run): Run {
+  return run.completed
+    ? run
+    : {
+        ...run,
+        questions: run.questions.map((q) => ({ ...q, verbGiven: true })),
+      };
 }

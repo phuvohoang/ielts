@@ -148,7 +148,9 @@ test("navigates into selected mode, practises only chosen words, keeps choices a
     await expect(
       page.getByRole("heading", { name: `Câu ${i}/2`, exact: true }),
     ).toBeVisible();
-    const prompt = await page.locator("h3").first().innerText();
+    const prompt = (await page.locator("h3").first().innerText()).split(
+      " · ",
+    )[0];
     expect(["Alpha", "Beta"]).toContain(prompt);
     seen.push(prompt);
     await page.getByLabel("Noun", { exact: true }).fill(prompt.toLowerCase());
