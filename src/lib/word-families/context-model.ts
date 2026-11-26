@@ -100,38 +100,88 @@ export function planContext(
     );
   const familyCounts = new Map<string, number>(),
     posCounts = new Map<Part, number>();
-  return Array.from({ length: settings.count }, (_, index) => {
-    const family = [...eligible].sort(
-      (a, b) => (familyCounts.get(a.id) ?? 0) - (familyCounts.get(b.id) ?? 0),
-    )[0];
-    familyCounts.set(family.id, (familyCounts.get(family.id) ?? 0) + 1);
-    const choices = contextChoices(family);
-    const candidates = shuffle(
-      choices.filter(
-        (c) => settings.target === "all" || c.part === settings.target,
-      ),
-    );
-    candidates.sort(
-      (a, b) => (posCounts.get(a.part) ?? 0) - (posCounts.get(b.part) ?? 0),
-    );
-    const selected = candidates[0];
-    posCounts.set(selected.part, (posCounts.get(selected.part) ?? 0) + 1);
-    const correct = shuffle(selected.accepted)[0];
-    return {
-      family,
-      target_pos: selected.part,
-      correct_answer: correct,
-      options: shuffle(
-        choices.map((c) =>
-          c.part === selected.part ? correct : shuffle(c.accepted)[0],
+  const plan: ContextTask[] = Array.from(
+    { length: settings.count },
+    (_, index) => {
+      const family = [...eligible].sort(
+        (a, b) => (familyCounts.get(a.id) ?? 0) - (familyCounts.get(b.id) ?? 0),
+      )[0];
+      familyCounts.set(family.id, (familyCounts.get(family.id) ?? 0) + 1);
+      const choices = contextChoices(family);
+      const candidates = shuffle(
+        choices.filter(
+          (c) => settings.target === "all" || c.part === settings.target,
         ),
-      ),
-      difficulty:
-        settings.difficulty === "Mixed"
-          ? levels[index % levels.length]
-          : settings.difficulty,
-    };
-  });
+      );
+      candidates.sort(
+        (a, b) => (posCounts.get(a.part) ?? 0) - (posCounts.get(b.part) ?? 0),
+      );
+      const selected = candidates[0];
+      posCounts.set(selected.part, (posCounts.get(selected.part) ?? 0) + 1);
+      const correct = shuffle(selected.accepted)[0];
+      return {
+        family,
+        target_pos: selected.part,
+        correct_answer: correct,
+        options: shuffle(
+          choices.map((c) =>
+            c.part === selected.part ? correct : shuffle(c.accepted)[0],
+          ),
+        ),
+        difficulty:
+          settings.difficulty === "Mixed"
+            ? levels[index % levels.length]
+            : settings.difficulty,
+      };
+    },
+  );
+  if (settings.target === "all") {
+    // Move targets along the at-most-four-POS graph, preserving each family's
+    // question quota. A path can free a scarce POS through another family.
+    type Move = { task: ContextTask; to: Part };
+    for (;;) {
+      let moves: Move[] | undefined;
+      for (const from of parts) {
+        const queue: { part: Part; path: Move[] }[] = [
+          { part: from, path: [] },
+        ];
+        const seen = new Set<Part>([from]);
+        while (queue.length && !moves) {
+          const node = queue.shift()!;
+          for (const task of plan.filter((t) => t.target_pos === node.part)) {
+            for (const choice of contextChoices(task.family)) {
+              if (seen.has(choice.part)) continue;
+              seen.add(choice.part);
+              const path = [...node.path, { task, to: choice.part }];
+              if (
+                (posCounts.get(from) ?? 0) >
+                (posCounts.get(choice.part) ?? 0) + 1
+              ) {
+                moves = path;
+                break;
+              }
+              queue.push({ part: choice.part, path });
+            }
+            if (moves) break;
+          }
+        }
+        if (moves) break;
+      }
+      if (!moves) break;
+      for (const { task, to } of moves) {
+        posCounts.set(
+          task.target_pos,
+          (posCounts.get(task.target_pos) ?? 0) - 1,
+        );
+        posCounts.set(to, (posCounts.get(to) ?? 0) + 1);
+        task.target_pos = to;
+        task.correct_answer = task.options.find((word) =>
+          task.family.data[to].some((w) => normalize(w) === normalize(word)),
+        )!;
+      }
+    }
+  }
+  return plan;
 }
 export function validateContextQuestion(
   raw: unknown,

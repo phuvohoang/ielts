@@ -91,20 +91,22 @@ describe("context vocabulary and deterministic validation", () => {
     expect((await contextSource(settings)).map((f) => f.id)).toEqual([
       family.id,
     ]);
-    const plan = planContext([family, other], {
-      ...settings,
-      count: 20,
-      target: "all",
-      difficulty: "Mixed",
-    });
-    expect(plan.filter((t) => t.family.id === family.id)).toHaveLength(10);
-    expect(new Set(plan.map((t) => t.difficulty))).toEqual(
-      new Set(["B1", "B2", "C1"]),
-    );
-    const counts = ["noun", "adjective", "adverb", "verb"].map(
-      (p) => plan.filter((t) => t.target_pos === p).length,
-    );
-    expect(Math.max(...counts) - Math.min(...counts)).toBeLessThanOrEqual(1);
+    for (let trial = 0; trial < 40; trial++) {
+      const plan = planContext([family, other], {
+        ...settings,
+        count: 20,
+        target: "all",
+        difficulty: "Mixed",
+      });
+      expect(plan.filter((t) => t.family.id === family.id)).toHaveLength(10);
+      expect(new Set(plan.map((t) => t.difficulty))).toEqual(
+        new Set(["B1", "B2", "C1"]),
+      );
+      const counts = ["noun", "adjective", "adverb", "verb"].map(
+        (p) => plan.filter((t) => t.target_pos === p).length,
+      );
+      expect(Math.max(...counts) - Math.min(...counts)).toBeLessThanOrEqual(1);
+    }
     expect(
       eligibleContextFamilies(
         [
