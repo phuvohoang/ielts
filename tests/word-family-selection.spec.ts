@@ -1,13 +1,11 @@
 import { test, expect, type Page } from "@playwright/test";
 async function upload(page: Page, rows: unknown) {
   await page.goto("/word-families");
-  await page
-    .getByLabel("Nhập JSON hoặc CSV")
-    .setInputFiles({
-      name: "selection.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(JSON.stringify(rows)),
-    });
+  await page.getByLabel("Nhập JSON hoặc CSV").setInputFiles({
+    name: "selection.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(rows)),
+  });
   await page
     .getByRole("button", { name: "Xác nhận nhập", exact: true })
     .click();
@@ -196,6 +194,9 @@ test("navigates into selected mode, practises only chosen words, keeps choices a
   ).toBeDisabled();
   await page.getByRole("button", { name: "Về thiết lập", exact: true }).click();
   await expect(source).toHaveValue("selected");
+  await expect(
+    page.getByText("Bạn chọn 50 câu", { exact: false }),
+  ).not.toBeVisible();
   await expect(
     page.getByRole("button", { name: "Bắt đầu luyện", exact: true }),
   ).toBeDisabled();

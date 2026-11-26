@@ -270,7 +270,10 @@ export function FamilyPractice({
                 aria-label="Nguồn luyện"
                 size="sm"
                 value={pool}
-                onChange={(e) => setPool(e.target.value as Run["pool"])}
+                onChange={(e) => {
+                  setPool(e.target.value as Run["pool"]);
+                  setNotice("");
+                }}
               >
                 <option value="all">All words ({families.length})</option>
                 <option value="selected">
@@ -495,7 +498,10 @@ export function FamilyPractice({
                 size="sm"
                 variant="ghost"
                 disabled={busy}
-                onClick={() => display(undefined)}
+                onClick={() => {
+                  display(undefined);
+                  setNotice("");
+                }}
               >
                 Về thiết lập
               </Button>
