@@ -15,24 +15,38 @@ import {
   type Family,
   type Run,
   type Weakness,
+  type Selection,
+  selectedFamilies,
+  practiceFamilies,
 } from "../../lib/word-families/model";
-import { checkRun, saveRun, loadRun } from "../../lib/word-families/storage";
+import {
+  checkRun,
+  saveRun,
+  loadRun,
+  loadSelectedFamilies,
+} from "../../lib/word-families/storage";
 // Clock reads below persist draft/history timestamps; never used for render keys.
 export function FamilyPractice({
   families,
   runs,
   weaknesses,
+  selections,
+  selectedPracticeRequest,
   reload,
   openLibrary,
 }: {
   families: Family[];
   runs: Run[];
   weaknesses: Weakness[];
+  selections: Selection[];
+  selectedPracticeRequest: number;
   reload: () => Promise<void>;
   openLibrary: () => void;
 }) {
   const [requested, setRequested] = useState<Run["requested"]>(10),
-    [pool, setPool] = useState<Run["pool"]>("all");
+    [pool, setPool] = useState<Run["pool"]>(
+      runs.find((r) => !r.completed)?.pool ?? "all",
+    );
   const [run, setRun] = useState<Run | undefined>(() =>
     runs.find((r) => !r.completed),
   );
@@ -43,10 +57,17 @@ export function FamilyPractice({
     [error, setError] = useState(""),
     [notice, setNotice] = useState("");
   const first = useRef<HTMLInputElement>(null),
-    nextButton = useRef<HTMLButtonElement>(null);
+    nextButton = useRef<HTMLButtonElement>(null),
+    sourceControl = useRef<HTMLSelectElement>(null),
+    focusSelection = useRef(false);
   const [historyPage, setHistoryPage] = useState(0);
   useEffect(() => {
     if (busy) return;
+    if (!run && focusSelection.current) {
+      sourceControl.current?.focus();
+      focusSelection.current = false;
+      return;
+    }
     if (run?.questions[run.index].checked) nextButton.current?.focus();
     else first.current?.focus();
   }, [run?.id, run?.index, run?.questions[run.index]?.checked, busy]);
@@ -63,8 +84,28 @@ export function FamilyPractice({
       )
       .map((w) => w.familyId),
   );
-  const available =
-    pool === "all" ? families : families.filter((f) => incorrectIds.has(f.id));
+  const selectedCount = selectedFamilies(families, selections).length;
+  const available = practiceFamilies(families, pool, selections, incorrectIds);
+  const appliedRequest = useRef(0);
+  useEffect(() => {
+    if (
+      !selectedPracticeRequest ||
+      selectedPracticeRequest <= appliedRequest.current ||
+      busy ||
+      locked.current
+    )
+      return;
+    appliedRequest.current = selectedPracticeRequest;
+    void action(async () => {
+      if (current.current) await saveRun(current.current);
+      focusSelection.current = true;
+      display(undefined);
+      setPool("selected");
+      setNotice(
+        "Đã chọn chế độ Selected words. Chọn số câu rồi bắt đầu luyện.",
+      );
+    });
+  }, [selectedPracticeRequest, busy]);
   async function action(work: () => Promise<void>) {
     if (locked.current) return;
     locked.current = true;
@@ -112,11 +153,10 @@ export function FamilyPractice({
     count: Run["requested"] = requested,
   ) {
     await action(async () => {
-      const selected = ids
-        ? families.filter((f) => ids.has(f.id))
-        : source === "all"
-          ? families
-          : families.filter((f) => incorrectIds.has(f.id));
+      const selected =
+        source === "selected"
+          ? await loadSelectedFamilies(ids)
+          : practiceFamilies(families, source, selections, incorrectIds, ids);
       const next = createRun(selected, count, source);
       await saveRun(next);
       display(next);
@@ -151,6 +191,24 @@ export function FamilyPractice({
   const q = run?.questions[run.index],
     feedback = q?.checked ? grade(q) : undefined;
   const summary = run ? summarize(run) : undefined;
+  const againAvailable = run
+    ? practiceFamilies(
+        families,
+        run.pool,
+        selections,
+        incorrectIds,
+        new Set(run.questions.map((q) => q.family.id)),
+      ).length
+    : 0;
+  const retryIds = new Set(summary?.incorrect.map((x) => x.familyId) ?? []);
+  const retrySource = run?.pool === "selected" ? "selected" : "incorrect";
+  const retryAvailable = practiceFamilies(
+    families,
+    retrySource,
+    selections,
+    incorrectIds,
+    retryIds,
+  ).length;
   const historyPages = Math.max(1, Math.ceil(runs.length / 20)),
     visibleHistory = Math.min(historyPage, historyPages - 1);
   const recent = runs.slice(visibleHistory * 20, visibleHistory * 20 + 20);
@@ -208,14 +266,18 @@ export function FamilyPractice({
             <label className="flex flex-col gap-2">
               Nguồn luyện
               <NativeSelect
+                ref={sourceControl}
                 aria-label="Nguồn luyện"
                 size="sm"
                 value={pool}
                 onChange={(e) => setPool(e.target.value as Run["pool"])}
               >
-                <option value="all">Tất cả từ đã nhập</option>
+                <option value="all">All words ({families.length})</option>
+                <option value="selected">
+                  Selected words ({selectedCount})
+                </option>
                 <option value="incorrect">
-                  Từ từng trả lời sai chưa sửa được
+                  Previously incorrect words ({incorrectIds.size})
                 </option>
               </NativeSelect>
             </label>
@@ -244,9 +306,11 @@ export function FamilyPractice({
           </div>
           {!available.length && (
             <p>
-              {families.length
-                ? "Chưa có từ phù hợp với bộ lọc này. Chọn tất cả từ hoặc nhập thêm dữ liệu."
-                : "Thư viện trống. Nhập từ trước khi luyện."}
+              {pool === "selected"
+                ? "Chưa chọn word family nào. Vào Word Library và chọn từ để bắt đầu luyện."
+                : families.length
+                  ? "Chưa có từ phù hợp với bộ lọc này. Chọn tất cả từ hoặc nhập thêm dữ liệu."
+                  : "Thư viện trống. Nhập từ trước khi luyện."}
             </p>
           )}
         </PracticePanel>
@@ -318,14 +382,20 @@ export function FamilyPractice({
                           </Badge>
                           <p>
                             Câu bạn nhập:{" "}
-                            <span lang="en" className="whitespace-pre-wrap break-words">
+                            <span
+                              lang="en"
+                              className="whitespace-pre-wrap break-words"
+                            >
                               {result.answer || "(để trống)"}
                             </span>
                           </p>
                           {!result.correct && (
                             <p>
                               Đáp án chấp nhận:{" "}
-                              <span lang="en" className="whitespace-pre-wrap break-words">
+                              <span
+                                lang="en"
+                                className="whitespace-pre-wrap break-words"
+                              >
                                 {result.accepted.join(" / ")}
                               </span>
                             </p>
@@ -400,7 +470,7 @@ export function FamilyPractice({
               <Button
                 type="button"
                 size="sm"
-                disabled={busy || !families.length}
+                disabled={busy || !againAvailable}
                 onClick={() =>
                   void start(
                     run.pool,
@@ -415,19 +485,8 @@ export function FamilyPractice({
                 type="button"
                 size="sm"
                 variant="outline"
-                disabled={
-                  busy ||
-                  !summary.incorrect.some((x) =>
-                    families.some((f) => f.id === x.familyId),
-                  )
-                }
-                onClick={() =>
-                  void start(
-                    "incorrect",
-                    new Set(summary.incorrect.map((x) => x.familyId)),
-                    "all",
-                  )
-                }
+                disabled={busy || !retryAvailable}
+                onClick={() => void start(retrySource, retryIds, "all")}
               >
                 Retry Incorrect Words
               </Button>

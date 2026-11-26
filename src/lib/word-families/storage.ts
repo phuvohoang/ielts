@@ -1,5 +1,6 @@
 import { db } from "../db";
 import {
+  selectionSchema,
   duplicate,
   duplicateIndex,
   familyInputSchema,
@@ -61,7 +62,9 @@ export async function deleteFamily(id: string) {
     "rw",
     db.wordFamilies,
     db.wordFamilyWeaknesses,
+    db.wordFamilySelections,
     async () => {
+      await db.wordFamilySelections.delete(id);
       await db.wordFamilies.delete(id);
       await db.wordFamilyWeaknesses.delete(id);
     },
@@ -115,10 +118,14 @@ export async function checkRun(run: Run) {
 export async function loadWordFamilies() {
   return db.transaction(
     "r",
+    db.wordFamilySelections,
     db.wordFamilies,
     db.wordFamilyRuns,
     db.wordFamilyWeaknesses,
     async () => ({
+      selections: (await db.wordFamilySelections.toArray()).map((s) =>
+        selectionSchema.parse(s),
+      ),
       families: (await db.wordFamilies.toArray()).map((v) =>
         familySchema.parse(v),
       ),
@@ -132,4 +139,42 @@ export async function loadWordFamilies() {
 
 export async function loadRun(id: string) {
   return runSchema.parse(await db.wordFamilyRuns.get(id));
+}
+
+export async function setFamilySelection(ids: string[], selected: boolean) {
+  await db.transaction(
+    "rw",
+    db.wordFamilies,
+    db.wordFamilySelections,
+    async () => {
+      const valid = (await db.wordFamilies.bulkGet([...new Set(ids)])).flatMap(
+        (f) => (f ? [f.id] : []),
+      );
+      if (selected)
+        await db.wordFamilySelections.bulkPut(
+          valid.map((familyId) => ({ familyId })),
+        );
+      else await db.wordFamilySelections.bulkDelete(ids);
+    },
+  );
+}
+export async function clearFamilySelection() {
+  await db.wordFamilySelections.clear();
+}
+
+export async function loadSelectedFamilies(ids?: Set<string>) {
+  return db.transaction(
+    "r",
+    db.wordFamilies,
+    db.wordFamilySelections,
+    async () => {
+      const selected = await db.wordFamilySelections.toArray();
+      const rows = await db.wordFamilies.bulkGet(
+        selected.map((s) => s.familyId),
+      );
+      return rows.flatMap((row) =>
+        row && (!ids || ids.has(row.id)) ? [familySchema.parse(row)] : [],
+      );
+    },
+  );
 }
