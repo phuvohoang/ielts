@@ -183,10 +183,40 @@ export function planContext(
   }
   return plan;
 }
+// Verify explicit quoted adjacency claims against the actual gap, rather than
+// trusting an AI assertion that a word is immediately beside it.
+export function explanationPositionIssue(q: ContextQuestion) {
+  const [left = "", right = ""] = q.sentence.split("_____");
+  const clean = (text: string) =>
+    normalize(text).replace(
+      /^[\s.,;:!?()\[\]"“”‘’']+|[\s.,;:!?()\[\]"“”‘’']+$/g,
+      "",
+    );
+  const claims = q.explanation_vi.matchAll(
+    /(ngay sau|ngay trước|liền sau|liền trước)[^'"“”‘’.\n]{0,90}['"“‘]([^'"“”‘’]+)['"”’]/giu,
+  );
+  for (const claim of claims) {
+    const word = clean(claim[2]),
+      before = claim[1].toLowerCase().includes("trước");
+    const adjacent = clean(before ? right : left);
+    if (
+      !word ||
+      !(
+        adjacent === word ||
+        (before
+          ? adjacent.startsWith(word + " ")
+          : adjacent.endsWith(" " + word))
+      )
+    )
+      return true;
+  }
+  return false;
+}
 export function validateContextQuestion(
   raw: unknown,
   task: ContextTask,
   avoid: string[] = [],
+  checkExplanation = true,
 ): ContextQuestion {
   const q = contextQuestionSchema.parse(raw);
   const choices = contextChoices(task.family);
@@ -217,6 +247,8 @@ export function validateContextQuestion(
     throw Error(
       "Câu hỏi không khớp thư viện, kế hoạch hoặc cấu trúc cho phép.",
     );
+  if (checkExplanation && explanationPositionIssue(q))
+    throw Error("Giải thích vị trí không khớp câu gốc.");
   return q;
 }
 export const cachedContextSchema = z
@@ -231,13 +263,18 @@ export const cachedContextSchema = z
   .strict()
   .superRefine((item, ctx) => {
     try {
-      validateContextQuestion(item.question, {
-        family: item.family,
-        difficulty: item.difficulty,
-        target_pos: item.question.target_pos,
-        correct_answer: item.question.correct_answer,
-        options: item.question.options,
-      });
+      validateContextQuestion(
+        item.question,
+        {
+          family: item.family,
+          difficulty: item.difficulty,
+          target_pos: item.question.target_pos,
+          correct_answer: item.question.correct_answer,
+          options: item.question.options,
+        },
+        [],
+        false,
+      );
     } catch {
       ctx.addIssue({
         code: "custom",
