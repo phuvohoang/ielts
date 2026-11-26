@@ -36,3 +36,10 @@ New and imported rows have no selection record, so default to unselected. Editin
 Practice source options show counts for All words, Selected words and Previously incorrect words. The library shortcut switches to the Practice tab and Selected words configuration, preserving any earlier draft in history. Selected generation rereads current selection and family records transactionally, then applies existing sampling without replacement and field-order shuffling. Oversized requests use the available subset with a notice; an empty selection disables starting. Existing sessions retain their original snapshots; changes to the selection apply to new/retry sessions. Selected-session repeat/retry also intersects with current selected IDs. Grading is unchanged and remains entirely local.
 
 Selection-specific coverage includes filtered bulk selection across 32 rows/two pages, independent row ordering, search/filter/tab persistence, page reload, browser storage-state restart, edit/delete/default-import semantics, candidate isolation and count capping, selection retention after completion, v7 upgrade, and v8/legacy backup restore. No dependencies or backend services were added.
+
+
+## Verb clue format
+
+New practice shows the imported Verb form(s) beside the Vietnamese meaning, or `—` if no Verb is supplied. Only Noun, Adjective and Adverb have answer inputs and contribute points, accuracy or current weaknesses. Their order remains random. Verb-only entries stay in the library/selections but do not produce new questions, and available-source counts reflect this.
+
+Questions persist an optional `verbGiven` format flag. Newly created and resumed unfinished sessions use the new format; raw previous answers are retained. Completed legacy sessions without the flag keep their original four-form scoring and historical feedback. Practice Again creates a new session in the new format. Dictionary records, JSON/CSV imports and selection persistence are unchanged; no database version bump or backend is required.

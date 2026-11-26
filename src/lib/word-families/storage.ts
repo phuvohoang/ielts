@@ -1,6 +1,8 @@
 import { db } from "../db";
 import {
   selectionSchema,
+  resumeRun,
+  hasPracticeForms,
   duplicate,
   duplicateIndex,
   familyInputSchema,
@@ -131,14 +133,14 @@ export async function loadWordFamilies() {
       ),
       runs: (
         await db.wordFamilyRuns.orderBy("updatedAt").reverse().toArray()
-      ).map((v) => runSchema.parse(v)),
+      ).map((v) => resumeRun(runSchema.parse(v))),
       weaknesses: await db.wordFamilyWeaknesses.toArray(),
     }),
   );
 }
 
 export async function loadRun(id: string) {
-  return runSchema.parse(await db.wordFamilyRuns.get(id));
+  return resumeRun(runSchema.parse(await db.wordFamilyRuns.get(id)));
 }
 
 export async function setFamilySelection(ids: string[], selected: boolean) {
@@ -173,7 +175,9 @@ export async function loadSelectedFamilies(ids?: Set<string>) {
         selected.map((s) => s.familyId),
       );
       return rows.flatMap((row) =>
-        row && (!ids || ids.has(row.id)) ? [familySchema.parse(row)] : [],
+        row && hasPracticeForms(row) && (!ids || ids.has(row.id))
+          ? [familySchema.parse(row)]
+          : [],
       );
     },
   );

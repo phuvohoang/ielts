@@ -16,8 +16,8 @@ import {
   type Run,
   type Weakness,
   type Selection,
-  selectedFamilies,
   practiceFamilies,
+  selectedFamilies,
 } from "../../lib/word-families/model";
 import {
   checkRun,
@@ -79,12 +79,26 @@ export function FamilyPractice({
     weaknesses
       .filter((w) =>
         w.incorrect.some(
-          (p) => families.find((f) => f.id === w.familyId)?.data[p].length,
+          (p) =>
+            p !== "verb" &&
+            families.find((f) => f.id === w.familyId)?.data[p].length,
         ),
       )
       .map((w) => w.familyId),
   );
-  const selectedCount = selectedFamilies(families, selections).length;
+  const selectedTotal = selectedFamilies(families, selections).length;
+  const selectedCount = practiceFamilies(
+    families,
+    "selected",
+    selections,
+    incorrectIds,
+  ).length;
+  const allCount = practiceFamilies(
+    families,
+    "all",
+    selections,
+    incorrectIds,
+  ).length;
   const available = practiceFamilies(families, pool, selections, incorrectIds);
   const appliedRequest = useRef(0);
   useEffect(() => {
@@ -275,7 +289,7 @@ export function FamilyPractice({
                   setNotice("");
                 }}
               >
-                <option value="all">All words ({families.length})</option>
+                <option value="all">All words ({allCount})</option>
                 <option value="selected">
                   Selected words ({selectedCount})
                 </option>
@@ -287,7 +301,8 @@ export function FamilyPractice({
           </div>
           <p>
             {available.length} word families phù hợp. Chỉ chọn từ trong thư viện
-            của bạn; không dùng AI.
+            của bạn; không dùng AI. Verb được cho sẵn; chỉ chấm Noun, Adjective,
+            Adverb. Mục chỉ có Verb không đưa vào bài luyện.
           </p>
           <div className="flex gap-2">
             <Button
@@ -310,10 +325,14 @@ export function FamilyPractice({
           {!available.length && (
             <p>
               {pool === "selected"
-                ? "Chưa chọn word family nào. Vào Word Library và chọn từ để bắt đầu luyện."
-                : families.length
-                  ? "Chưa có từ phù hợp với bộ lọc này. Chọn tất cả từ hoặc nhập thêm dữ liệu."
-                  : "Thư viện trống. Nhập từ trước khi luyện."}
+                ? selectedTotal
+                  ? "Các từ đã chọn chỉ có Verb. Chọn từ có Noun, Adjective hoặc Adverb để luyện."
+                  : "Chưa chọn word family nào. Vào Word Library và chọn từ để bắt đầu luyện."
+                : families.length && !allCount
+                  ? "Thư viện chưa có Noun, Adjective hoặc Adverb để luyện."
+                  : families.length
+                    ? "Chưa có từ phù hợp với bộ lọc này. Chọn tất cả từ hoặc nhập thêm dữ liệu."
+                    : "Thư viện trống. Nhập từ trước khi luyện."}
             </p>
           )}
         </PracticePanel>
@@ -331,8 +350,14 @@ export function FamilyPractice({
             }
             aria-label="Tiến độ Word Families"
           />
-          <h3 className="font-semibold tracking-tight">
+          <h3 className="font-semibold tracking-tight break-words">
             {q.family.data.meaning_vi}
+            {q.verbGiven && (
+              <>
+                {" "}
+                · <span lang="en">{q.family.data.verb.join(" / ") || "—"}</span>
+              </>
+            )}
           </h3>
           <form
             className="flex flex-col gap-4"
@@ -343,7 +368,10 @@ export function FamilyPractice({
           >
             <div className="grid gap-4 sm:grid-cols-2">
               {q.order
-                .filter((p) => q.family.data[p].length)
+                .filter(
+                  (p) =>
+                    q.family.data[p].length && !(q.verbGiven && p === "verb"),
+                )
                 .map((part, i) => {
                   const result = feedback?.find((x) => x.part === part);
                   return (
@@ -411,10 +439,16 @@ export function FamilyPractice({
             </div>
             <p className="text-muted-foreground">
               {parts
-                .filter((p) => !q.family.data[p].length)
+                .filter(
+                  (p) =>
+                    !q.family.data[p].length && !(q.verbGiven && p === "verb"),
+                )
                 .map((p) => labels[p])
                 .join(", ")}
-              {parts.some((p) => !q.family.data[p].length)
+              {parts.some(
+                (p) =>
+                  !q.family.data[p].length && !(q.verbGiven && p === "verb"),
+              )
                 ? ": — · Không có trong dữ liệu, không tính điểm."
                 : ""}
             </p>
@@ -555,7 +589,7 @@ export function FamilyPractice({
                 {f.data.meaning_vi}:{" "}
                 {weaknesses
                   .find((w) => w.familyId === f.id)
-                  ?.incorrect.filter((p) => f.data[p].length)
+                  ?.incorrect.filter((p) => p !== "verb" && f.data[p].length)
                   .map((p) => labels[p])
                   .join(", ")}
               </p>
