@@ -77,6 +77,21 @@ export function WordLibrary({
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [notice, setNotice] = useState("");
+  const meaningInput = useRef<HTMLInputElement>(null);
+  const [editorRequest, setEditorRequest] = useState(0);
+  function openEditor(next: NonNullable<typeof editor>) {
+    setEditor(next);
+    setError("");
+    setEditorRequest((n) => n + 1);
+  }
+  useEffect(() => {
+    if (!editorRequest) return;
+    meaningInput.current?.scrollIntoView({
+      block: "center",
+      behavior: "instant",
+    });
+    meaningInput.current?.focus({ preventScroll: true });
+  }, [editorRequest]);
   const preview = useMemo(
     () =>
       rows
@@ -216,6 +231,7 @@ export function WordLibrary({
             <label className="flex flex-col gap-2">
               Nghĩa tiếng Việt
               <Input
+                ref={meaningInput}
                 required
                 maxLength={500}
                 value={editor.fields.meaning_vi}
@@ -272,10 +288,7 @@ export function WordLibrary({
             type="button"
             size="sm"
             disabled={busy}
-            onClick={() => {
-              setEditor({ fields: { ...empty } });
-              setError("");
-            }}
+            onClick={() => openEditor({ fields: { ...empty } })}
           >
             Thêm word family
           </Button>
@@ -427,7 +440,7 @@ export function WordLibrary({
               type="button"
               size="sm"
               variant="outline"
-              onClick={() => setEditor({ fields: { ...empty } })}
+              onClick={() => openEditor({ fields: { ...empty } })}
             >
               Thêm từ đầu tiên
             </Button>
@@ -530,7 +543,7 @@ export function WordLibrary({
                             disabled={busy}
                             aria-label={`Sửa ${f.data.meaning_vi}`}
                             onClick={() =>
-                              setEditor({
+                              openEditor({
                                 id: f.id,
                                 fields: {
                                   meaning_vi: f.data.meaning_vi,
