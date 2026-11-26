@@ -1,3 +1,7 @@
+import { ContextPractice } from "./ContextPractice";
+import { NativeSelect } from "../ui/native-select";
+import { PracticePanel } from "../practice/PracticePanel";
+import { loadContextRuns } from "../../lib/word-families/context-storage";
 import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { Alert, AlertDescription } from "../reui/alert";
@@ -8,6 +12,7 @@ import { WordLibrary } from "./WordLibrary";
 import { FamilyPractice } from "./FamilyPractice";
 type Data = Awaited<ReturnType<typeof loadWordFamilies>>;
 export function WordFamilies() {
+  const [exercise, setExercise] = useState("recall");
   const [tab, setTab] = useState("library"),
     [data, setData] = useState<Data>(),
     [error, setError] = useState("");
@@ -24,7 +29,24 @@ export function WordFamilies() {
     }
   }
   useEffect(() => {
-    void reload();
+    void (async () => {
+      await reload();
+      try {
+        const [context, recall] = await Promise.all([
+          loadContextRuns(),
+          loadWordFamilies(),
+        ]);
+        const draft = context.find((r) => !r.completed);
+        if (
+          draft &&
+          draft.updatedAt >
+            (recall.runs.find((r) => !r.completed)?.updatedAt ?? 0)
+        )
+          setExercise("context");
+      } catch {
+        /* Each practice view retains its own retryable load error. */
+      }
+    })();
   }, []);
   return (
     <div className="flex min-w-0 flex-col gap-6 text-sm">
@@ -79,14 +101,38 @@ export function WordFamilies() {
           <TabsContent
             value="practice"
             forceMount
-            className="data-[state=inactive]:hidden"
+            className="flex flex-col gap-6 data-[state=inactive]:hidden"
           >
-            <FamilyPractice
-              {...data}
-              selectedPracticeRequest={selectedPracticeRequest}
-              reload={reload}
-              openLibrary={() => setTab("library")}
-            />
+            <PracticePanel title="Loại bài tập">
+              <label className="flex flex-col gap-2">
+                Chọn loại bài
+                <NativeSelect
+                  aria-label="Loại bài tập"
+                  value={exercise}
+                  onChange={(e) => setExercise(e.target.value)}
+                >
+                  <option value="recall">Word Family Recall</option>
+                  <option value="context">Word Formation in Context</option>
+                </NativeSelect>
+              </label>
+            </PracticePanel>
+            <div hidden={exercise !== "recall"}>
+              <FamilyPractice
+                {...data}
+                selectedPracticeRequest={selectedPracticeRequest}
+                reload={reload}
+                openLibrary={() => setTab("library")}
+              />
+            </div>
+            <div hidden={exercise !== "context"}>
+              <ContextPractice
+                families={data.families}
+                selections={data.selections}
+                selectedPracticeRequest={selectedPracticeRequest}
+                active={tab === "practice" && exercise === "context"}
+                openLibrary={() => setTab("library")}
+              />
+            </div>
           </TabsContent>
         </Tabs>
       )}

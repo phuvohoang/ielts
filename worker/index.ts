@@ -1,3 +1,5 @@
+import { generateWordContext } from "./word-context";
+import { contextRequestSchema } from "../src/lib/word-families/context-model";
 import {
   essayInputSchema,
   exerciseRequestSchema,
@@ -44,6 +46,7 @@ export default {
     const path = new URL(request.url).pathname;
     if (
       ![
+        "/api/word-families/context",
         "/api/grammar/grade",
         "/api/grammar/generate",
         "/api/grammar/submit-exam",
@@ -73,7 +76,8 @@ export default {
             request,
             path === "/api/grammar/submit-exam"
               ? 640000
-              : path.startsWith("/api/writing/")
+              : path.startsWith("/api/writing/") ||
+                  path === "/api/word-families/context"
                 ? 128000
                 : 32000,
           ),
@@ -84,6 +88,35 @@ export default {
         { error: "Invalid or oversized request" },
         e instanceof Error && e.message === "large" ? 413 : 400,
       );
+    }
+    if (path === "/api/word-families/context") {
+      try {
+        const parsed = contextRequestSchema.parse(raw);
+        const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+        if (
+          !env.GENERATE_LIMIT ||
+          !(await env.GENERATE_LIMIT.limit({ key: ip })).success ||
+          !(await env.GLOBAL_LIMIT.limit({ key: "ielts-grammar" })).success
+        )
+          return send(
+            {
+              error:
+                "Tạo câu quá nhanh. Chờ một phút rồi thử lại; cache đã tạo vẫn được giữ.",
+            },
+            429,
+          );
+        return send(await generateWordContext(env, parsed));
+      } catch (e) {
+        return send(
+          {
+            error:
+              e instanceof z.ZodError
+                ? "Dữ liệu họ từ không hợp lệ."
+                : "Chưa tạo được câu hỏi đủ rõ ràng. Hãy thử lại; thư viện và bài cũ vẫn được giữ.",
+          },
+          e instanceof z.ZodError ? 400 : 503,
+        );
+      }
     }
     if (path.startsWith("/api/writing/")) {
       if (!env.SESSIONS || !env.GENERATE_LIMIT)
