@@ -340,6 +340,29 @@ describe("independent linguistic gate", () => {
     ).toEqual({ questions: [q2] });
     expect(callStructured).toHaveBeenCalledTimes(4);
   });
+  it("retains accepted questions and regenerates only rejected tasks within the retry limit", async () => {
+    const task = planContext([family], settings)[0],
+      good = question(task, 10),
+      bad = question(task, 11),
+      fixed = question(task, 12);
+    const first = review(good).reviews[0],
+      rejected = review(bad, true).reviews[0];
+    vi.mocked(callStructured)
+      .mockResolvedValueOnce({ questions: [good, bad] })
+      .mockResolvedValueOnce({ reviews: [first, rejected] })
+      .mockResolvedValueOnce({ questions: [fixed] })
+      .mockResolvedValueOnce(review(fixed));
+    expect(
+      await generateWordContext({} as Env, { tasks: [task, task], avoid: [] }),
+    ).toEqual({ questions: [good, fixed] });
+    expect(callStructured).toHaveBeenCalledTimes(4);
+    const retryInput = vi.mocked(callStructured).mock.calls[2][2] as {
+      tasks: ContextTask[];
+      avoid: string[];
+    };
+    expect(retryInput.tasks).toHaveLength(1);
+    expect(retryInput.avoid).toContain(good.sentence);
+  });
   it("never returns known ambiguous items or invented vocabulary after the retry limit", async () => {
     const task = planContext([family], settings)[0],
       q = question(task);
